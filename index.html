@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>来客受付フォーム</title>
   <style>
-    /* ベーススタイル */
     :root {
       --primary-color: #006699;
       --bg-color: #f5f8fa;
@@ -31,6 +30,19 @@
       text-align: center;
       color: var(--primary-color);
       margin-bottom: var(--spacing);
+    }
+    /* 言語切り替え */
+    #langSwitch {
+      text-align: right;
+      margin-bottom: 0.5em;
+    }
+    #langSwitch button {
+      background: none;
+      border: none;
+      color: var(--primary-color);
+      cursor: pointer;
+      margin-left: 0.5em;
+      font-size: 0.9rem;
     }
     label {
       display: block;
@@ -61,14 +73,14 @@
       gap: 0.5em;
       margin-top: 0.5em;
     }
-    .purpose-group label {
+    .purpose-item {
       display: flex;
       align-items: center;
+      gap: 0.5em;
       font-weight: normal;
     }
-    .purpose-group input {
-      margin-right: 0.5em;
-      margin-top: 0;
+    .purpose-item input[type="checkbox"] {
+      margin: 0;
     }
     /* 注意事項ボックス */
     .scroll-box {
@@ -83,7 +95,7 @@
       font-size: 0.9rem;
       line-height: 1.4;
     }
-    /* 追加・送信ボタン */
+    /* ボタン */
     .btn {
       background: var(--primary-color);
       color: #fff;
@@ -110,37 +122,51 @@
 </head>
 <body>
   <main>
-    <h1>来客受付</h1>
+    <div id="langSwitch">
+      <button type="button" onclick="setLang('ja')">日本語</button>
+      <button type="button" onclick="setLang('en')">English</button>
+    </div>
+    <h1 data-ja="来客受付" data-en="Visitor Check-in">来客受付</h1>
     <form id="visitorForm">
-      <label for="visitDate">ご来所日</label>
+      <label for="visitDate" data-ja="ご来所日" data-en="Date of Visit">ご来所日</label>
       <input type="date" id="visitDate" name="visitDate" required>
 
-      <label for="visitTime">ご来所時間</label>
+      <label for="visitTime" data-ja="ご来所時間" data-en="Time of Arrival">ご来所時間</label>
       <input type="time" id="visitTime" name="visitTime" required>
 
-      <label for="leaveTime">予定ご退所時間</label>
+      <label for="leaveTime" data-ja="予定ご退所時間" data-en="Expected Departure">予定ご退所時間</label>
       <input type="time" id="leaveTime" name="leaveTime">
 
-      <label for="company">貴社名（必須）</label>
+      <label for="company" data-ja="貴社名（必須）" data-en="Company Name (required)">貴社名（必須）</label>
       <input type="text" id="company" name="company" required>
 
-      <label>お名前・ビジターカード番号</label>
+      <label data-ja="お名前・ビジターカード番号" data-en="Name & Visitor Card No.">お名前・ビジターカード番号</label>
       <div id="nameSection">
         <div class="name-pair">
-          <input type="text" placeholder="お名前" required>
-          <input type="number" placeholder="VC No." required>
+          <input type="text" placeholder="お名前" data-en-placeholder="Name" required>
+          <input type="number" placeholder="VC No." data-en-placeholder="Card No." required>
         </div>
       </div>
-      <button type="button" class="btn btn-small" onclick="addNamePair()">＋追加</button>
+      <button type="button" class="btn btn-small" onclick="addNamePair()" 
+              data-ja="＋追加" data-en="+ Add">＋追加</button>
 
-      <label>ご来所目的（複数選択可）</label>
+      <label data-ja="ご来所目的（複数選択可）" data-en="Purpose of Visit (multiple)">ご来所目的（複数選択可）</label>
       <div class="purpose-group">
-        <label><input type="checkbox" name="purpose" value="調査・監査・見学">調査・監査・見学</label>
-        <label><input type="checkbox" name="purpose" value="打合せ">打合せ（会議）</label>
-        <label><input type="checkbox" name="purpose" value="納品・修理・清掃 他">納品・修理・清掃 他</label>
+        <label class="purpose-item">
+          <input type="checkbox" name="purpose" value="調査・監査・見学">
+          <span data-en="Inspection / Audit / Tour">調査・監査・見学</span>
+        </label>
+        <label class="purpose-item">
+          <input type="checkbox" name="purpose" value="打合せ">
+          <span data-en="Meeting">打合せ（会議）</span>
+        </label>
+        <label class="purpose-item">
+          <input type="checkbox" name="purpose" value="納品・修理・清掃 他">
+          <span data-en="Delivery / Repair / Cleaning">納品・修理・清掃 他</span>
+        </label>
       </div>
 
-      <label>【注意事項】（必読）</label>
+      <label data-ja="【注意事項】（必読）" data-en="Notes (must read)">【注意事項】（必読）</label>
       <div class="scroll-box">
 試験エリアには化学物質や有機溶媒が置かれています。それらに接触することにより眼や皮膚が障害されたり、吸収されて健康被害を惹き起こす可能性があります。そのため、試験エリアに立ち入る際には、肌の露出を避ける服装でご入室してください。また、化学物質等に接触の可能性が高い場合は保護具（マスク、ゴーグル、グローブ、白衣）を貸与致しますので、弊社社員にお申し付けください。
 試験エリアには機器や設備が机上や足元に設置されています。それらに接触すると衣服が破れたり、けがをする恐れがありますのでご注意願います。
@@ -151,9 +177,12 @@
 施設内で知り得た情報の第三者開示、写真撮影、動画撮影は禁止しますのでご了承願います。
 当方の一方的過失以外の事故などについては、一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。
       </div>
-      <label><input type="checkbox" id="agree" name="agree" required>上記注意事項を確認しました</label>
+      <label>
+        <input type="checkbox" id="agree" name="agree" required>
+        <span data-ja="上記注意事項を確認しました" data-en="I have read and agree to the above">上記注意事項を確認しました</span>
+      </label>
 
-      <button type="submit" class="btn">送信</button>
+      <button type="submit" class="btn" data-ja="送信" data-en="Submit">送信</button>
     </form>
     <p id="msg"></p>
   </main>
@@ -168,33 +197,29 @@
     function addNamePair() {
       const section = document.getElementById('nameSection');
       const count = section.querySelectorAll('.name-pair').length;
-      if (count >= 5) return alert("最大5名までです");
+      if (count >= 5) return alert(lang==='en' ? 'Up to 5 entries' : '最大5名までです');
       const div = document.createElement('div');
       div.className = 'name-pair';
       div.innerHTML = `
-        <input type="text" placeholder="お名前" required>
-        <input type="number" placeholder="VC No." required>
+        <input type="text" placeholder="${lang==='en' ? 'Name' : 'お名前'}" required>
+        <input type="number" placeholder="${lang==='en' ? 'Card No.' : 'VC No.'}" required>
       `;
       section.appendChild(div);
     }
 
-    // 送信処理
+    // フォーム送信
     document.getElementById('visitorForm').addEventListener('submit', async e => {
       e.preventDefault();
       const fields = {};
-      // 基本項目
       ['visitDate','visitTime','leaveTime','company'].forEach(id => {
         fields[id] = document.getElementById(id).value;
       });
-      // 名前・VC
       document.querySelectorAll('.name-pair').forEach((pair, i) => {
         fields[`name_${i+1}`] = pair.children[0].value.trim();
         fields[`vc_${i+1}`]   = pair.children[1].value.trim();
       });
-      // 目的
       fields.purpose = [...document.querySelectorAll('input[name="purpose"]:checked')]
         .map(el => el.value);
-      // 同意
       fields.agree = document.getElementById('agree').checked;
 
       try {
@@ -204,13 +229,34 @@
           body: JSON.stringify(fields)
         });
         const result = await res.json();
-        const msg = res.ok ? '送信が完了しました。ありがとうございました。' : 'エラー：' + result.message;
-        document.getElementById('msg').textContent = msg;
+        document.getElementById('msg').textContent =
+          res.ok
+            ? (lang==='en' ? 'Submission successful. Thank you.' : '送信が完了しました。ありがとうございました。')
+            : (lang==='en' ? 'Error: ' : 'エラー：') + result.message;
         if (res.ok) e.target.reset();
       } catch (err) {
-        document.getElementById('msg').textContent = '送信エラー：' + err.message;
+        document.getElementById('msg').textContent =
+          (lang==='en' ? 'Submission failed: ' : '送信エラー：') + err.message;
       }
     });
+
+    // 言語切替
+    let lang = 'ja';
+    function setLang(l) {
+      lang = l;
+      document.querySelectorAll('[data-ja]').forEach(el => {
+        if (el.dataset[l]) {
+          if (el.tagName==='INPUT' || el.tagName==='BUTTON') {
+            el.value = el.dataset[l] || el.value;
+          } else if (el.placeholder) {
+            // placeholder要素
+            el.placeholder = el.dataset[l + '-placeholder'] || el.placeholder;
+          } else {
+            el.textContent = el.dataset[l];
+          }
+        }
+      });
+    }
   </script>
 </body>
 </html>
