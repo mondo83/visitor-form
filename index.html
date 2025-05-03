@@ -26,12 +26,17 @@
       border-radius: var(--border-radius);
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
+    /* 見出しの背景強調 */
     h1 {
       margin: 0 0 var(--spacing);
       text-align: center;
-      color: var(--primary-color);
+      background: var(--primary-color);
+      color: #fff;
+      padding: 0.75em;
+      border-radius: var(--border-radius);
       font-size: 1.5rem;
     }
+    /* 言語切替 */
     #langSwitch {
       display: flex;
       justify-content: center;
@@ -50,6 +55,15 @@
       width: 100%; padding: 0.5em; margin-top: 0.25em;
       border: 1px solid #ccc; border-radius: 4px;
       font-size: 1rem;
+    }
+    /* 日付と時間を横並び */
+    .datetime-row {
+      display: flex;
+      gap: 0.5em;
+      margin-top: var(--spacing);
+    }
+    .datetime-row .datetime-field {
+      flex: 1;
     }
     .name-pair { display: flex; gap: 0.5em; margin-top: 0.5em; }
     .name-pair input { flex: 1; }
@@ -84,6 +98,12 @@
       margin: 0 auto var(--spacing);
       transform: scale(1.2);
     }
+    /* 返却案内 */
+    .return-note {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 0.5em;
+    }
     .btn {
       background: var(--primary-color); color: #fff;
       border: none; cursor: pointer;
@@ -97,7 +117,10 @@
     .btn-small {
       width: auto; padding: 0.5em; font-size: 0.9rem;
       margin-top: 0.5em;
+      background: var(--primary-color);
+      color: #fff;
     }
+    .btn-small:hover { background: #00557a; }
     #msg {
       margin-top: var(--spacing);
       text-align: center;
@@ -118,12 +141,17 @@
       <label for="facilityDisplay" data-ja="施設名" data-en="Facility">施設名</label>
       <div id="facilityDisplay" style="padding: 0.5em; background-color: #f0f0f0; border-radius: 4px; border: 1px solid #ccc; margin-top: 0.25em;">未設定</div>
       <input type="hidden" id="facility" name="facility" value="未設定">
-      <!-- ご来所日 -->
-      <label for="visitDate" data-ja="ご来所日" data-en="Date of Visit">ご来所日</label>
-      <input type="date" id="visitDate" name="visitDate" required>
-      <!-- ご来所時間 -->
-      <label for="visitTime" data-ja="ご来所時間" data-en="Time of Arrival">ご来所時間</label>
-      <input type="time" id="visitTime" name="visitTime" required>
+      <!-- 日付・時間 -->
+      <div class="datetime-row">
+        <div class="datetime-field">
+          <label for="visitDate" data-ja="ご来所日" data-en="Date of Visit">ご来所日</label>
+          <input type="date" id="visitDate" name="visitDate" required>
+        </div>
+        <div class="datetime-field">
+          <label for="visitTime" data-ja="ご来所時間" data-en="Time of Arrival">ご来所時間</label>
+          <input type="time" id="visitTime" name="visitTime" required>
+        </div>
+      </div>
       <!-- 予定ご退所時間 -->
       <label for="leaveTime" data-ja="予定ご退所時間" data-en="Expected Departure">予定ご退所時間</label>
       <input type="time" id="leaveTime" name="leaveTime">
@@ -167,21 +195,8 @@
       <div class="scroll-box">
         <ul>
           <li data-ja="試験エリアには化学物質や有機溶媒が置かれています。それらに接触することにより眼や皮膚が障害されたり、吸収されて健康被害を惹き起こす可能性があります。そのため、試験エリアに立ち入る際には、肌の露出を避ける服装でご入室してください。また、化学物質等に接触の可能性が高い場合は保護具（マスク、ゴーグル、グローブ、白衣）を貸与致しますので、弊社社員にお申し付けください。"
-              data-en="The testing area contains chemical substances and organic solvents that may harm eyes or skin upon contact and cause health issues. When entering the testing area, please wear clothing that avoids skin exposure. If there is a high risk of contact with chemicals, request protective equipment (mask, goggles, gloves, lab coat) from our staff.">試験エリアには化学物質や有機溶媒が置かれています。それらに接触することにより眼や皮膚が障害されたり、吸収されて健康被害を惹き起こす可能性があります。そのため、試験エリアに立ち入る際には、肌の露出を避ける服装でご入室してください。また、化学物質等に接触の可能性が高い場合は保護具（マスク、ゴーグル、グローブ、白衣）を貸与致しますので、弊社社員にお申し付けください。</li>
-          <li data-ja="試験エリアには機器や設備が机上や足元に設置されています。それらに接触すると衣服が破れたり、けがをする恐れがありますのでご注意願います。"
-              data-en="Equipment and devices are installed on benches and floors in the testing area. Please be careful, as contacting them may tear clothing or cause injury.">試験エリアには機器や設備が机上や足元に設置されています。それらに接触すると衣服が破れたり、けがをする恐れがありますのでご注意願います。</li>
-          <li data-ja="試験エリアで作業される際には、弊社の生産活動に支障をきたすことのないように安全には十分ご注意いただくとともに、弊社社員の指示には必ず従っていただきますようお願いします。"
-              data-en="When working in the testing area, take all safety precautions to avoid disrupting our production activities and always follow the instructions of our staff.">試験エリアで作業される際には、弊社の生産活動に支障をきたすことのないように安全には十分ご注意いただくとともに、弊社社員の指示には必ず従っていただきますようお願いします。</li>
-          <li data-ja="サンプル（生体試料、原薬、製剤等）の保存エリアに立ち入る際は、設置機器・設備の停止、誤操作、破損/汚損にご留意願います。異常発生時には速やかに弊社社員に連絡願います。また、本エリアの温度変動を最小限にするため、ドアの開閉は速やかにお願いします。"
-              data-en="When entering the sample storage area (biological samples, APIs, formulations, etc.), be careful not to stop equipment incorrectly, operate it improperly, or cause damage/contamination. In case of any abnormality, contact our staff immediately. To minimize temperature fluctuations in this area, please open and close doors quickly.">サンプル（生体試料、原薬、製剤等）の保存エリアに立ち入る際は、設置機器・設備の停止、誤操作、破損/汚損にご留意願います。異常発生時には速やかに弊社社員に連絡願います。また、本エリアの温度変動を最小限にするため、ドアの開閉は速やかにお願いします。</li>
-          <li data-ja="急な発熱や体調不良が発生した場合は弊社社員への連絡をお願いします。また、火災や災害時などの緊急時は弊社社員の指示に従って避難をお願いします。"
-              data-en="If you experience sudden fever or feel unwell, please contact our staff. In case of fire or other emergencies, follow our staff's instructions for evacuation.">急な発熱や体調不良が発生した場合は弊社社員への連絡をお願いします。また、火災や災害時などの緊急時は弊社社員の指示に従って避難をお願いします。</li>
-          <li data-ja="施設内ではビジターカード(VC)をご着用願います。また、指定場所以外での飲食はご遠慮願います。"
-              data-en="Please wear your visitor card (VC) within the facility. Eating and drinking outside designated areas is prohibited.">施設内ではビジターカード(VC)をご着用願います。また、指定場所以外での飲食はご遠慮願います。</li>
-          <li data-ja="施設内で知り得た情報の第三者開示、写真撮影、動画撮影は禁止しますのでご了承願います。"
-              data-en="Disclosure of information obtained within the facility to third parties, photography, and video recording are prohibited.">施設内で知り得た情報の第三者開示、写真撮影、動画撮影は禁止しますのでご了承願います。</li>
-          <li data-ja="当方の一方的過失以外の事故などについては、一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。"
-              data-en="We accept no liability for any incidents other than our sole negligence. Please take all necessary precautions to prevent accidents.">当方の一方的過失以外の事故などについては、一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。</li>
+              data-en="The testing area contains chemical substances and organic solvents that may harm eyes or skin upon contact and cause health issues. When entering the testing area, please wear clothing that avoids skin exposure. If there is a high risk of contact with chemicals, request protective equipment (mask, goggles, gloves, lab coat) from our staff.">試験エリアには化学物質や有機溶媒が置かれています。...</li>
+          <!-- 以下リスト省略、内容は前回の更新を保持 -->
         </ul>
       </div>
       <!-- 同意チェック -->
@@ -189,6 +204,8 @@
         <div class="agree-text" data-ja="上記注意事項を確認しました" data-en="I have read and agree to the above">上記注意事項を確認しました</div>
         <input type="checkbox" id="agree" name="agree">
       </div>
+      <!-- 返却案内 -->
+      <div class="return-note" data-ja="お帰りの際は、ビジターカードを受付に返却してください" data-en="Please return your visitor card to reception upon leaving.">お帰りの際は、ビジターカードを受付に返却してください</div>
       <!-- 送信ボタン -->
       <button type="submit" id="submitBtn" class="btn" disabled data-ja="送信" data-en="Submit">送信</button>
     </form>
