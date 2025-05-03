@@ -77,36 +77,35 @@
       <label data-ja="お名前・ビジターカード番号" data-en="Name & Visitor Card No.">お名前・ビジターカード番号</label>
       <div id="nameSection">
         <div class="name-pair">
-          <input
-            type="text"
-            id="visitorName0"
-            name="visitorName[]"
-            placeholder="お名前"
-            autocomplete="name"
-            autocapitalize="words"
-            inputmode="text"
-            required
-          >
-          <input
-            type="text"
-            id="visitorCard0"
-            name="visitorCard[]"
-            placeholder="VC No."
-            inputmode="numeric"
-            pattern="[0-9]*"
-            required
-          >
+          <input type="text" name="visitorName[]" data-ja-placeholder="お名前" data-en-placeholder="Name" placeholder="お名前" autocomplete="name" autocapitalize="words" inputmode="text" required>
+          <input type="text" name="visitorCard[]" data-ja-placeholder="VC No." data-en-placeholder="Card No." placeholder="VC No." inputmode="numeric" pattern="[0-9]*" required>
         </div>
       </div>
-      <button type="button" class="btn btn-small" onclick="addNamePair()">＋追加</button>
+      <button type="button" class="btn btn-small" onclick="addNamePair()" data-ja="＋追加" data-en="+ Add">＋追加</button>
 
       <table class="purpose-table">
-        <!-- 省略: 目的チェックリスト -->
+        <thead>
+          <tr><th></th><th data-ja="ご来所目的（複数選択可）" data-en="Purpose of Visit (multiple)">ご来所目的（複数選択可）</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><input type="checkbox" name="purpose" value="調査・監査・見学"></td><td data-ja="調査・監査・見学" data-en="Inspection / Audit / Tour">調査・監査・見学</td></tr>
+          <tr><td><input type="checkbox" name="purpose" value="打合せ"></td><td data-ja="打合せ（会議）" data-en="Meeting">打合せ（会議）</td></tr>
+          <tr><td><input type="checkbox" name="purpose" value="納品・修理・清掃 他"></td><td data-ja="納品・修理・清掃 他" data-en="Delivery / Repair / Cleaning">納品・修理・清掃 他</td></tr>
+        </tbody>
       </table>
 
       <label data-ja="【注意事項】（必読）" data-en="Notes (must read)">【注意事項】（必読）</label>
       <div class="scroll-box">
-        <!-- 省略: 注意事項リスト -->
+        <ul>
+          <li data-ja="試験エリアには化学物質や有機溶媒が置かれています。それらに接触することにより眼や皮膚が障碍されたり、吸収されて健康被害を惹き起こす可能性があります。そのため、試験エリアに立ち入る際には肌の露出を避けた服装でご入室ください。また、化学物質等に接触の可能性が高い場合は保護具（マスク、ゴーグル、グローブ、白衣）を貸与いたしますので弊社社員にお申し付けください。" data-en="The testing area contains chemical substances and organic solvents that may harm eyes or skin upon contact and cause health issues. When entering the testing area, please wear clothing that avoids skin exposure. If there is a high risk of contact with chemicals, request protective equipment (mask, goggles, gloves, lab coat) from our staff.">試験エリアには化学物質や有機溶媒が置かれています。それらに接触することにより眼や皮膚が障碍されたり、吸収されて健康被害を惹き起こす可能性があります。そのため、試験エリアに立ち入る際には肌の露出を避けた服装でご入室ください。また、化学物質等に接触の可能性が高い場合は保護具（マスク、ゴーグル、グローブ、白衣）を貸与いたしますので弊社社員にお申し付けください。</li>
+          <li data-ja="試験エリアには機器や設備が机上や足元に設置されています。それらに接触すると衣服が破れたり、怪我をする恐れがありますのでご注意願います。" data-en="Equipment and devices are installed on benches and floors in the testing area. Please be careful, as contacting them may tear clothing or cause injury.">試験エリアには機器や設備が机上や足元に設置されています。それらに接触すると衣服が破れたり、怪我をする恐れがありますのでご注意願います。</li>
+          <li data-ja="試験エリアで作業される際には弊社の生産活動に支障をきたすことのないように安全には十分ご注意いただくとともに弊社社員の指示には必ず従っていただくようお願いします。" data-en="When working in the testing area, take all safety precautions to avoid disrupting our production activities and always follow the instructions of our staff.">試験エリアで作業される際には弊社の生産活動に支障をきたすことのないように安全には十分ご注意いただくとともに弊社社員の指示には必ず従っていただくようお願いします。</li>
+          <li data-ja="サンプル（生体試料、原薬、製剤等）の保存エリアに立ち入る際は設置機器・設備の停止、誤操作、破損/汚損にご留意願います。異常発生時には速やかに弊署社員に連絡願います。また、本エリアの温度変動を最小限にするためドアの開閉は速やかにお願いします。" data-en="When entering the sample storage area (biological samples, APIs, formulations, etc.), be careful not to stop equipment incorrectly, operate it improperly, or cause damage/contamination. In case of any abnormality, contact our staff immediately. To minimize temperature deviations in this area, please open and close doors promptly.">サンプル（生体試料、原薬、製剤等）の保存エリアに立ち入る際は設置機器・設備の停止、誤操作、破損/汚損にご留意願います。異常発生時には速やかに弊署社員に連絡願います。また、本エリアの温度変動を最小限にするためドアの開閉は速やかにお願いします。</li>
+          <li data-ja="急な発熱や体調不良が発生した場合は弊社社員への連絡をお願いします。また火災や災害時などの緊急時は弊社社員の指示に従って避難をお願いします。" data-en="If you experience sudden fever or feel unwell, please contact our staff. In case of fire or other emergencies, follow our staff's instructions for evacuation.">急な発熱や体調不良が発生した場合は弊社社員への連絡をお願いします。また火災や災害時などの緊急時は弊社社員の指示に従って避難をお願いします。</li>
+          <li data-ja="施設内ではビジターカード(VC)をご着用願います。また指定場所以外での飲食はご遠慮願います。" data-en="Please wear your visitor card (VC) within the facility. Eating and drinking outside designated areas is prohibited.">施設内ではビジターカード(VC)をご着用願います。また指定場所以外での飲食はご遠慮願います。</li>
+          <li data-ja="施設内で知り得た情報の第三者開示、写真撮影、動画撮影は禁止しますのでご了承願います。" data-en="Disclosure of information obtained within the facility to third parties, photography, and video recording are prohibited.">施設内で知り得た情報の第三者開示、写真撮影、動画撮影は禁止しますのでご了承願います。</li>
+          <li data-ja="当方の一方的過失以外の事故などについては一切の 책임을負いかねます。事故防止には万全を期していただくようお願い申し上げます。" data-en="We accept no liability for any incidents other than our sole negligence. Please take all necessary precautions to prevent accidents.">当方の一方的過失以外の事故などについては一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。</li>
+        </ul>
       </div>
 
       <div class="agree-container">
@@ -114,9 +113,7 @@
         <input type="checkbox" id="agree" name="agree">
       </div>
 
-      <div class="return-note" data-ja="お帰りの際は、ビジターカードを受付に返却してください" data-en="Please return your visitor card to reception upon leaving.">
-        お帰りの際は、ビジターカードを受付に返却してください
-      </div>
+      <div class="return-note" data-ja="お帰りの際は、ビジターカードを受付に返却してください" data-en="Please return your visitor card to reception upon leaving.">お帰りの際は、ビジターカードを受付に返却してください</div>
 
       <button type="submit" id="submitBtn" class="btn" disabled data-ja="送信" data-en="Submit">送信</button>
     </form>
@@ -130,21 +127,24 @@
       lang = l;
       document.querySelectorAll('[data-ja]').forEach(el => {
         el.textContent = el.getAttribute(`data-${l}`);
-        if (el.placeholder) {
-          el.placeholder = el.getAttribute(`data-${l}-placeholder`) || el.placeholder;
+        if (el.hasAttribute('data-' + l + '-placeholder')) {
+          el.placeholder = el.getAttribute(`data-${l}-placeholder`);
         }
       });
     }
 
-    const urlParams = new URLSearchParams(location.search);
-    const fac = urlParams.get('facility') || '未設定';
+    // facility
+    const params = new URLSearchParams(location.search);
+    const fac = params.get('facility') || '未設定';
     document.getElementById('facility').value = decodeURIComponent(fac);
     document.getElementById('facilityDisplay').textContent = decodeURIComponent(fac);
 
+    // initial datetime
     const now = new Date();
     document.getElementById('visitDate').value = now.toISOString().slice(0,10);
     document.getElementById('visitTime').value = now.toTimeString().slice(0,5);
 
+    // add name pair
     function addNamePair() {
       const section = document.getElementById('nameSection');
       const count = section.querySelectorAll('.name-pair').length;
@@ -152,29 +152,14 @@
 
       const div = document.createElement('div');
       div.className = 'name-pair';
-      const idx = count;
       div.innerHTML = `
-        <input
-          type="text"
-          name="visitorName[]"
-          placeholder="${lang==='en'?'Name':'お名前'}"
-          autocomplete="name"
-          autocapitalize="words"
-          inputmode="text"
-          required
-        >
-        <input
-          type="text"
-          name="visitorCard[]"
-          placeholder="${lang==='en'?'Card No.':'VC No.'}"
-          inputmode="numeric"
-          pattern="[0-9]*"
-          required
-        >
+        <input type="text" name="visitorName[]" placeholder="${lang==='en'? 'Name' : 'お名前'}" autocomplete="name" autocapitalize="words" inputmode="text" required>
+        <input type="text" name="visitorCard[]" placeholder="${lang==='en'? 'Card No.' : 'VC No.'}" inputmode="numeric" pattern="[0-9]*" required>
       `;
       section.appendChild(div);
     }
 
+    // enable submit
     document.getElementById('visitorForm').addEventListener('change', () => {
       document.getElementById('submitBtn').disabled = !document.getElementById('agree').checked;
     });
