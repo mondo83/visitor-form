@@ -216,15 +216,17 @@
       const div = document.createElement('div');
       div.className = 'name-pair';
       div.innerHTML = `
-        <input type="text"
-               name="visitorName[]"
-               placeholder="${lang==='en'?'Name':'お名前'}"
-               data-ja-placeholder="お名前"
-               data-en-placeholder="Name"
-               autocomplete="name"
-               autocapitalize="words"
-               inputmode="text"
-               required>
+<input type="text"
+       name="visitorName[]"
+       lang="ja"
+       placeholder="${lang==='en'?'Name':'お名前'}"
+       data-ja-placeholder="お名前"
+       data-en-placeholder="Name"
+       autocomplete="name"
+       autocapitalize="words"
+       inputmode="text"
+       required>
+
         <input type="text"
                name="visitorCard[]"
                placeholder="${lang==='en'?'Card No.':'VC No.'}"
