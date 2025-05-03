@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>来訪者受付フォーム</title>
   <style>
     :root {
@@ -14,26 +14,33 @@
     }
     * { box-sizing: border-box; }
 
-    /* ──────────────── 追加部分 ──────────────── */
-    input, textarea {
+    /* iOSの日本語入力対応 */
+    input, textarea, select {
       -webkit-user-select: text;
       user-select: text;
+      -webkit-appearance: none;
+      appearance: none;
+      font-size: 16px; /* 16pxより小さいとiOSがズームする */
     }
-    /* ───────────────────────────────────────── */
 
     body {
       margin: 0;
       padding: var(--spacing);
       background: var(--bg-color);
-      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-text-size-adjust: 100%;
     }
     main {
-      max-width: 600px;
+      max-width: 100%;
+      width: 600px;
       margin: auto;
       background: var(--card-bg);
       padding: calc(var(--spacing) * 1.5);
       border-radius: var(--border-radius);
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow-x: hidden; /* はみ出し防止 */
     }
 
     /* 見出し */
@@ -45,6 +52,7 @@
       padding: 0.75em;
       border-radius: var(--border-radius);
       font-size: 1.5rem;
+      word-break: keep-all; /* 日本語の改行位置調整 */
     }
     #langSwitch {
       display: flex;
@@ -58,6 +66,7 @@
       color: var(--primary-color);
       cursor: pointer;
       font-size: 0.9rem;
+      padding: 0.5em 1em; /* タップ領域拡大 */
     }
 
     .facility-display {
@@ -65,6 +74,7 @@
       margin-bottom: var(--spacing);
       color: var(--primary-color);
       font-weight: bold;
+      word-break: break-all; /* 長い施設名の改行 */
     }
     label {
       display: block;
@@ -76,40 +86,169 @@
       margin-top: 0.25em;
       border: 1px solid #ccc;
       border-radius: 4px;
-      font-size: 1rem;
+      font-size: 16px; /* iOSでのズーム防止 */
+      max-width: 100%; /* はみ出し防止 */
     }
-    input, select, button { width: 100%; }
+    
+    /* iOSでの日付・時間入力対応 */
+    input[type="date"], input[type="time"] {
+      min-height: 44px; /* タップしやすさ向上 */
+    }
+    
+    input, select { width: 100%; }
+    button { width: 100%; }
 
-    .datetime-row { display: flex; gap: 0.5em; margin-top: var(--spacing); }
-    .datetime-field { flex: 1; }
+    /* レスポンシブ対応強化 */
+    .datetime-row { 
+      display: flex; 
+      flex-wrap: wrap; /* 狭い画面で折り返し */
+      gap: 0.5em; 
+      margin-top: var(--spacing); 
+    }
+    .datetime-field { 
+      flex: 1 1 45%; /* 狭い画面では縦に並ぶようにする */
+      min-width: 140px; 
+    }
 
-    .name-pair { display: flex; gap: 0.5em; margin-top: 0.5em; }
-    .name-pair input { flex: 1 1 auto; min-width: 0; width: auto; }
+    .name-pair { 
+      display: flex; 
+      flex-wrap: wrap; /* 狭い画面で折り返し */
+      gap: 0.5em; 
+      margin-top: 0.5em; 
+    }
+    .name-pair input { 
+      flex: 1 1 45%; 
+      min-width: 120px; /* 最小幅を確保 */
+    }
 
-    .purpose-table { width: 100%; border-collapse: collapse; margin-top: var(--spacing); }
-    .purpose-table th { text-align: left; padding-bottom: 0.5em; border-bottom: 1px solid #ddd; font-weight: bold; }
-    .purpose-table td { padding: 0.25em 0; vertical-align: middle; }
-    .purpose-table td:first-child { width: 2em; }
-    .purpose-table td:nth-child(2) { padding-left: 0.5em; }
+    .purpose-table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      margin-top: var(--spacing); 
+      table-layout: fixed; /* テーブルの幅固定 */
+    }
+    .purpose-table th { 
+      text-align: left; 
+      padding-bottom: 0.5em; 
+      border-bottom: 1px solid #ddd; 
+      font-weight: bold; 
+    }
+    .purpose-table td { 
+      padding: 0.5em 0; /* タップ領域拡大 */
+      vertical-align: middle; 
+    }
+    .purpose-table td:first-child { 
+      width: 2em; 
+      text-align: center; 
+    }
+    .purpose-table td:first-child input[type="checkbox"] {
+      width: auto;
+      min-height: 24px; /* チェックボックスを大きくしてタップしやすく */
+      min-width: 24px;
+    }
+    .purpose-table td:nth-child(2) { 
+      padding-left: 0.5em; 
+      word-break: keep-all; /* 日本語の改行位置調整 */
+    }
 
-    .scroll-box { max-height: 240px; overflow-y: auto; background: #fafafa; padding: 0.75em; border: 1px solid #ddd; border-radius: 4px; white-space: normal; margin-top: 0.5em; font-size: 0.9rem; line-height: 1.4; }
-    .scroll-box ul { margin: 0; padding-left: 1.2em; }
-    .scroll-box li { margin-bottom: 0.5em; }
+    .scroll-box { 
+      max-height: 240px; 
+      overflow-y: auto; 
+      -webkit-overflow-scrolling: touch; /* iOSでのスムーズスクロール */
+      background: #fafafa; 
+      padding: 0.75em; 
+      border: 1px solid #ddd; 
+      border-radius: 4px; 
+      white-space: normal; 
+      margin-top: 0.5em; 
+      font-size: 0.9rem; 
+      line-height: 1.4; 
+    }
+    .scroll-box ul { 
+      margin: 0; 
+      padding-left: 1.2em; 
+    }
+    .scroll-box li { 
+      margin-bottom: 0.5em; 
+      overflow-wrap: break-word; /* 長い文章の折り返し */
+      word-break: break-word;
+    }
 
-    .agree-container { text-align: center; margin-top: var(--spacing); }
-    .agree-text { margin-bottom: 0.5em; font-weight: bold; }
-    .agree-container input[type="checkbox"] { width: auto; display: block; margin: 0 auto var(--spacing); transform: scale(1.2); }
+    .agree-container { 
+      text-align: center; 
+      margin-top: var(--spacing); 
+    }
+    .agree-text { 
+      margin-bottom: 0.5em; 
+      font-weight: bold; 
+    }
+    .agree-container input[type="checkbox"] { 
+      width: auto; 
+      display: block; 
+      margin: 0 auto var(--spacing); 
+      transform: scale(1.5); /* タップしやすくする */
+      min-height: 24px;
+      min-width: 24px;
+    }
 
-    .return-note { text-align: center; font-size: 0.9rem; margin-top: 0.5em; }
+    .return-note { 
+      text-align: center; 
+      font-size: 0.9rem; 
+      margin-top: 0.5em; 
+    }
 
-    .btn { background: var(--primary-color); color: #fff; border: none; cursor: pointer; font-size: 1rem; margin-top: var(--spacing); transition: background 0.2s; }
-    .btn:disabled { background: #aaa; cursor: not-allowed; }
-    .btn:hover:enabled { background: #00557a; }
+    .btn { 
+      background: var(--primary-color); 
+      color: #fff; 
+      border: none; 
+      cursor: pointer; 
+      font-size: 1rem; 
+      margin-top: var(--spacing); 
+      transition: background 0.2s; 
+      min-height: 44px; /* タップしやすく */
+    }
+    .btn:disabled { 
+      background: #aaa; 
+      cursor: not-allowed; 
+    }
+    .btn:hover:enabled, .btn:active:enabled { 
+      background: #00557a; 
+    }
 
-    .btn-small { background: var(--primary-color); color: #fff; width: auto; padding: 0.5em; font-size: 0.9rem; margin-top: 0.5em; }
-    .btn-small:hover { background: #00557a; }
+    .btn-small { 
+      background: var(--primary-color); 
+      color: #fff; 
+      width: auto; 
+      padding: 0.5em 1em; /* タップ領域拡大 */
+      font-size: 0.9rem; 
+      margin-top: 0.5em; 
+      min-height: 44px; /* タップしやすく */
+    }
+    .btn-small:hover, .btn-small:active { 
+      background: #00557a; 
+    }
 
-    #msg { margin-top: var(--spacing); text-align: center; color: #d33; font-weight: bold; }
+    #msg { 
+      margin-top: var(--spacing); 
+      text-align: center; 
+      color: #d33; 
+      font-weight: bold; 
+      word-break: break-word; /* エラーメッセージの折り返し */
+    }
+    
+    /* iOSでの表示問題解決のための追加スタイル */
+    @supports (-webkit-touch-callout: none) {
+      /* iOSデバイス向け特定対応 */
+      input, select, textarea, button {
+        font-size: 16px !important; /* ズーム防止のため */
+      }
+      
+      /* フォーカス時の挙動改善 */
+      input:focus, textarea:focus, select:focus {
+        font-size: 16px !important;
+        transform: scale(1);
+      }
+    }
   </style>
 </head>
 <body>
@@ -139,11 +278,11 @@
       <input type="time" id="leaveTime" name="leaveTime">
 
       <label for="company" data-ja="貴社名（必須）" data-en="Company Name (required)">貴社名（必須）</label>
-      <input type="text" id="company" name="company" required>
+      <input type="text" id="company" name="company" autocomplete="organization" required>
 
       <label data-ja="お名前・ビジターカード番号" data-en="Name & Visitor Card No.">お名前・ビジターカード番号</label>
       <div id="nameSection"></div>
-      <button type="button" class="btn btn-small" onclick="addNamePair()" data-ja="＋追加" data-en="+ Add">＋追加</button>
+      <button type="button" class="btn-small" onclick="addNamePair()" data-ja="＋追加" data-en="+ Add">＋追加</button>
 
       <table class="purpose-table">
         <thead><tr><th></th><th data-ja="ご来所目的（複数選択可）" data-en="Purpose of Visit (multiple)">ご来所目的（複数選択可）</th></tr></thead>
@@ -164,10 +303,9 @@
           <li data-ja="急な発熱や体調不良が発生した場合は弊社社員への連絡をお願いします。また火災や災害時などの緊急時は弊社社員の指示に従って避難をお願いします。" data-en="If you experience sudden fever or feel unwell, please contact our staff. In case of fire or other emergencies, follow our staff's instructions for evacuation.">急な発熱や体調不良が発生した場合は弊社社員への連絡をお願いします。また火災や災害時などの緊急時は弊社社員の指示に従って避難をお願いします。</li>
           <li data-ja="施設内ではビジターカード(VC)をご着用願います。また指定場所以外での飲食はご遠慮願います。" data-en="Please wear your visitor card (VC) within the facility. Eating and drinking outside designated areas is prohibited.">施設内ではビジターカード(VC)をご着用願います。また指定場所以外での飲食はご遠慮願います。</li>
           <li data-ja="施設内で知り得た情報の第三者開示、写真撮影、動画撮影は禁止しますのでご了承願います。" data-en="Disclosure of information obtained within the facility to third parties, photography, and video recording are prohibited.">施設内で知り得た情報の第三者開示、写真撮影、動画撮影は禁止しますのでご了承願います。</li>
-          <li data-ja="当方の一方的過失以外の事故などについては一切の 책임을負いかねます。事故防止には万全を期していただくようお願い申し上げます。" data-en="We accept no liability for any incidents other than our sole negligence. Please take all necessary precautions to prevent accidents.">当方の一方的過失以外の事故などについては一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。</li>
+          <li data-ja="当方の一方的過失以外の事故などについては一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。" data-en="We accept no liability for any incidents other than our sole negligence. Please take all necessary precautions to prevent accidents.">当方の一方的過失以外の事故などについては一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。</li>
         </ul>
       </div>
-
 
       <div class="agree-container">
         <div class="agree-text" data-ja="上記注意事項を確認しました" data-en="I have read and agree to the above">上記注意事項を確認しました</div>
@@ -186,13 +324,45 @@
 
     function setLang(l) {
       lang = l;
-      document.querySelectorAll('[data-ja]').forEach(el => {
-        el.textContent = el.getAttribute(`data-${l}`);
+      document.querySelectorAll('[data-ja], [data-en]').forEach(el => {
+        // データ属性がある要素だけ処理
+        if(el.hasAttribute(`data-${l}`)) {
+          el.textContent = el.getAttribute(`data-${l}`);
+        }
+        
+        // プレースホルダー処理
         if (el.hasAttribute(`data-${l}-placeholder`)) {
           el.placeholder = el.getAttribute(`data-${l}-placeholder`);
         }
       });
+      
+      // 名前セクションのプレースホルダー更新
+      document.querySelectorAll('#nameSection input').forEach(input => {
+        if(input.name === 'visitorName[]') {
+          input.placeholder = lang === 'en' ? 'Name' : 'お名前';
+        } else if(input.name === 'visitorCard[]') {
+          input.placeholder = lang === 'en' ? 'Card No.' : 'VC No.';
+        }
+      });
     }
+
+    // iOSでのフォーカス問題を解決
+    document.addEventListener('focusin', function(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+        // 少し遅延させて確実にiOSのズームを防止
+        setTimeout(function() {
+          // まれにiOSでズームすることがあるので、メタビューポートを一時的に更新
+          const viewportMeta = document.querySelector('meta[name="viewport"]');
+          const originalContent = viewportMeta.getAttribute('content');
+          viewportMeta.setAttribute('content', originalContent + ', maximum-scale=1');
+          
+          // すぐに元に戻す（タイミング問題）
+          setTimeout(function() {
+            viewportMeta.setAttribute('content', originalContent);
+          }, 300);
+        }, 100);
+      }
+    });
 
     // 初期処理: 1行目もJavaScriptで追加
     window.addEventListener('DOMContentLoaded', () => {
@@ -200,47 +370,92 @@
 
       const now = new Date();
       document.getElementById('visitDate').value = now.toISOString().slice(0,10);
-      document.getElementById('visitTime').value = now.toTimeString().slice(0,5);
+      
+      // 時刻フォーマットを修正（Safari対応）
+      let hours = now.getHours().toString().padStart(2, '0');
+      let minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('visitTime').value = `${hours}:${minutes}`;
 
-      const params = new URLSearchParams(location.search);
-      const fac = params.get('facility') || '未設定';
-      document.getElementById('facility').value = decodeURIComponent(fac);
-      document.getElementById('facilityDisplay').textContent = decodeURIComponent(fac);
+      try {
+        const params = new URLSearchParams(location.search);
+        const fac = params.get('facility') || '未設定';
+        document.getElementById('facility').value = decodeURIComponent(fac);
+        document.getElementById('facilityDisplay').textContent = decodeURIComponent(fac);
+      } catch (e) {
+        console.error('URLパラメータ処理エラー:', e);
+        document.getElementById('facility').value = '未設定';
+        document.getElementById('facilityDisplay').textContent = '未設定';
+      }
+      
+      // iOS日本語入力サポート
+      document.querySelectorAll('input[type="text"]').forEach(input => {
+        input.addEventListener('focus', function() {
+          // iOSでの日本語入力をサポート
+          this.setAttribute('autocomplete', 'off');
+        });
+      });
     });
 
     function addNamePair() {
       const section = document.getElementById('nameSection');
       const count = section.querySelectorAll('.name-pair').length;
-      if (count >= 5) return alert(lang==='en'? 'Up to 5 entries':'最大5名までです');
+      if (count >= 5) {
+        alert(lang==='en'? 'Up to 5 entries':'最大5名までです');
+        return;
+      }
 
       const div = document.createElement('div');
       div.className = 'name-pair';
-      div.innerHTML = `
-<input type="text"
-       name="visitorName[]"
-       lang="ja"
-       placeholder="${lang==='en'?'Name':'お名前'}"
-       data-ja-placeholder="お名前"
-       data-en-placeholder="Name"
-       autocomplete="name"
-       autocapitalize="words"
-       inputmode="text"
-       required>
-
-        <input type="text"
-               name="visitorCard[]"
-               placeholder="${lang==='en'?'Card No.':'VC No.'}"
-               data-ja-placeholder="VC No."
-               data-en-placeholder="Card No."
-               inputmode="numeric"
-               pattern="[0-9]*"
-               required>
-      `;
+      
+      // 日本語入力に対応した入力フィールド
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.name = 'visitorName[]';
+      nameInput.lang = 'ja';
+      nameInput.placeholder = lang==='en'?'Name':'お名前';
+      nameInput.setAttribute('data-ja-placeholder', 'お名前');
+      nameInput.setAttribute('data-en-placeholder', 'Name');
+      nameInput.autocomplete = 'name';
+      nameInput.autocapitalize = 'words';
+      nameInput.inputmode = 'text';
+      nameInput.required = true;
+      
+      const cardInput = document.createElement('input');
+      cardInput.type = 'text';
+      cardInput.name = 'visitorCard[]';
+      cardInput.placeholder = lang==='en'?'Card No.':'VC No.';
+      cardInput.setAttribute('data-ja-placeholder', 'VC No.');
+      cardInput.setAttribute('data-en-placeholder', 'Card No.');
+      cardInput.inputmode = 'numeric';
+      cardInput.pattern = '[0-9]*';
+      cardInput.required = true;
+      
+      div.appendChild(nameInput);
+      div.appendChild(cardInput);
       section.appendChild(div);
     }
 
-    document.getElementById('visitorForm').addEventListener('change',()=>{
+    document.getElementById('visitorForm').addEventListener('change', function(e) {
       document.getElementById('submitBtn').disabled = !document.getElementById('agree').checked;
+    });
+    
+    // チェックボックスのタップエリアを拡大
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('input[type="checkbox"]').forEach(function(checkbox) {
+        const parent = checkbox.parentElement;
+        if(parent) {
+          parent.style.cursor = 'pointer';
+          parent.addEventListener('click', function(e) {
+            // チェックボックス自体のクリックは通常処理
+            if(e.target !== checkbox) {
+              checkbox.checked = !checkbox.checked;
+              // イベント発火
+              const event = new Event('change', { bubbles: true });
+              checkbox.dispatchEvent(event);
+            }
+          });
+        }
+      });
     });
   </script>
 </body>
