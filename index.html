@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>来訪者受付フォーム</title>
   <style>
     :root {
@@ -26,7 +26,7 @@
       border-radius: var(--border-radius);
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    /* 見出しの背景強調 */
+    /* 見出し */
     h1 {
       margin: 0 0 var(--spacing);
       text-align: center;
@@ -36,11 +36,17 @@
       border-radius: var(--border-radius);
       font-size: 1.5rem;
     }
+    /* 施設名表示 */
+    .facility-display {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: var(--spacing);
+    }
     /* 言語切替 */
     #langSwitch {
       display: flex;
-      justify-content: center;
-      gap: 1rem;
+      justify-content: flex-end;
+      gap: 0.5em;
       margin-bottom: var(--spacing);
     }
     #langSwitch button {
@@ -56,27 +62,19 @@
       border: 1px solid #ccc; border-radius: 4px;
       font-size: 1rem;
     }
-    /* 日付と時間を横並び */
+    /* 日付・時間横並び */
     .datetime-row {
-      display: flex;
-      gap: 0.5em;
-      margin-top: var(--spacing);
+      display: flex; gap: 0.5em; margin-top: var(--spacing);
     }
-    .datetime-row .datetime-field {
-      flex: 1;
-    }
+    .datetime-row .datetime-field { flex: 1; }
     .name-pair { display: flex; gap: 0.5em; margin-top: 0.5em; }
     .name-pair input { flex: 1; }
-    .purpose-table {
-      width: 100%; border-collapse: collapse; margin-top: var(--spacing);
-    }
+    .purpose-table { width: 100%; border-collapse: collapse; margin-top: var(--spacing); }
     .purpose-table th {
       text-align: left; padding-bottom: 0.5em;
       border-bottom: 1px solid #ddd; font-weight: bold;
     }
-    .purpose-table td {
-      padding: 0.25em 0; vertical-align: middle;
-    }
+    .purpose-table td { padding: 0.25em 0; vertical-align: middle; }
     .purpose-table td:first-child { width: 2em; }
     .purpose-table td:nth-child(2) { padding-left: 0.5em; }
     .scroll-box {
@@ -93,12 +91,10 @@
     }
     .agree-text { margin-bottom: 0.5em; font-weight: bold; }
     .agree-container input[type="checkbox"] {
-      width: auto;
-      display: block;
+      width: auto; display: block;
       margin: 0 auto var(--spacing);
       transform: scale(1.2);
     }
-    /* 返却案内 */
     .return-note {
       text-align: center;
       font-size: 0.9rem;
@@ -110,36 +106,29 @@
       font-size: 1rem; margin-top: var(--spacing);
       transition: background 0.2s;
     }
-    .btn:disabled {
-      background: #aaa; cursor: not-allowed;
-    }
+    .btn:disabled { background: #aaa; cursor: not-allowed; }
     .btn:hover:enabled { background: #00557a; }
     .btn-small {
       width: auto; padding: 0.5em; font-size: 0.9rem;
       margin-top: 0.5em;
-      background: var(--primary-color);
-      color: #fff;
+      background: var(--primary-color); color: #fff;
     }
     .btn-small:hover { background: #00557a; }
-    #msg {
-      margin-top: var(--spacing);
-      text-align: center;
-      color: #d33;
-      font-weight: bold;
-    }
+    #msg { margin-top: var(--spacing); text-align: center; color: #d33; font-weight: bold; }
   </style>
 </head>
 <body>
   <main>
     <h1 data-ja="来訪者受付フォーム" data-en="Visitor Check-in Form">来訪者受付フォーム</h1>
+    <!-- 施設名表示 -->
+    <div class="facility-display" id="facilityDisplay">未設定</div>
+    <!-- 言語切替右寄せ -->
     <div id="langSwitch">
       <button type="button" onclick="setLang('ja')">日本語</button>
       <button type="button" onclick="setLang('en')">English</button>
     </div>
     <form id="visitorForm">
-      <!-- 施設名 -->
-      <label for="facilityDisplay" data-ja="施設名" data-en="Facility">施設名</label>
-      <div id="facilityDisplay" style="padding: 0.5em; background-color: #f0f0f0; border-radius: 4px; border: 1px solid #ccc; margin-top: 0.25em;">未設定</div>
+      <!-- 隠し値としての施設 -->
       <input type="hidden" id="facility" name="facility" value="未設定">
       <!-- 日付・時間 -->
       <div class="datetime-row">
@@ -152,22 +141,18 @@
           <input type="time" id="visitTime" name="visitTime" required>
         </div>
       </div>
-      <!-- 予定ご退所時間 -->
       <label for="leaveTime" data-ja="予定ご退所時間" data-en="Expected Departure">予定ご退所時間</label>
       <input type="time" id="leaveTime" name="leaveTime">
-      <!-- 貴社名 -->
       <label for="company" data-ja="貴社名（必須）" data-en="Company Name (required)">貴社名（必須）</label>
       <input type="text" id="company" name="company" required>
-      <!-- お名前・VC -->
       <label data-ja="お名前・ビジターカード番号" data-en="Name & Visitor Card No.">お名前・ビジターカード番号</label>
       <div id="nameSection">
         <div class="name-pair">
-          <input type="text" placeholder="お名前" data-en-placeholder="Name" required>
-          <input type="number" placeholder="VC No." data-en-placeholder="Card No." required>
+          <input type="text" inputmode="text" placeholder="お名前" data-en-placeholder="Name" required>
+          <input type="number" inputmode="numeric" placeholder="VC No." data-en-placeholder="Card No." required>
         </div>
       </div>
       <button type="button" class="btn btn-small" onclick="addNamePair()" data-ja="＋追加" data-en="+ Add">＋追加</button>
-      <!-- ご来所目的 -->
       <table class="purpose-table">
         <thead>
           <tr>
@@ -190,40 +175,32 @@
           </tr>
         </tbody>
       </table>
-      <!-- 注意事項 -->
       <label data-ja="【注意事項】（必読）" data-en="Notes (must read)">【注意事項】（必読）</label>
       <div class="scroll-box">
         <ul>
-          <li data-ja="試験エリアには化学物質や有機溶媒が置かれています。それらに接触することにより眼や皮膚が障害されたり、吸収されて健康被害を惹き起こす可能性があります。そのため、試験エリアに立ち入る際には、肌の露出を避ける服装でご入室してください。また、化学物質等に接触の可能性が高い場合は保護具（マスク、ゴーグル、グローブ、白衣）を貸与致しますので、弊社社員にお申し付けください。"
-              data-en="The testing area contains chemical substances and organic solvents that may harm eyes or skin upon contact and cause health issues. When entering the testing area, please wear clothing that avoids skin exposure. If there is a high risk of contact with chemicals, request protective equipment (mask, goggles, gloves, lab coat) from our staff.">試験エリアには化学物質や有機溶媒が置かれています。...</li>
-          <!-- 以下リスト省略、内容は前回の更新を保持 -->
+          <!-- 注意事項リストは既存内容を保持 -->
         </ul>
       </div>
-      <!-- 同意チェック -->
       <div class="agree-container">
         <div class="agree-text" data-ja="上記注意事項を確認しました" data-en="I have read and agree to the above">上記注意事項を確認しました</div>
         <input type="checkbox" id="agree" name="agree">
       </div>
-      <!-- 返却案内 -->
       <div class="return-note" data-ja="お帰りの際は、ビジターカードを受付に返却してください" data-en="Please return your visitor card to reception upon leaving.">お帰りの際は、ビジターカードを受付に返却してください</div>
-      <!-- 送信ボタン -->
       <button type="submit" id="submitBtn" class="btn" disabled data-ja="送信" data-en="Submit">送信</button>
     </form>
     <p id="msg"></p>
   </main>
 
   <script>
-    // URLパラメータからfacility取得
+    // 施設名自動セット
     const urlParams = new URLSearchParams(location.search);
     const fac = urlParams.get('facility') || '未設定';
     document.getElementById('facility').value = decodeURIComponent(fac);
     document.getElementById('facilityDisplay').textContent = decodeURIComponent(fac);
-
     // 初期値セット
     const now = new Date();
     document.getElementById('visitDate').value = now.toISOString().slice(0,10);
     document.getElementById('visitTime').value = now.toTimeString().slice(0,5);
-
     // 名前＋VC追加
     function addNamePair() {
       const section = document.getElementById('nameSection');
@@ -232,67 +209,33 @@
       const div = document.createElement('div');
       div.className = 'name-pair';
       div.innerHTML = `
-        <input type="text" placeholder="${lang==='en'?'Name':'お名前'}" required>
-        <input type="number" placeholder="${lang==='en'?'Card No.':'VC No.'}" required>
+        <input type="text" inputmode="text" placeholder="${lang==='en'?'Name':'お名前'}" required>
+        <input type="number" inputmode="numeric" placeholder="${lang==='en'?'Card No.':'VC No.'}" required>
       `;
       section.appendChild(div);
     }
-
     // 同意チェックで送信ボタン制御
     const agreeChk = document.getElementById('agree');
     const submitBtn = document.getElementById('submitBtn');
-    agreeChk.addEventListener('change', () => {
-      submitBtn.disabled = !agreeChk.checked;
-    });
-
+    agreeChk.addEventListener('change', () => { submitBtn.disabled = !agreeChk.checked; });
     // フォーム送信
     document.getElementById('visitorForm').addEventListener('submit', async e => {
       e.preventDefault();
       const fields = {};
-      ['facility','visitDate','visitTime','leaveTime','company'].forEach(id =>
-        fields[id] = document.getElementById(id).value
-      );
-      document.querySelectorAll('.name-pair').forEach((pair,i) => {
-        fields[`name_${i+1}`] = pair.children[0].value.trim();
-        fields[`vc_${i+1}`]   = pair.children[1].value.trim();
-      });
-      fields.purpose = [...document.querySelectorAll('input[name="purpose"]:checked')]
-        .map(el => el.value);
+      ['facility','visitDate','visitTime','leaveTime','company'].forEach(id => fields[id] = document.getElementById(id).value);
+      document.querySelectorAll('.name-pair').forEach((pair,i) => { fields[`name_${i+1}`] = pair.children[0].value.trim(); fields[`vc_${i+1}`] = pair.children[1].value.trim(); });
+      fields.purpose = [...document.querySelectorAll('input[name="purpose"]:checked')].map(el => el.value);
       fields.agree = agreeChk.checked;
-
       try {
-        const res = await fetch('/.netlify/functions/submit', {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify(fields)
-        });
+        const res = await fetch('/.netlify/functions/submit', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(fields) });
         const result = await res.json();
-        document.getElementById('msg').textContent =
-          res.ok
-            ? (lang==='en'?'Submission successful. Thank you.':'送信が完了しました。ありがとうございました。')
-            : (lang==='en'?'Error: ':'エラー：') + result.message;
+        document.getElementById('msg').textContent = res.ok ? (lang==='en'?'Submission successful. Thank you.':'送信が完了しました。ありがとうございました。') : (lang==='en'?'Error: ':'エラー：') + result.message;
         if(res.ok) e.target.reset();
-      } catch(err) {
-        document.getElementById('msg').textContent =
-          (lang==='en'?'Submission failed: ':'送信エラー：') + err.message;
-      }
+      } catch(err) { document.getElementById('msg').textContent = (lang==='en'?'Submission failed: ':'送信エラー：') + err.message; }
     });
-
     // 言語切替
     let lang = 'ja';
-    function setLang(l) {
-      lang = l;
-      document.querySelectorAll('[data-ja]').forEach(el => {
-        const txt = el.dataset[l];
-        if (!txt) return;
-        if (el.tagName==='INPUT' || el.tagName==='BUTTON') {
-          if (el.hasAttribute('value')) el.value = txt;
-          else if (el.placeholder) el.placeholder = el.dataset[l+'-placeholder'] || el.placeholder;
-        } else {
-          el.textContent = txt;
-        }
-      });
-    }
+    function setLang(l) { lang = l; document.querySelectorAll('[data-ja]').forEach(el => { const txt = el.dataset[l]; if(!txt) return; if(el.tagName==='INPUT' || el.tagName==='BUTTON'){ if(el.hasAttribute('value')) el.value = txt; else if(el.placeholder) el.placeholder = el.dataset[l+'-placeholder'] || el.placeholder; } else { el.textContent = txt; } }); }
   </script>
 </body>
 </html>
