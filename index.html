@@ -13,75 +13,226 @@
       --spacing: 1rem;
     }
     * { box-sizing: border-box; }
-    body { margin: 0; padding: var(--spacing); background: var(--bg-color); font-family: 'Helvetica Neue', Arial, sans-serif; }
-    main { max-width: 600px; margin: auto; background: var(--card-bg); padding: calc(var(--spacing) * 1.5); border-radius: var(--border-radius); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    h1 { margin: 0 0 var(--spacing); text-align: center; background: var(--primary-color); color: #fff; padding: 0.75em; border-radius: var(--border-radius); font-size: 1.5rem; }
-    #langSwitch { display: flex; justify-content: center; gap: 1rem; margin-bottom: var(--spacing); }
-    #langSwitch button { background: none; border: none; color: var(--primary-color); cursor: pointer; font-size: 0.9rem; }
-    .facility-display { text-align: center; margin-bottom: var(--spacing); color: var(--primary-color); font-weight: bold; }
-    label { display: block; margin-top: var(--spacing); font-weight: bold; }
-    input, select, button { padding: 0.5em; margin-top: 0.25em; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
-    input, select, button { width: 100%; }
-    .datetime-row { display: flex; gap: 0.5em; margin-top: var(--spacing); }
+
+    /* ──────────────── 追加部分 ──────────────── */
+    input, textarea {
+      -webkit-user-select: text;
+      user-select: text;
+    }
+    /* ───────────────────────────────────────── */
+
+    body {
+      margin: 0;
+      padding: var(--spacing);
+      background: var(--bg-color);
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+    main {
+      max-width: 600px;
+      margin: auto;
+      background: var(--card-bg);
+      padding: calc(var(--spacing) * 1.5);
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    /* 見出し */
+    h1 {
+      margin: 0 0 var(--spacing);
+      text-align: center;
+      background: var(--primary-color);
+      color: #fff;
+      padding: 0.75em;
+      border-radius: var(--border-radius);
+      font-size: 1.5rem;
+    }
+    #langSwitch {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: var(--spacing);
+    }
+    #langSwitch button {
+      background: none;
+      border: none;
+      color: var(--primary-color);
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .facility-display {
+      text-align: center;
+      margin-bottom: var(--spacing);
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+    label {
+      display: block;
+      margin-top: var(--spacing);
+      font-weight: bold;
+    }
+    input, select, button {
+      padding: 0.5em;
+      margin-top: 0.25em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    input, select, button {
+      width: 100%;
+    }
+
+    .datetime-row {
+      display: flex;
+      gap: 0.5em;
+      margin-top: var(--spacing);
+    }
     .datetime-field { flex: 1; }
-    .name-pair { display: flex; gap: 0.5em; margin-top: 0.5em; }
-    .name-pair input { flex: 1 1 auto; min-width: 0; width: auto; }
+
+    .name-pair {
+      display: flex;
+      gap: 0.5em;
+      margin-top: 0.5em;
+    }
+    .name-pair input {
+      flex: 1 1 auto;
+      min-width: 0;
+      width: auto;
+    }
+
     .purpose-table { width: 100%; border-collapse: collapse; margin-top: var(--spacing); }
-    .purpose-table th { text-align: left; padding-bottom: 0.5em; border-bottom: 1px solid #ddd; font-weight: bold; }
-    .purpose-table td { padding: 0.25em 0; vertical-align: middle; }
+    .purpose-table th {
+      text-align: left;
+      padding-bottom: 0.5em;
+      border-bottom: 1px solid #ddd;
+      font-weight: bold;
+    }
+    .purpose-table td {
+      padding: 0.25em 0;
+      vertical-align: middle;
+    }
     .purpose-table td:first-child { width: 2em; }
     .purpose-table td:nth-child(2) { padding-left: 0.5em; }
-    .scroll-box { max-height: 240px; overflow-y: auto; background: #fafafa; padding: 0.75em; border: 1px solid #ddd; border-radius: 4px; white-space: normal; margin-top: 0.5em; font-size: 0.9rem; line-height: 1.4; }
+
+    .scroll-box {
+      max-height: 240px;
+      overflow-y: auto;
+      background: #fafafa;
+      padding: 0.75em;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      white-space: normal;
+      margin-top: 0.5em;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
     .scroll-box ul { margin: 0; padding-left: 1.2em; }
     .scroll-box li { margin-bottom: 0.5em; }
+
     .agree-container { text-align: center; margin-top: var(--spacing); }
     .agree-text { margin-bottom: 0.5em; font-weight: bold; }
-    .agree-container input[type="checkbox"] { width: auto; display: block; margin: 0 auto var(--spacing); transform: scale(1.2); }
-    .return-note { text-align: center; font-size: 0.9rem; margin-top: 0.5em; }
-    .btn { background: var(--primary-color); color: #fff; border: none; cursor: pointer; font-size: 1rem; margin-top: var(--spacing); transition: background 0.2s; }
+    .agree-container input[type="checkbox"] {
+      width: auto;
+      display: block;
+      margin: 0 auto var(--spacing);
+      transform: scale(1.2);
+    }
+
+    .return-note {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 0.5em;
+    }
+
+    .btn {
+      background: var(--primary-color);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: var(--spacing);
+      transition: background 0.2s;
+    }
     .btn:disabled { background: #aaa; cursor: not-allowed; }
     .btn:hover:enabled { background: #00557a; }
-    .btn-small { background: var(--primary-color); color: #fff; width: auto; padding: 0.5em; font-size: 0.9rem; margin-top: 0.5em; }
+
+    .btn-small {
+      background: var(--primary-color);
+      color: #fff;
+      width: auto;
+      padding: 0.5em;
+      font-size: 0.9rem;
+      margin-top: 0.5em;
+    }
     .btn-small:hover { background: #00557a; }
-    #msg { margin-top: var(--spacing); text-align: center; color: #d33; font-weight: bold; }
+
+    #msg {
+      margin-top: var(--spacing);
+      text-align: center;
+      color: #d33;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
   <main>
-    <h1 data-ja="来訪者受付フォーム" data-en="Visitor Check-in Form">来訪者受付フォーム</h1>
+    <h1 data-ja="来訪者受付フォーム" data-en="Visitor Check-in Form">
+      来訪者受付フォーム
+    </h1>
     <div id="langSwitch">
       <button type="button" onclick="setLang('ja')">日本語</button>
       <button type="button" onclick="setLang('en')">English</button>
     </div>
 
     <div id="facilityDisplay" class="facility-display">未設定</div>
-    <input type="hidden" id="facility" name="facility" value="未設定">
+    <input type="hidden" id="facility" name="facility" value="未設定" />
 
     <form id="visitorForm">
       <div class="datetime-row">
         <div class="datetime-field">
           <label for="visitDate" data-ja="ご来所日" data-en="Date of Visit">ご来所日</label>
-          <input type="date" id="visitDate" name="visitDate" required>
+          <input type="date" id="visitDate" name="visitDate" required />
         </div>
         <div class="datetime-field">
           <label for="visitTime" data-ja="ご来所時間" data-en="Time of Arrival">ご来所時間</label>
-          <input type="time" id="visitTime" name="visitTime" required>
+          <input type="time" id="visitTime" name="visitTime" required />
         </div>
       </div>
+
       <label for="leaveTime" data-ja="予定ご退所時間" data-en="Expected Departure">予定ご退所時間</label>
-      <input type="time" id="leaveTime" name="leaveTime">
+      <input type="time" id="leaveTime" name="leaveTime" />
 
       <label for="company" data-ja="貴社名（必須）" data-en="Company Name (required)">貴社名（必須）</label>
-      <input type="text" id="company" name="company" required>
+      <input type="text" id="company" name="company" required />
 
       <label data-ja="お名前・ビジターカード番号" data-en="Name & Visitor Card No.">お名前・ビジターカード番号</label>
       <div id="nameSection">
         <div class="name-pair">
-          <input type="text" name="visitorName[]" data-ja-placeholder="お名前" data-en-placeholder="Name" placeholder="お名前" autocomplete="name" autocapitalize="words" inputmode="text" required>
-          <input type="text" name="visitorCard[]" data-ja-placeholder="VC No." data-en-placeholder="Card No." placeholder="VC No." inputmode="numeric" pattern="[0-9]*" required>
+          <input
+            type="text"
+            name="visitorName[]"
+            placeholder="お名前"
+            data-ja-placeholder="お名前"
+            data-en-placeholder="Name"
+            autocomplete="name"
+            autocapitalize="words"
+            inputmode="text"
+            required
+          />
+          <input
+            type="text"
+            name="visitorCard[]"
+            placeholder="VC No."
+            data-ja-placeholder="VC No."
+            data-en-placeholder="Card No."
+            inputmode="numeric"
+            pattern="[0-9]*"
+            required
+          />
         </div>
       </div>
-      <button type="button" class="btn btn-small" onclick="addNamePair()" data-ja="＋追加" data-en="+ Add">＋追加</button>
+      <button type="button" class="btn btn-small" onclick="addNamePair()">＋追加</button>
+
 
       <table class="purpose-table">
         <thead>
@@ -108,43 +259,44 @@
         </ul>
       </div>
 
-      <div class="agree-container">
-        <div class="agree-text" data-ja="上記注意事項を確認しました" data-en="I have read and agree to the above">上記注意事項を確認しました</div>
-        <input type="checkbox" id="agree" name="agree">
+      <div class="agree-container">        <div class="agree-text" data-ja="上記注意事項を確認しました" data-en="I have read and agree to the above">
+          上記注意事項を確認しました
+        </div>
+        <input type="checkbox" id="agree" name="agree" />
       </div>
 
-      <div class="return-note" data-ja="お帰りの際は、ビジターカードを受付に返却してください" data-en="Please return your visitor card to reception upon leaving.">お帰りの際は、ビジターカードを受付に返却してください</div>
+      <div class="return-note" data-ja="お帰りの際は、ビジターカードを受付に返却してください" data-en="Please return your visitor card to reception upon leaving.">
+        お帰りの際は、ビジターカードを受付に返却してください
+      </div>
 
-      <button type="submit" id="submitBtn" class="btn" disabled data-ja="送信" data-en="Submit">送信</button>
+      <button type="submit" id="submitBtn" class="btn" disabled data-ja="送信" data-en="Submit">
+        送信
+      </button>
     </form>
     <p id="msg"></p>
   </main>
 
   <script>
     let lang = 'ja';
-
     function setLang(l) {
       lang = l;
       document.querySelectorAll('[data-ja]').forEach(el => {
         el.textContent = el.getAttribute(`data-${l}`);
-        if (el.hasAttribute('data-' + l + '-placeholder')) {
-          el.placeholder = el.getAttribute(`data-${l}-placeholder`);
+        if (el.placeholder) {
+          el.placeholder = el.getAttribute(`data-${l}-placeholder`) || el.placeholder;
         }
       });
     }
 
-    // facility
-    const params = new URLSearchParams(location.search);
-    const fac = params.get('facility') || '未設定';
+    const urlParams = new URLSearchParams(location.search);
+    const fac = urlParams.get('facility') || '未設定';
     document.getElementById('facility').value = decodeURIComponent(fac);
     document.getElementById('facilityDisplay').textContent = decodeURIComponent(fac);
 
-    // initial datetime
     const now = new Date();
     document.getElementById('visitDate').value = now.toISOString().slice(0,10);
     document.getElementById('visitTime').value = now.toTimeString().slice(0,5);
 
-    // add name pair
     function addNamePair() {
       const section = document.getElementById('nameSection');
       const count = section.querySelectorAll('.name-pair').length;
@@ -153,13 +305,31 @@
       const div = document.createElement('div');
       div.className = 'name-pair';
       div.innerHTML = `
-        <input type="text" name="visitorName[]" placeholder="${lang==='en'? 'Name' : 'お名前'}" autocomplete="name" autocapitalize="words" inputmode="text" required>
-        <input type="text" name="visitorCard[]" placeholder="${lang==='en'? 'Card No.' : 'VC No.'}" inputmode="numeric" pattern="[0-9]*" required>
+        <input
+          type="text"
+          name="visitorName[]"
+          placeholder="${lang==='en'?'Name':'お名前'}"
+          data-ja-placeholder="お名前"
+          data-en-placeholder="Name"
+          autocomplete="name"
+          autocapitalize="words"
+          inputmode="text"
+          required
+        />
+        <input
+          type="text"
+          name="visitorCard[]"
+          placeholder="${lang==='en'?'Card No.':'VC No.'}"
+          data-ja-placeholder="VC No."
+          data-en-placeholder="Card No."
+          inputmode="numeric"
+          pattern="[0-9]*"
+          required
+        />
       `;
       section.appendChild(div);
     }
 
-    // enable submit
     document.getElementById('visitorForm').addEventListener('change', () => {
       document.getElementById('submitBtn').disabled = !document.getElementById('agree').checked;
     });
