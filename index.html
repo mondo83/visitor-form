@@ -31,7 +31,6 @@
       color: var(--primary-color);
       margin-bottom: var(--spacing);
     }
-    /* 言語切り替え */
     #langSwitch {
       text-align: right;
       margin-bottom: 0.5em;
@@ -49,7 +48,7 @@
       margin-top: var(--spacing);
       font-weight: bold;
     }
-    input, textarea, button {
+    input, textarea, button, select {
       width: 100%;
       padding: 0.5em;
       margin-top: 0.25em;
@@ -57,7 +56,6 @@
       border-radius: 4px;
       font-size: 1rem;
     }
-    /* 名前＋VCの横並び */
     .name-pair {
       display: flex;
       gap: 0.5em;
@@ -66,7 +64,6 @@
     .name-pair input {
       flex: 1;
     }
-    /* 目的チェックボックス整列 */
     .purpose-group {
       display: flex;
       flex-direction: column;
@@ -77,12 +74,14 @@
       display: flex;
       align-items: center;
       gap: 0.5em;
-      font-weight: normal;
+    }
+    .purpose-item span {
+      flex: 1;
     }
     .purpose-item input[type="checkbox"] {
       margin: 0;
+      margin-left: auto;
     }
-    /* 注意事項ボックス */
     .scroll-box {
       max-height: 240px;
       overflow-y: scroll;
@@ -95,7 +94,13 @@
       font-size: 0.9rem;
       line-height: 1.4;
     }
-    /* ボタン */
+    .scroll-box ul {
+      padding-left: 1.2em;
+      margin: 0;
+    }
+    .scroll-box li {
+      margin-bottom: 0.5em;
+    }
     .btn {
       background: var(--primary-color);
       color: #fff;
@@ -147,36 +152,47 @@
           <input type="number" placeholder="VC No." data-en-placeholder="Card No." required>
         </div>
       </div>
-      <button type="button" class="btn btn-small" onclick="addNamePair()" 
+      <button type="button" class="btn btn-small" onclick="addNamePair()"
               data-ja="＋追加" data-en="+ Add">＋追加</button>
 
       <label data-ja="ご来所目的（複数選択可）" data-en="Purpose of Visit (multiple)">ご来所目的（複数選択可）</label>
       <div class="purpose-group">
         <label class="purpose-item">
+          <span data-ja="調査・監査・見学" data-en="Inspection / Audit / Tour">調査・監査・見学</span>
           <input type="checkbox" name="purpose" value="調査・監査・見学">
-          <span data-en="Inspection / Audit / Tour">調査・監査・見学</span>
         </label>
         <label class="purpose-item">
+          <span data-ja="打合せ（会議）" data-en="Meeting">打合せ（会議）</span>
           <input type="checkbox" name="purpose" value="打合せ">
-          <span data-en="Meeting">打合せ（会議）</span>
         </label>
         <label class="purpose-item">
+          <span data-ja="納品・修理・清掃 他" data-en="Delivery / Repair / Cleaning">納品・修理・清掃 他</span>
           <input type="checkbox" name="purpose" value="納品・修理・清掃 他">
-          <span data-en="Delivery / Repair / Cleaning">納品・修理・清掃 他</span>
         </label>
       </div>
 
       <label data-ja="【注意事項】（必読）" data-en="Notes (must read)">【注意事項】（必読）</label>
       <div class="scroll-box">
-試験エリアには化学物質や有機溶媒が置かれています。それらに接触することにより眼や皮膚が障害されたり、吸収されて健康被害を惹き起こす可能性があります。そのため、試験エリアに立ち入る際には、肌の露出を避ける服装でご入室してください。また、化学物質等に接触の可能性が高い場合は保護具（マスク、ゴーグル、グローブ、白衣）を貸与致しますので、弊社社員にお申し付けください。
-試験エリアには機器や設備が机上や足元に設置されています。それらに接触すると衣服が破れたり、けがをする恐れがありますのでご注意願います。
-試験エリアで作業される際には、弊社の生産活動に支障をきたすことのないように安全には十分ご注意いただくとともに、弊社社員の指示には必ず従っていただきますようお願いします。
-サンプル（生体試料、原薬、製剤等）の保存エリアに立ち入る際は、設置機器・設備の停止、誤操作、破損/汚損にご留意願います。異常発生時には速やかに弊社社員に連絡願います。また、本エリアの温度変動を最小限にするため、ドアの開閉は速やかにお願いします。
-急な発熱や体調不良が発生した場合は弊社社員への連絡をお願いします。また、火災や災害時などの緊急時は弊社社員の指示に従って避難をお願いします。
-施設内ではビジターカード(VC)をご着用願います。また、指定場所以外での飲食はご遠慮願います。
-施設内で知り得た情報の第三者開示、写真撮影、動画撮影は禁止しますのでご了承願います。
-当方の一方的過失以外の事故などについては、一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。
+        <ul>
+          <li data-ja="試験エリアには化学物質や有機溶媒が置かれています…保護具（マスク、ゴーグル、グローブ、白衣）を貸与致しますので、弊社社員にお申し付けください。"
+              data-en="In the testing area, chemical substances and organic solvents are stored. Contact may harm eyes or skin and cause health damage. Please wear protective clothing and, if needed, request protective gear (mask, goggles, gloves, lab coat).">試験エリアには化学物質や有機溶媒が置かれています…保護具（マスク、ゴーグル、グローブ、白衣）を貸与致しますので、弊社社員にお申し付けください。</li>
+          <li data-ja="試験エリアには機器や設備が机上や足元に設置されています…衣服が破れたり、けがをする恐れがありますのでご注意願います。"
+              data-en="In the testing area, equipment is placed on benches and floors. Contact may tear clothing or cause injury, so please be careful.">試験エリアには機器や設備が机上や足元に設置されています…衣服が破れたり、けがをする恐れがありますのでご注意願います。</li>
+          <li data-ja="試験エリアで作業される際には…弊社社員の指示には必ず従っていただきますようお願いします。"
+              data-en="When working in the testing area, take all safety precautions and follow staff instructions to avoid disrupting production.">試験エリアで作業される際には…弊社社員の指示には必ず従っていただきますようお願いします。</li>
+          <li data-ja="サンプル保存エリアでは…ドアの開閉は速やかにお願いします。"
+              data-en="In the sample storage area, avoid improper operation or damage to equipment. Report anomalies immediately and open/close doors quickly to minimize temperature changes.">サンプル保存エリアでは…ドアの開閉は速やかにお願いします。</li>
+          <li data-ja="急な発熱や体調不良が発生した場合は…避難をお願いします。"
+              data-en="If you develop a fever or feel unwell, contact staff. In case of fire or disaster, evacuate per staff instructions.">急な発熱や体調不良が発生した場合は…避難をお願いします。</li>
+          <li data-ja="施設内ではビジターカード(VC)をご着用願います…飲食はご遠慮願います。"
+              data-en="Please wear your visitor card (VC) and refrain from eating or drinking outside designated areas.">施設内ではビジターカード(VC)をご着用願います…飲食はご遠慮願います。</li>
+          <li data-ja="知り得た情報の第三者開示、写真撮影、動画撮影は禁止します。"
+              data-en="Disclosing facility information, photography, or video recording is prohibited.">知り得た情報の第三者開示、写真撮影、動画撮影は禁止します。</li>
+          <li data-ja="当方の一方的過失以外の事故などについては…事故防止には万全を期してください。"
+              data-en="We assume no liability except for sole negligence. Please take all precautions to prevent accidents.">当方の一方的過失以外の事故などについては…事故防止には万全を期してください。</li>
+        </ul>
       </div>
+
       <label>
         <input type="checkbox" id="agree" name="agree" required>
         <span data-ja="上記注意事項を確認しました" data-en="I have read and agree to the above">上記注意事項を確認しました</span>
@@ -188,12 +204,10 @@
   </main>
 
   <script>
-    // 初期値セット
     const now = new Date();
     document.getElementById('visitDate').value = now.toISOString().slice(0,10);
     document.getElementById('visitTime').value = now.toTimeString().slice(0,5);
 
-    // 名前＋VC追加
     function addNamePair() {
       const section = document.getElementById('nameSection');
       const count = section.querySelectorAll('.name-pair').length;
@@ -201,20 +215,19 @@
       const div = document.createElement('div');
       div.className = 'name-pair';
       div.innerHTML = `
-        <input type="text" placeholder="${lang==='en' ? 'Name' : 'お名前'}" required>
-        <input type="number" placeholder="${lang==='en' ? 'Card No.' : 'VC No.'}" required>
+        <input type="text" placeholder="${lang==='en'?'Name':'お名前'}" required>
+        <input type="number" placeholder="${lang==='en'?'Card No.':'VC No.'}" required>
       `;
       section.appendChild(div);
     }
 
-    // フォーム送信
     document.getElementById('visitorForm').addEventListener('submit', async e => {
       e.preventDefault();
       const fields = {};
-      ['visitDate','visitTime','leaveTime','company'].forEach(id => {
-        fields[id] = document.getElementById(id).value;
-      });
-      document.querySelectorAll('.name-pair').forEach((pair, i) => {
+      ['visitDate','visitTime','leaveTime','company'].forEach(id =>
+        fields[id] = document.getElementById(id).value
+      );
+      document.querySelectorAll('.name-pair').forEach((pair,i) => {
         fields[`name_${i+1}`] = pair.children[0].value.trim();
         fields[`vc_${i+1}`]   = pair.children[1].value.trim();
       });
@@ -223,37 +236,34 @@
       fields.agree = document.getElementById('agree').checked;
 
       try {
-        const res = await fetch('/.netlify/functions/submit', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(fields)
+        const res = await fetch('/.netlify/functions/submit',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(fields)
         });
         const result = await res.json();
         document.getElementById('msg').textContent =
           res.ok
-            ? (lang==='en' ? 'Submission successful. Thank you.' : '送信が完了しました。ありがとうございました。')
-            : (lang==='en' ? 'Error: ' : 'エラー：') + result.message;
-        if (res.ok) e.target.reset();
-      } catch (err) {
+            ? (lang==='en'?'Submission successful. Thank you.':'送信が完了しました。ありがとうございました。')
+            : (lang==='en'?'Error: ':'エラー：') + result.message;
+        if(res.ok) e.target.reset();
+      } catch(err) {
         document.getElementById('msg').textContent =
-          (lang==='en' ? 'Submission failed: ' : '送信エラー：') + err.message;
+          (lang==='en'?'Submission failed: ':'送信エラー：') + err.message;
       }
     });
 
-    // 言語切替
     let lang = 'ja';
     function setLang(l) {
       lang = l;
       document.querySelectorAll('[data-ja]').forEach(el => {
-        if (el.dataset[l]) {
-          if (el.tagName==='INPUT' || el.tagName==='BUTTON') {
-            el.value = el.dataset[l] || el.value;
-          } else if (el.placeholder) {
-            // placeholder要素
-            el.placeholder = el.dataset[l + '-placeholder'] || el.placeholder;
-          } else {
-            el.textContent = el.dataset[l];
-          }
+        const text = el.dataset[l];
+        if (!text) return;
+        if (el.tagName==='INPUT' || el.tagName==='BUTTON') {
+          if (el.hasAttribute('value')) el.value = text;
+          else if (el.placeholder) el.placeholder = el.dataset[l+'-placeholder']||el.placeholder;
+        } else {
+          el.textContent = text;
         }
       });
     }
