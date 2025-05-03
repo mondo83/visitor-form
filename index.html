@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>来客受付フォーム</title>
+  <title>来訪者受付フォーム</title>
   <style>
     :root {
       --primary-color: #006699;
@@ -19,10 +19,10 @@
       font-family: 'Helvetica Neue', Arial, sans-serif;
     }
     main {
-      position: relative;
-      max-width: 600px; margin: auto;
+      max-width: 600px;
+      margin: auto;
       background: var(--card-bg);
-      padding: calc(var(--spacing)*1.5);
+      padding: calc(var(--spacing) * 1.5);
       border-radius: var(--border-radius);
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
@@ -30,16 +30,21 @@
       margin: 0 0 var(--spacing);
       text-align: center;
       color: var(--primary-color);
+      font-size: 1.5rem;
     }
-    /* 言語切替 */
+    /* 言語切替：見出し下に配置 */
     #langSwitch {
-      position: absolute; top: 1rem; right: 1rem;
-      display: flex; gap: 0.5em;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: var(--spacing);
     }
     #langSwitch button {
-      background: none; border: none;
+      background: none;
+      border: none;
       color: var(--primary-color);
-      cursor: pointer; font-size: 0.9rem;
+      cursor: pointer;
+      font-size: 0.9rem;
     }
     label { display: block; margin-top: var(--spacing); font-weight: bold; }
     input, select, button {
@@ -47,36 +52,43 @@
       border: 1px solid #ccc; border-radius: 4px;
       font-size: 1rem;
     }
-    .name-pair { display:flex; gap:0.5em; margin-top:0.5em; }
-    .name-pair input { flex:1; }
+    .name-pair { display: flex; gap: 0.5em; margin-top: 0.5em; }
+    .name-pair input { flex: 1; }
     .purpose-table {
-      width:100%; border-collapse:collapse; margin-top:var(--spacing);
+      width: 100%; border-collapse: collapse; margin-top: var(--spacing);
     }
     .purpose-table th {
-      text-align:left; padding-bottom:0.5em;
-      border-bottom:1px solid #ddd; font-weight:bold;
+      text-align: left; padding-bottom: 0.5em;
+      border-bottom: 1px solid #ddd; font-weight: bold;
     }
     .purpose-table td {
-      padding:0.25em 0; vertical-align:middle;
+      padding: 0.25em 0; vertical-align: middle;
     }
-    .purpose-table td:first-child { width:2em; }
-    .purpose-table td:nth-child(2) { padding-left:0.5em; }
+    .purpose-table td:first-child { width: 2em; }
+    .purpose-table td:nth-child(2) { padding-left: 0.5em; }
     .scroll-box {
-      max-height:240px; overflow-y:auto;
-      background:#fafafa; padding:0.75em;
-      border:1px solid #ddd; border-radius:4px;
-      white-space:normal; margin-top:0.5em;
-      font-size:0.9rem; line-height:1.4;
+      max-height: 240px; overflow-y: auto;
+      background: #fafafa; padding: 0.75em;
+      border: 1px solid #ddd; border-radius: 4px;
+      white-space: normal; margin-top: 0.5em;
+      font-size: 0.9rem; line-height: 1.4;
     }
-    .scroll-box ul { margin:0; padding-left:1.2em; }
-    .scroll-box li { margin-bottom:0.5em; }
+    .scroll-box ul { margin: 0; padding-left: 1.2em; }
+    .scroll-box li { margin-bottom: 0.5em; }
+    /* 同意チェック */
     .agree-container {
-      text-align: center; margin-top: var(--spacing);
+      text-align: center;
+      margin-top: var(--spacing);
     }
-    .agree-text { margin-bottom:0.5em; font-weight:bold; }
+    .agree-text {
+      margin-bottom: 0.5em;
+      font-weight: bold;
+    }
     .agree-container input[type="checkbox"] {
-      transform: scale(1.2); margin-bottom: var(--spacing);
+      transform: scale(1.2);
+      margin-bottom: var(--spacing);
     }
+    /* ボタン */
     .btn {
       background: var(--primary-color); color: #fff;
       border: none; cursor: pointer;
@@ -101,31 +113,27 @@
 </head>
 <body>
   <main>
-    <!-- 言語切替 -->
+    <h1 data-ja="来訪者受付フォーム" data-en="Visitor Check-in Form">来訪者受付フォーム</h1>
     <div id="langSwitch">
       <button type="button" onclick="setLang('ja')">日本語</button>
       <button type="button" onclick="setLang('en')">English</button>
     </div>
-    <!-- タイトル -->
-    <h1 data-ja="来客受付" data-en="Visitor Check-in">来客受付</h1>
-
     <form id="visitorForm">
+      <!-- 施設名 -->
+      <label for="facility" data-ja="施設名" data-en="Facility">施設名</label>
+      <input type="text" id="facility" name="facility" readonly>
       <!-- ご来所日 -->
       <label for="visitDate" data-ja="ご来所日" data-en="Date of Visit">ご来所日</label>
       <input type="date" id="visitDate" name="visitDate" required>
-
       <!-- ご来所時間 -->
       <label for="visitTime" data-ja="ご来所時間" data-en="Time of Arrival">ご来所時間</label>
       <input type="time" id="visitTime" name="visitTime" required>
-
       <!-- 予定ご退所時間 -->
       <label for="leaveTime" data-ja="予定ご退所時間" data-en="Expected Departure">予定ご退所時間</label>
       <input type="time" id="leaveTime" name="leaveTime">
-
       <!-- 貴社名 -->
       <label for="company" data-ja="貴社名（必須）" data-en="Company Name (required)">貴社名（必須）</label>
       <input type="text" id="company" name="company" required>
-
       <!-- お名前・VC -->
       <label data-ja="お名前・ビジターカード番号" data-en="Name & Visitor Card No.">お名前・ビジターカード番号</label>
       <div id="nameSection">
@@ -134,11 +142,7 @@
           <input type="number" placeholder="VC No." data-en-placeholder="Card No." required>
         </div>
       </div>
-      <button type="button" class="btn btn-small"
-              onclick="addNamePair()"
-              data-ja="＋追加"
-              data-en="+ Add">＋追加</button>
-
+      <button type="button" class="btn btn-small" onclick="addNamePair()" data-ja="＋追加" data-en="+ Add">＋追加</button>
       <!-- ご来所目的 -->
       <table class="purpose-table">
         <thead>
@@ -162,56 +166,45 @@
           </tr>
         </tbody>
       </table>
-
       <!-- 注意事項 -->
       <label data-ja="【注意事項】（必読）" data-en="Notes (must read)">【注意事項】（必読）</label>
       <div class="scroll-box">
         <ul>
           <li data-ja="試験エリアには化学物質や有機溶媒が置かれています。それらに接触すると健康被害を惹き起こす可能性があります。肌の露出を避け、必要に応じて保護具（マスク、ゴーグル、グローブ、白衣）を申し付けください。"
-              data-en="Chemical substances and organic solvents are stored in the testing area. Contact may cause health damage. Avoid skin exposure and request protective gear (mask, goggles, gloves, lab coat) as needed.">
-            試験エリアには化学物質や有機溶媒が置かれています。それらに接触すると健康被害を惹き起こす可能性があります。肌の露出を避け、必要に応じて保護具（マスク、ゴーグル、グローブ、白衣）を申し付けください。</li>
+              data-en="Chemical substances and organic solvents are stored in the testing area. Contact may cause health damage. Avoid skin exposure and request protective gear (mask, goggles, gloves, lab coat) as needed.">試験エリアには化学物質や有機溶媒が置かれています。それらに接触すると健康被害を惹き起こす可能性があります。肌の露出を避け、必要に応じて保護具（マ스크、ゴーグル、グローブ、白衣）を申し付けください。</li>
           <li data-ja="試験エリアには機器が机上や足元に設置されています。接触によるけがや衣服破れにご注意ください。"
-              data-en="Equipment is placed on benches and floors in the testing area. Be careful to avoid injury or clothing damage.">
-            試験エリアには機器が机上や足元に設置されています。接触によるけがや衣服破れにご注意ください。</li>
+              data-en="Equipment is placed on benches and floors in the testing area. Be careful to avoid injury or clothing damage.">試験エリアには機器が机上や足元に設置されています。接触によるけがや衣服破れにご注意ください。</li>
           <li data-ja="作業時は安全に十分ご注意いただき、弊社社員の指示に必ず従ってください。"
-              data-en="Take all safety precautions when working and follow staff instructions at all times.">
-            作業時は安全に十分ご注意いただき、弊社社員の指示に必ず従ってください。</li>
+              data-en="Take all safety precautions when working and follow staff instructions at all times.">作業時は安全に十分ご注意いただき、弊社社員の指示に必ず従ってください。</li>
           <li data-ja="サンプル保存エリアでは誤操作や破損にご留意ください。温度保持のためドア開閉は速やかにお願いします。"
-              data-en="In the sample storage area, avoid mishandling or damage. Open/close doors quickly to maintain temperature.">
-            サンプル保存エリアでは誤操作や破損にご留意ください。温度保持のためドア開閉は速やかにお願いします。</li>
+              data-en="In the sample storage area, avoid mishandling or damage. Open/close doors quickly to maintain temperature.">サンプル保存エリアでは誤操作や破損にご留意ください。温度保持のためドア開閉は速やかにお願いします。</li>
           <li data-ja="急な発熱や体調不良が発生した場合は弊社社員に連絡し、火災や災害時は避難してください。"
-              data-en="If you develop a fever or feel unwell, contact staff and evacuate in case of fire or disaster.">
-            急な発熱や体調不良が発生した場合は弊社社員に連絡し、火災や災害時は避難してください。</li>
+              data-en="If you develop a fever or feel unwell, contact staff and evacuate in case of fire or disaster.">急な発熱や体調不良が発生した場合は弊社社員に連絡し、火災や災害時は避難してください。</li>
           <li data-ja="施設内ではビジターカード(VC)をご着用ください。指定場所以外での飲食はご遠慮ください。"
-              data-en="Please wear your visitor card (VC) and refrain from eating or drinking outside designated areas.">
-            施設内ではビジターカード(VC)をご着用ください。指定場所以外での飲食はご遠慮ください。</li>
+              data-en="Please wear your visitor card (VC) and refrain from eating or drinking outside designated areas.">施設内ではビジターカード(VC)をご着用ください。指定場所以外での飲食はご遠慮ください。</li>
           <li data-ja="知り得た情報の第三者開示、写真撮影、動画撮影は禁止します。"
-              data-en="Disclosing facility information, photography, or video recording is prohibited.">
-            知り得た情報の第三者開示、写真撮影、動画撮影は禁止します。</li>
+              data-en="Disclosing facility information, photography, or video recording is prohibited.">知り得た情報の第三者開示、写真撮影、動画撮影は禁止します。</li>
           <li data-ja="当方の一方的過失以外の事故などについては、一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。"
-              data-en="We assume no liability except for sole negligence. Please take all precautions to prevent accidents.">
-            当方の一方的過失以外の事故などについては、一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。</li>
+              data-en="We assume no liability except for sole negligence. Please take all precautions to prevent accidents.">当方の一方的過失以外の事故などについては、一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。</li>
         </ul>
       </div>
-
       <!-- 同意チェック -->
       <div class="agree-container">
-        <div class="agree-text"
-             data-ja="上記注意事項を確認しました"
-             data-en="I have read and agree to the above">
-          上記注意事項を確認しました
-        </div>
+        <div class="agree-text" data-ja="上記注意事項を確認しました" data-en="I have read and agree to the above">上記注意事項を確認しました</div>
         <input type="checkbox" id="agree" name="agree">
       </div>
-
       <!-- 送信ボタン -->
-      <button type="submit" id="submitBtn" class="btn" disabled
-              data-ja="送信" data-en="Submit">送信</button>
+      <button type="submit" id="submitBtn" class="btn" disabled data-ja="送信" data-en="Submit">送信</button>
     </form>
     <p id="msg"></p>
   </main>
 
   <script>
+    // URLパラメータからfacility取得
+    const urlParams = new URLSearchParams(location.search);
+    const fac = urlParams.get('facility') || 'Ⅰ棟';
+    document.getElementById('facility').value = decodeURIComponent(fac);
+
     // 初期値セット
     const now = new Date();
     document.getElementById('visitDate').value = now.toISOString().slice(0,10);
@@ -232,15 +225,17 @@
     }
 
     // 同意チェックで送信ボタン制御
-    document.getElementById('agree').addEventListener('change', function() {
-      submitBtn.disabled = !this.checked;
+    const agreeChk = document.getElementById('agree');
+    const submitBtn = document.getElementById('submitBtn');
+    agreeChk.addEventListener('change', () => {
+      submitBtn.disabled = !agreeChk.checked;
     });
 
     // フォーム送信
     document.getElementById('visitorForm').addEventListener('submit', async e => {
       e.preventDefault();
       const fields = {};
-      ['visitDate','visitTime','leaveTime','company'].forEach(id =>
+      ['facility','visitDate','visitTime','leaveTime','company'].forEach(id =>
         fields[id] = document.getElementById(id).value
       );
       document.querySelectorAll('.name-pair').forEach((pair,i) => {
@@ -249,7 +244,7 @@
       });
       fields.purpose = [...document.querySelectorAll('input[name="purpose"]:checked')]
         .map(el => el.value);
-      fields.agree = document.getElementById('agree').checked;
+      fields.agree = agreeChk.checked;
 
       try {
         const res = await fetch('/.netlify/functions/submit', {
@@ -258,13 +253,13 @@
           body:JSON.stringify(fields)
         });
         const result = await res.json();
-        msg.textContent =
+        document.getElementById('msg').textContent =
           res.ok
             ? (lang==='en'?'Submission successful. Thank you.':'送信が完了しました。ありがとうございました。')
             : (lang==='en'?'Error: ':'エラー：') + result.message;
         if(res.ok) e.target.reset();
       } catch(err) {
-        msg.textContent =
+        document.getElementById('msg').textContent =
           (lang==='en'?'Submission failed: ':'送信エラー：') + err.message;
       }
     });
@@ -278,7 +273,7 @@
         if (!txt) return;
         if (el.tagName==='INPUT' || el.tagName==='BUTTON') {
           if (el.hasAttribute('value')) el.value = txt;
-          else if (el.placeholder) el.placeholder = el.dataset[l+'-placeholder']||el.placeholder;
+          else if (el.placeholder) el.placeholder = el.dataset[l+'-placeholder'] || el.placeholder;
         } else {
           el.textContent = txt;
         }
