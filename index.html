@@ -16,9 +16,10 @@
     body {
       font-family: 'Helvetica Neue', Arial, sans-serif;
       background: var(--bg-color);
-      padding: var(--spacing);
+      margin: 0; padding: var(--spacing);
     }
     main {
+      position: relative;
       max-width: 600px;
       margin: auto;
       background: var(--card-bg);
@@ -29,47 +30,59 @@
     h1 {
       text-align: center;
       color: var(--primary-color);
-      margin-bottom: var(--spacing);
+      margin: 0 0 var(--spacing);
     }
+    /* 言語切替を右上に横並び */
     #langSwitch {
-      text-align: right;
-      margin-bottom: 0.5em;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5em;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
     }
     #langSwitch button {
       background: none;
       border: none;
       color: var(--primary-color);
       cursor: pointer;
-      margin-left: 0.5em;
       font-size: 0.9rem;
     }
     label { display: block; margin-top: var(--spacing); font-weight: bold; }
-    input, textarea, button, select {
+    input, select, button {
       width: 100%; padding: 0.5em; margin-top: 0.25em;
       border: 1px solid #ccc; border-radius: 4px; font-size: 1rem;
     }
-    .name-pair { display: flex; gap: 0.5em; margin-top: 0.5em; }
+    .name-pair {
+      display: flex; gap: 0.5em; margin-top: 0.5em;
+    }
     .name-pair input { flex: 1; }
-    /* 目的テーブル */
+    /* 目的をテーブルでレイアウト */
     .purpose-table {
       width: 100%; border-collapse: collapse; margin-top: var(--spacing);
     }
     .purpose-table th {
-      text-align: left; padding-bottom: 0.5em; font-weight: bold;
-      border-bottom: 1px solid #ddd;
+      text-align: left; padding-bottom: 0.5em;
+      font-weight: bold; border-bottom: 1px solid #ddd;
     }
     .purpose-table td {
       padding: 0.25em 0;
       vertical-align: middle;
     }
-    .purpose-table td:nth-child(2) {
-      text-align: right;
+    .purpose-table td:first-child {
+      width: 2em;
+      text-align: left;
     }
+    .purpose-table td:nth-child(2) {
+      text-align: left;
+      padding-left: 0.5em;
+    }
+    /* 注意事項の改行を詰めて通常折り返し */
     .scroll-box {
       max-height: 240px; overflow-y: auto;
       background: #fafafa; padding: 0.75em;
       border: 1px solid #ddd; border-radius: 4px;
-      white-space: pre-wrap; margin-top: 0.5em;
+      white-space: normal; margin-top: 0.5em;
       font-size: 0.9rem; line-height: 1.4;
     }
     .scroll-box ul {
@@ -78,6 +91,14 @@
     .scroll-box li {
       margin-bottom: 0.5em;
     }
+    /* 同意チェック */
+    .agree-item {
+      display: flex; align-items: center; gap: 0.5em;
+      margin-top: var(--spacing);
+      font-weight: normal;
+    }
+    .agree-item input { margin: 0; }
+    /* ボタン */
     .btn {
       background: var(--primary-color); color: #fff;
       border: none; cursor: pointer;
@@ -85,7 +106,10 @@
       transition: background 0.2s;
     }
     .btn:hover { background: #00557a; }
-    .btn-small { padding: 0.5em; font-size: 0.9rem; }
+    .btn-small {
+      width: auto; padding: 0.5em; font-size: 0.9rem;
+      margin-top: 0.5em;
+    }
     #msg {
       margin-top: var(--spacing); text-align: center;
       color: #d33; font-weight: bold;
@@ -122,26 +146,26 @@
       <button type="button" class="btn btn-small" onclick="addNamePair()"
               data-ja="＋追加" data-en="+ Add">＋追加</button>
 
-      <!-- 目的：テーブル形式 -->
+      <!-- ご来所目的 -->
       <table class="purpose-table">
         <thead>
           <tr>
-            <th data-ja="ご来所目的（複数選択可）" data-en="Purpose of Visit (multiple)">ご来所目的（複数選択可）</th>
             <th></th>
+            <th data-ja="ご来所目的（複数選択可）" data-en="Purpose of Visit (multiple)">ご来所目的（複数選択可）</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td data-ja="調査・監査・見学" data-en="Inspection / Audit / Tour">調査・監査・見学</td>
             <td><input type="checkbox" name="purpose" value="調査・監査・見学"></td>
+            <td data-ja="調査・監査・見学" data-en="Inspection / Audit / Tour">調査・監査・見学</td>
           </tr>
           <tr>
-            <td data-ja="打合せ（会議）" data-en="Meeting">打合せ（会議）</td>
             <td><input type="checkbox" name="purpose" value="打合せ"></td>
+            <td data-ja="打合せ（会議）" data-en="Meeting">打合せ（会議）</td>
           </tr>
           <tr>
-            <td data-ja="納品・修理・清掃 他" data-en="Delivery / Repair / Cleaning">納品・修理・清掃 他</td>
             <td><input type="checkbox" name="purpose" value="納品・修理・清掃 他"></td>
+            <td data-ja="納品・修理・清掃 他" data-en="Delivery / Repair / Cleaning">納品・修理・清掃 他</td>
           </tr>
         </tbody>
       </table>
@@ -176,14 +200,14 @@
         </ul>
       </div>
 
-      <label>
-        <input type="checkbox" id="agree" name="agree" required>
+      <label class="agree-item">
+        <input type="checkbox" id="agree" name="agree">
         <span data-ja="上記注意事項を確認しました" data-en="I have read and agree to the above">
           上記注意事項を確認しました
         </span>
       </label>
 
-      <button type="submit" class="btn" data-ja="送信" data-en="Submit">送信</button>
+      <button type="submit" id="submitBtn" class="btn" disabled data-ja="送信" data-en="Submit">送信</button>
     </form>
     <p id="msg"></p>
   </main>
@@ -208,6 +232,11 @@
       section.appendChild(div);
     }
 
+    // 同意チェックで送信ボタン制御
+    document.getElementById('agree').addEventListener('change', function() {
+      document.getElementById('submitBtn').disabled = !this.checked;
+    });
+
     // フォーム送信
     document.getElementById('visitorForm').addEventListener('submit', async e => {
       e.preventDefault();
@@ -216,7 +245,7 @@
         fields[id] = document.getElementById(id).value
       );
       document.querySelectorAll('.name-pair').forEach((pair,i) => {
-        fields[`name_${i+1}`] = pair.children[0].value.trim(); 
+        fields[`name_${i+1}`] = pair.children[0].value.trim();
         fields[`vc_${i+1}`]   = pair.children[1].value.trim();
       });
       fields.purpose = [...document.querySelectorAll('input[name="purpose"]:checked')]
