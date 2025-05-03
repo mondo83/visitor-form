@@ -124,7 +124,8 @@
     <form id="visitorForm">
       <!-- 施設名 -->
       <label for="facility" data-ja="施設名" data-en="Facility">施設名</label>
-      <input type="text" id="facility" name="facility" readonly>
+      <div id="facilityDisplay" style="padding: 0.5em; background-color: #f0f0f0; border-radius: 4px; border: 1px solid #ccc; margin-top: 0.25em;">Ⅰ棟</div>
+      <input type="hidden" id="facility" name="facility" value="未設定">
       <!-- ご来所日 -->
       <label for="visitDate" data-ja="ご来所日" data-en="Date of Visit">ご来所日</label>
       <input type="date" id="visitDate" name="visitDate" required>
