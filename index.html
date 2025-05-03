@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>来客受付フォーム</title>
+  <style>
+    body { font-family: sans-serif; max-width: 480px; margin: auto; padding: 1rem; }
+    label { display: block; margin-top: 1rem; }
+    input, textarea, button { width: 100%; padding: .5rem; margin-top: .5rem; }
+  </style>
+</head>
+<body>
+  <h1>来客受付</h1>
+  <form id="visitorForm">
+    <label>来訪日時
+      <input type="text" id="visitDate" readonly />
+    </label>
+    <label>氏名（必須）
+      <input type="text" id="name" required maxlength="50" />
+    </label>
+    <label>訪問目的
+      <textarea id="purpose" rows="3" maxlength="200" placeholder="例：打ち合わせ"></textarea>
+    </label>
+    <label>
+      <input type="checkbox" id="agree" required />
+      注意事項を確認し、同意します
+    </label>
+    <button type="submit">送信</button>
+  </form>
+  <p id="msg"></p>
+
+  <script>
+    document.getElementById('visitDate').value = new Date().toLocaleString();
+
+    document.getElementById('visitorForm').addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const payload = {
+        visit_datetime: document.getElementById('visitDate').value,
+        name: document.getElementById('name').value.trim(),
+        purpose: document.getElementById('purpose').value.trim(),
+        agree: document.getElementById('agree').checked
+      };
+
+      try {
+        const res = await fetch('/.netlify/functions/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+        document.getElementById('msg').textContent =
+          res.ok ? '送信が完了しました。ありがとうございました。' : '送信エラー：' + result.message;
+        if (res.ok) document.getElementById('visitorForm').reset();
+      } catch (err) {
+        document.getElementById('msg').textContent = '送信失敗：' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
