@@ -5,68 +5,170 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>来客受付フォーム</title>
   <style>
-    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 1rem; }
-    label, .name-pair { display: block; margin-top: 1rem; }
-    input, textarea, button, select { width: 100%; padding: .5rem; margin-top: .25rem; }
-    .name-pair input { width: 48%; display: inline-block; margin-right: 2%; }
-    .name-pair input:last-child { margin-right: 0; }
-    .scroll-box { height: 200px; overflow-y: scroll; background: #f9f9f9; padding: 0.5rem; border: 1px solid #ccc; white-space: pre-wrap; }
+    /* ベーススタイル */
+    :root {
+      --primary-color: #006699;
+      --bg-color: #f5f8fa;
+      --card-bg: #ffffff;
+      --border-radius: 8px;
+      --spacing: 1rem;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg-color);
+      padding: var(--spacing);
+    }
+    main {
+      max-width: 600px;
+      margin: auto;
+      background: var(--card-bg);
+      padding: calc(var(--spacing) * 1.5);
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: var(--primary-color);
+      margin-bottom: var(--spacing);
+    }
+    label {
+      display: block;
+      margin-top: var(--spacing);
+      font-weight: bold;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 0.5em;
+      margin-top: 0.25em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    /* 名前＋VCの横並び */
+    .name-pair {
+      display: flex;
+      gap: 0.5em;
+      margin-top: 0.5em;
+    }
+    .name-pair input {
+      flex: 1;
+    }
+    /* 目的チェックボックス整列 */
+    .purpose-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+      margin-top: 0.5em;
+    }
+    .purpose-group label {
+      display: flex;
+      align-items: center;
+      font-weight: normal;
+    }
+    .purpose-group input {
+      margin-right: 0.5em;
+      margin-top: 0;
+    }
+    /* 注意事項ボックス */
+    .scroll-box {
+      max-height: 240px;
+      overflow-y: scroll;
+      background: #fafafa;
+      padding: 0.75em;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      margin-top: 0.5em;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+    /* 追加・送信ボタン */
+    .btn {
+      background: var(--primary-color);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: var(--spacing);
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background: #00557a;
+    }
+    .btn-small {
+      padding: 0.5em;
+      font-size: 0.9rem;
+    }
+    #msg {
+      margin-top: var(--spacing);
+      text-align: center;
+      color: #d33;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <h1>来客受付</h1>
-  <form id="visitorForm">
-    <label>ご来所日
-      <input type="text" id="visitDate" readonly>
-    </label>
-    <label>ご来所時間
-      <input type="text" id="visitTime" readonly>
-    </label>
-    <label>予定ご退所時間
-      <input type="time" id="leaveTime">
-    </label>
-    <label>貴社名（必須）
-      <input type="text" id="company" required>
-    </label>
+  <main>
+    <h1>来客受付</h1>
+    <form id="visitorForm">
+      <label for="visitDate">ご来所日</label>
+      <input type="date" id="visitDate" name="visitDate" required>
 
-    <div id="nameSection">
-      <label>お名前・VC No.</label>
-      <div class="name-pair">
-        <input type="text" placeholder="お名前" required>
-        <input type="number" placeholder="VC No." required>
+      <label for="visitTime">ご来所時間</label>
+      <input type="time" id="visitTime" name="visitTime" required>
+
+      <label for="leaveTime">予定ご退所時間</label>
+      <input type="time" id="leaveTime" name="leaveTime">
+
+      <label for="company">貴社名（必須）</label>
+      <input type="text" id="company" name="company" required>
+
+      <label>お名前・ビジターカード番号</label>
+      <div id="nameSection">
+        <div class="name-pair">
+          <input type="text" placeholder="お名前" required>
+          <input type="number" placeholder="VC No." required>
+        </div>
       </div>
-    </div>
-    <button type="button" onclick="addNamePair()">＋追加</button>
+      <button type="button" class="btn btn-small" onclick="addNamePair()">＋追加</button>
 
-    <label>ご来所目的（複数選択可）</label>
-    <label><input type="checkbox" name="purpose" value="調査・見学"> 調査・監査・見学</label>
-    <label><input type="checkbox" name="purpose" value="打合せ"> 打合せ（会議）</label>
-    <label><input type="checkbox" name="purpose" value="納品・修理"> 納品・修理・清掃 他</label>
+      <label>ご来所目的（複数選択可）</label>
+      <div class="purpose-group">
+        <label><input type="checkbox" name="purpose" value="調査・監査・見学">調査・監査・見学</label>
+        <label><input type="checkbox" name="purpose" value="打合せ">打合せ（会議）</label>
+        <label><input type="checkbox" name="purpose" value="納品・修理・清掃 他">納品・修理・清掃 他</label>
+      </div>
 
-    <label>【注意事項】（必読）
+      <label>【注意事項】（必読）</label>
       <div class="scroll-box">
-        試験エリアには化学物質や有機溶媒が...（以下略・全文記載可）
+試験エリアには化学物質や有機溶媒が置かれています。それらに接触することにより眼や皮膚が障害されたり、吸収されて健康被害を惹き起こす可能性があります。そのため、試験エリアに立ち入る際には、肌の露出を避ける服装でご入室してください。また、化学物質等に接触の可能性が高い場合は保護具（マスク、ゴーグル、グローブ、白衣）を貸与致しますので、弊社社員にお申し付けください。
+試験エリアには機器や設備が机上や足元に設置されています。それらに接触すると衣服が破れたり、けがをする恐れがありますのでご注意願います。
+試験エリアで作業される際には、弊社の生産活動に支障をきたすことのないように安全には十分ご注意いただくとともに、弊社社員の指示には必ず従っていただきますようお願いします。
+サンプル（生体試料、原薬、製剤等）の保存エリアに立ち入る際は、設置機器・設備の停止、誤操作、破損/汚損にご留意願います。異常発生時には速やかに弊社社員に連絡願います。また、本エリアの温度変動を最小限にするため、ドアの開閉は速やかにお願いします。
+急な発熱や体調不良が発生した場合は弊社社員への連絡をお願いします。また、火災や災害時などの緊急時は弊社社員の指示に従って避難をお願いします。
+施設内ではビジターカード(VC)をご着用願います。また、指定場所以外での飲食はご遠慮願います。
+施設内で知り得た情報の第三者開示、写真撮影、動画撮影は禁止しますのでご了承願います。
+当方の一方的過失以外の事故などについては、一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。
       </div>
-    </label>
-    <label>
-      <input type="checkbox" id="agree" required>
-      上記注意事項を確認しました
-    </label>
+      <label><input type="checkbox" id="agree" name="agree" required>上記注意事項を確認しました</label>
 
-    <button type="submit">送信</button>
-  </form>
-
-  <p id="msg"></p>
+      <button type="submit" class="btn">送信</button>
+    </form>
+    <p id="msg"></p>
+  </main>
 
   <script>
-    document.getElementById('visitDate').value = new Date().toLocaleDateString();
-    document.getElementById('visitTime').value = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    // 初期値セット
+    const now = new Date();
+    document.getElementById('visitDate').value = now.toISOString().slice(0,10);
+    document.getElementById('visitTime').value = now.toTimeString().slice(0,5);
 
+    // 名前＋VC追加
     function addNamePair() {
       const section = document.getElementById('nameSection');
       const count = section.querySelectorAll('.name-pair').length;
-      if (count >= 5) return alert("5名までです");
-
+      if (count >= 5) return alert("最大5名までです");
       const div = document.createElement('div');
       div.className = 'name-pair';
       div.innerHTML = `
@@ -76,41 +178,34 @@
       section.appendChild(div);
     }
 
+    // 送信処理
     document.getElementById('visitorForm').addEventListener('submit', async e => {
       e.preventDefault();
-
-      const names = [...document.querySelectorAll('.name-pair')];
-      const nameFields = {};
-      const vcFields = {};
-
-      names.forEach((pair, i) => {
-        const name = pair.children[0].value.trim();
-        const vc = pair.children[1].value.trim();
-        nameFields[`name_${i+1}`] = name;
-        vcFields[`vc_${i+1}`] = vc;
+      const fields = {};
+      // 基本項目
+      ['visitDate','visitTime','leaveTime','company'].forEach(id => {
+        fields[id] = document.getElementById(id).value;
       });
-
-      const purposes = [...document.querySelectorAll('input[name="purpose"]:checked')].map(el => el.value);
-
-      const payload = {
-        visit_date: document.getElementById('visitDate').value,
-        visit_time: document.getElementById('visitTime').value,
-        leave_time: document.getElementById('leaveTime').value,
-        company: document.getElementById('company').value.trim(),
-        ...nameFields,
-        ...vcFields,
-        purpose: purposes,
-        agree: document.getElementById('agree').checked
-      };
+      // 名前・VC
+      document.querySelectorAll('.name-pair').forEach((pair, i) => {
+        fields[`name_${i+1}`] = pair.children[0].value.trim();
+        fields[`vc_${i+1}`]   = pair.children[1].value.trim();
+      });
+      // 目的
+      fields.purpose = [...document.querySelectorAll('input[name="purpose"]:checked')]
+        .map(el => el.value);
+      // 同意
+      fields.agree = document.getElementById('agree').checked;
 
       try {
         const res = await fetch('/.netlify/functions/submit', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(payload)
+          body: JSON.stringify(fields)
         });
         const result = await res.json();
-        document.getElementById('msg').textContent = res.ok ? '送信完了しました。' : 'エラー：' + result.message;
+        const msg = res.ok ? '送信が完了しました。ありがとうございました。' : 'エラー：' + result.message;
+        document.getElementById('msg').textContent = msg;
         if (res.ok) e.target.reset();
       } catch (err) {
         document.getElementById('msg').textContent = '送信エラー：' + err.message;
