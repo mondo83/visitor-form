@@ -2,60 +2,118 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>来客受付フォーム</title>
   <style>
-    body { font-family: sans-serif; max-width: 480px; margin: auto; padding: 1rem; }
-    label { display: block; margin-top: 1rem; }
-    input, textarea, button { width: 100%; padding: .5rem; margin-top: .5rem; }
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 1rem; }
+    label, .name-pair { display: block; margin-top: 1rem; }
+    input, textarea, button, select { width: 100%; padding: .5rem; margin-top: .25rem; }
+    .name-pair input { width: 48%; display: inline-block; margin-right: 2%; }
+    .name-pair input:last-child { margin-right: 0; }
+    .scroll-box { height: 200px; overflow-y: scroll; background: #f9f9f9; padding: 0.5rem; border: 1px solid #ccc; white-space: pre-wrap; }
   </style>
 </head>
 <body>
   <h1>来客受付</h1>
   <form id="visitorForm">
-    <label>来訪日時
-      <input type="text" id="visitDate" readonly />
+    <label>ご来所日
+      <input type="text" id="visitDate" readonly>
     </label>
-    <label>氏名（必須）
-      <input type="text" id="name" required maxlength="50" />
+    <label>ご来所時間
+      <input type="text" id="visitTime" readonly>
     </label>
-    <label>訪問目的
-      <textarea id="purpose" rows="3" maxlength="200" placeholder="例：打ち合わせ"></textarea>
+    <label>予定ご退所時間
+      <input type="time" id="leaveTime">
+    </label>
+    <label>貴社名（必須）
+      <input type="text" id="company" required>
+    </label>
+
+    <div id="nameSection">
+      <label>お名前・VC No.</label>
+      <div class="name-pair">
+        <input type="text" placeholder="お名前" required>
+        <input type="number" placeholder="VC No." required>
+      </div>
+    </div>
+    <button type="button" onclick="addNamePair()">＋追加</button>
+
+    <label>ご来所目的（複数選択可）</label>
+    <label><input type="checkbox" name="purpose" value="調査・見学"> 調査・監査・見学</label>
+    <label><input type="checkbox" name="purpose" value="打合せ"> 打合せ（会議）</label>
+    <label><input type="checkbox" name="purpose" value="納品・修理"> 納品・修理・清掃 他</label>
+
+    <label>【注意事項】（必読）
+      <div class="scroll-box">
+        試験エリアには化学物質や有機溶媒が...（以下略・全文記載可）
+      </div>
     </label>
     <label>
-      <input type="checkbox" id="agree" required />
-      注意事項を確認し、同意します
+      <input type="checkbox" id="agree" required>
+      上記注意事項を確認しました
     </label>
+
     <button type="submit">送信</button>
   </form>
+
   <p id="msg"></p>
 
   <script>
-    document.getElementById('visitDate').value = new Date().toLocaleString();
+    document.getElementById('visitDate').value = new Date().toLocaleDateString();
+    document.getElementById('visitTime').value = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+    function addNamePair() {
+      const section = document.getElementById('nameSection');
+      const count = section.querySelectorAll('.name-pair').length;
+      if (count >= 5) return alert("5名までです");
+
+      const div = document.createElement('div');
+      div.className = 'name-pair';
+      div.innerHTML = `
+        <input type="text" placeholder="お名前" required>
+        <input type="number" placeholder="VC No." required>
+      `;
+      section.appendChild(div);
+    }
 
     document.getElementById('visitorForm').addEventListener('submit', async e => {
       e.preventDefault();
 
+      const names = [...document.querySelectorAll('.name-pair')];
+      const nameFields = {};
+      const vcFields = {};
+
+      names.forEach((pair, i) => {
+        const name = pair.children[0].value.trim();
+        const vc = pair.children[1].value.trim();
+        nameFields[`name_${i+1}`] = name;
+        vcFields[`vc_${i+1}`] = vc;
+      });
+
+      const purposes = [...document.querySelectorAll('input[name="purpose"]:checked')].map(el => el.value);
+
       const payload = {
-        visit_datetime: document.getElementById('visitDate').value,
-        name: document.getElementById('name').value.trim(),
-        purpose: document.getElementById('purpose').value.trim(),
+        visit_date: document.getElementById('visitDate').value,
+        visit_time: document.getElementById('visitTime').value,
+        leave_time: document.getElementById('leaveTime').value,
+        company: document.getElementById('company').value.trim(),
+        ...nameFields,
+        ...vcFields,
+        purpose: purposes,
         agree: document.getElementById('agree').checked
       };
 
       try {
         const res = await fetch('/.netlify/functions/submit', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {'Content-Type': 'application/json'},
           body: JSON.stringify(payload)
         });
-
         const result = await res.json();
-        document.getElementById('msg').textContent =
-          res.ok ? '送信が完了しました。ありがとうございました。' : '送信エラー：' + result.message;
-        if (res.ok) document.getElementById('visitorForm').reset();
+        document.getElementById('msg').textContent = res.ok ? '送信完了しました。' : 'エラー：' + result.message;
+        if (res.ok) e.target.reset();
       } catch (err) {
-        document.getElementById('msg').textContent = '送信失敗：' + err.message;
+        document.getElementById('msg').textContent = '送信エラー：' + err.message;
       }
     });
   </script>
