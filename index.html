@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>来訪者受付フォーム</title>
   <style>
     :root {
@@ -143,8 +143,7 @@
     }
     .purpose-table td:first-child input[type="checkbox"] {
       width: auto;
-      min-height: 24px; /* チェックボックスを大きくしてタップしやすく */
-      min-width: 24px;
+      transform: scale(1.2); /* タップしやすく、かつ表示を保持 */
     }
     .purpose-table td:nth-child(2) { 
       padding-left: 0.5em; 
@@ -186,9 +185,7 @@
       width: auto; 
       display: block; 
       margin: 0 auto var(--spacing); 
-      transform: scale(1.5); /* タップしやすくする */
-      min-height: 24px;
-      min-width: 24px;
+      transform: scale(1.2); /* タップしやすくする */
     }
 
     .return-note { 
@@ -346,23 +343,13 @@
       });
     }
 
-    // iOSでのフォーカス問題を解決
-    document.addEventListener('focusin', function(e) {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
-        // 少し遅延させて確実にiOSのズームを防止
-        setTimeout(function() {
-          // まれにiOSでズームすることがあるので、メタビューポートを一時的に更新
-          const viewportMeta = document.querySelector('meta[name="viewport"]');
-          const originalContent = viewportMeta.getAttribute('content');
-          viewportMeta.setAttribute('content', originalContent + ', maximum-scale=1');
-          
-          // すぐに元に戻す（タイミング問題）
-          setTimeout(function() {
-            viewportMeta.setAttribute('content', originalContent);
-          }, 300);
-        }, 100);
-      }
-    });
+    // フォーカス問題を単純化して解決
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+      // 最初の読み込み時にビューポートを一度だけ設定
+      const viewportMeta = document.querySelector('meta[name="viewport"]');
+      viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
+    }
 
     // 初期処理: 1行目もJavaScriptで追加
     window.addEventListener('DOMContentLoaded', () => {
@@ -389,9 +376,18 @@
       
       // iOS日本語入力サポート
       document.querySelectorAll('input[type="text"]').forEach(input => {
+        // 日本語入力の問題を解決するための属性設定
+        input.setAttribute('autocomplete', 'off');
+        input.setAttribute('autocorrect', 'off');
+        input.setAttribute('autocapitalize', 'off');
+        input.setAttribute('spellcheck', 'false');
+
+        // iOSでの動作を安定させるためのイベント処理
         input.addEventListener('focus', function() {
-          // iOSでの日本語入力をサポート
-          this.setAttribute('autocomplete', 'off');
+          // フォーカス時に属性を再設定（特にiOSで効果的）
+          setTimeout(() => {
+            this.setAttribute('autocomplete', 'off');
+          }, 100);
         });
       });
     });
@@ -407,31 +403,27 @@
       const div = document.createElement('div');
       div.className = 'name-pair';
       
-      // 日本語入力に対応した入力フィールド
-      const nameInput = document.createElement('input');
-      nameInput.type = 'text';
-      nameInput.name = 'visitorName[]';
-      nameInput.lang = 'ja';
-      nameInput.placeholder = lang==='en'?'Name':'お名前';
-      nameInput.setAttribute('data-ja-placeholder', 'お名前');
-      nameInput.setAttribute('data-en-placeholder', 'Name');
-      nameInput.autocomplete = 'name';
-      nameInput.autocapitalize = 'words';
-      nameInput.inputmode = 'text';
-      nameInput.required = true;
-      
-      const cardInput = document.createElement('input');
-      cardInput.type = 'text';
-      cardInput.name = 'visitorCard[]';
-      cardInput.placeholder = lang==='en'?'Card No.':'VC No.';
-      cardInput.setAttribute('data-ja-placeholder', 'VC No.');
-      cardInput.setAttribute('data-en-placeholder', 'Card No.');
-      cardInput.inputmode = 'numeric';
-      cardInput.pattern = '[0-9]*';
-      cardInput.required = true;
-      
-      div.appendChild(nameInput);
-      div.appendChild(cardInput);
+      // HTMLを直接設定（iOSでの入力問題対応）
+      div.innerHTML = `
+        <input type="text"
+               name="visitorName[]"
+               lang="ja"
+               placeholder="${lang==='en'?'Name':'お名前'}"
+               data-ja-placeholder="お名前"
+               data-en-placeholder="Name"
+               autocomplete="name"
+               autocapitalize="words"
+               inputmode="text"
+               required>
+        <input type="text"
+               name="visitorCard[]"
+               placeholder="${lang==='en'?'Card No.':'VC No.'}"
+               data-ja-placeholder="VC No."
+               data-en-placeholder="Card No."
+               inputmode="numeric"
+               pattern="[0-9]*"
+               required>
+      `;
       section.appendChild(div);
     }
 
@@ -439,20 +431,17 @@
       document.getElementById('submitBtn').disabled = !document.getElementById('agree').checked;
     });
     
-    // チェックボックスのタップエリアを拡大
+    // チェックボックスのタップエリアを拡大 - テーブル内のチェックボックスのみ対象
     document.addEventListener('DOMContentLoaded', function() {
-      document.querySelectorAll('input[type="checkbox"]').forEach(function(checkbox) {
-        const parent = checkbox.parentElement;
+      document.querySelectorAll('.purpose-table input[type="checkbox"]').forEach(function(checkbox) {
+        const parent = checkbox.closest('td').nextElementSibling; // ラベルセル
         if(parent) {
           parent.style.cursor = 'pointer';
           parent.addEventListener('click', function(e) {
-            // チェックボックス自体のクリックは通常処理
-            if(e.target !== checkbox) {
-              checkbox.checked = !checkbox.checked;
-              // イベント発火
-              const event = new Event('change', { bubbles: true });
-              checkbox.dispatchEvent(event);
-            }
+            checkbox.checked = !checkbox.checked;
+            // イベント発火
+            const event = new Event('change', { bubbles: true });
+            checkbox.dispatchEvent(event);
           });
         }
       });
