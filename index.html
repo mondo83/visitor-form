@@ -1,673 +1,520 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>入館・退館管理システム | Visitor Management System</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-    <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2980b9;
-            --success-color: #2ecc71;
-            --danger-color: #e74c3c;
-            --text-color: #333;
-            --light-bg: #f8f9fa;
-            --border-color: #ddd;
-            --font-family: 'Helvetica Neue', Arial, sans-serif;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: var(--font-family);
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: #f5f5f5;
-            padding: 0;
-            margin: 0;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            background-color: white;
-            padding: 15px 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: relative;
-        }
-
-        .language-switch {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .language-switch:hover {
-            text-decoration: underline;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: var(--primary-color);
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            text-decoration: none;
-            transition: background-color 0.3s;
-            margin: 10px 0;
-            width: 100%;
-        }
-
-        .btn:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .btn-success {
-            background-color: var(--success-color);
-        }
-
-        .btn-success:hover {
-            background-color: #27ae60;
-        }
-
-        .btn-danger {
-            background-color: var(--danger-color);
-        }
-
-        .btn-danger:hover {
-            background-color: #c0392b;
-        }
-
-        .btn-disabled {
-            background-color: #95a5a6;
-            cursor: not-allowed;
-        }
-
-        .home-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin-top: 50px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-
-        input[type="text"],
-        input[type="datetime-local"],
-        input[type="time"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 16px;
-        }
-
-        .checkbox-group {
-            margin-top: 10px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .checkbox-item input[type="checkbox"] {
-            margin-right: 10px;
-        }
-
-        .terms-container {
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            background-color: var(--light-bg);
-            margin-bottom: 15px;
-        }
-
-        .qr-container {
-            margin: 20px 0;
-        }
-
-        #qr-reader {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        #qr-reader img {
-            max-width: 100%;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .card {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 25px;
-            margin-bottom: 20px;
-        }
-
-        .result-container {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .loading {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border: 3px solid rgba(0,0,0,0.2);
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s ease-in-out infinite;
-            margin-bottom: 15px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .back-btn {
-            display: inline-block;
-            color: var(--primary-color);
-            text-decoration: none;
-            margin-top: 20px;
-            font-weight: bold;
-        }
-
-        .back-btn:hover {
-            text-decoration: underline;
-        }
-
-        @media (min-width: 768px) {
-            .home-buttons {
-                flex-direction: row;
-                justify-content: center;
-            }
-
-            .btn {
-                width: auto;
-                min-width: 200px;
-            }
-        }
-
-        .qr-code-result {
-            margin-top: 15px;
-            padding: 10px;
-            background-color: #e8f4fd;
-            border-radius: 4px;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .error-message {
-            color: var(--danger-color);
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        .success-message {
-            color: var(--success-color);
-            margin-top: 10px;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>入退館フォーム</title>
+  <!-- html5-qrcode CDN -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <style>
+    :root {
+      --main-bg: #f9f9f9;
+      --main-color: #222;
+      --accent: #1976d2;
+      --danger: #e53935;
+      --border: #ddd;
+      --radius: 8px;
+      --max-width: 480px;
+    }
+    body {
+      background: var(--main-bg);
+      color: var(--main-color);
+      font-family: 'Segoe UI', 'Hiragino Sans', Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 24px 8px 40px 8px;
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      margin-top: 32px;
+    }
+    .center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 48px;
+    }
+    .btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 18px 0;
+      font-size: 1.2rem;
+      width: 90%;
+      margin: 12px 0;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .btn:active, .btn:focus {
+      background: #12549b;
+    }
+    .lang-switch {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      color: var(--accent);
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: underline;
+      font-size: 1rem;
+      z-index: 20;
+    }
+    h1 {
+      font-size: 1.5rem;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    form {
+      margin-top: 12px;
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    input[type="text"], input[type="datetime-local"], input[type="time"], textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: #fafbfc;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .checkbox-label {
+      margin-right: 12px;
+      font-size: 0.98rem;
+    }
+    .notice {
+      background: #f1f8e9;
+      border-left: 4px solid var(--accent);
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      border-radius: var(--radius);
+      font-size: 0.98rem;
+      white-space: pre-line;
+    }
+    .qr-section {
+      margin: 20px 0;
+      text-align: center;
+    }
+    .readonly {
+      background: #eee;
+      color: #888;
+      border: 1px solid #ccc;
+    }
+    .error {
+      color: var(--danger);
+      margin-bottom: 12px;
+      font-size: 1rem;
+      text-align: center;
+    }
+    .success {
+      color: #388e3c;
+      margin-bottom: 12px;
+      font-size: 1rem;
+      text-align: center;
+    }
+    @media (max-width: 600px) {
+      .container {
+        max-width: 100vw;
+        margin-top: 0;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 12px 2vw 40px 2vw;
+      }
+      .btn {
+        width: 100%;
+      }
+      .lang-switch {
+        right: 10px;
+        top: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <a href="#" class="language-switch" id="language-toggle">English</a>
-    </header>
+  <div class="lang-switch" id="lang-switch">English</div>
+  <div class="container" id="main-container">
+    <!-- Dynamic content will be rendered here -->
+  </div>
+  <script>
+    // --- 多言語辞書 ---
+    const i18n = {
+      ja: {
+        title: "入退館フォーム",
+        entry: "これから入館する方",
+        exit: "これで退館する方",
+        name: "氏名",
+        company: "会社名",
+        visitDatetime: "来館日時",
+        exitPlan: "退館予定時刻",
+        visitPurpose: "来訪目的",
+        purposes: [
+          "打ち合わせ", "納品", "点検", "面接", "その他"
+        ],
+        notice: `【注意事項】
+・館内では必ずビジターカードを携帯してください。
+・退館時は必ず本フォームから手続きを行ってください。
+・不明点があれば受付にお尋ねください。`,
+        noticeAgree: "注意事項を読み、同意します",
+        qrRead: "ビジターカードのQRコードを読み取ってください",
+        qrReading: "QRコード読み取り中...",
+        qrReadAgain: "再度QRコードを読み取る",
+        qrReadSuccess: "読み取り成功: ",
+        cardNumber: "ビジターカード番号",
+        submit: "送信",
+        submitting: "送信中...",
+        sent: "送信が完了しました。ご来館ありがとうございます。",
+        exitQr: "退館するビジターカードのQRコードを読み取ってください",
+        exitProcessing: "退館処理中...",
+        exitSuccess: "退館処理が完了しました。ご利用ありがとうございました。",
+        exitNotFound: "該当する入館中の記録が見つかりません。",
+        agreeRequired: "注意事項への同意が必要です。",
+        required: "必須項目です",
+        fieldRequired: "を入力してください",
+        error: "エラーが発生しました。再度お試しください。",
+        back: "戻る",
+        lang: "English"
+      },
+      en: {
+        title: "Entry/Exit Form",
+        entry: "Entry",
+        exit: "Exit",
+        name: "Name",
+        company: "Company",
+        visitDatetime: "Visit Date & Time",
+        exitPlan: "Planned Exit Time",
+        visitPurpose: "Purpose of Visit",
+        purposes: [
+          "Meeting", "Delivery", "Inspection", "Interview", "Other"
+        ],
+        notice: `【Notice】
+・Please always carry your visitor card inside the building.
+・Be sure to complete the exit procedure via this form when leaving.
+・If you have any questions, please ask at the reception.`,
+        noticeAgree: "I have read and agree to the notice",
+        qrRead: "Please scan the QR code on your visitor card",
+        qrReading: "Scanning QR code...",
+        qrReadAgain: "Scan QR code again",
+        qrReadSuccess: "Scan Success: ",
+        cardNumber: "Visitor Card Number",
+        submit: "Submit",
+        submitting: "Submitting...",
+        sent: "Submission completed. Thank you for your visit.",
+        exitQr: "Please scan the QR code of the visitor card to exit",
+        exitProcessing: "Processing exit...",
+        exitSuccess: "Exit completed. Thank you for your visit.",
+        exitNotFound: "No matching entry record found.",
+        agreeRequired: "You must agree to the notice.",
+        required: "Required",
+        fieldRequired: "is required.",
+        error: "An error occurred. Please try again.",
+        back: "Back",
+        lang: "日本語"
+      }
+    };
 
-    <div class="container">
-        <!-- ホーム画面 -->
-        <div id="home-screen">
-            <h1 id="home-title">入館・退館管理システム</h1>
-            <div class="home-buttons">
-                <button class="btn" id="check-in-btn">これから入館する方</button>
-                <button class="btn" id="check-out-btn">これから退館する方</button>
-            </div>
+    // --- 設定値（本番では外部関数で分離推奨） ---
+    const KINTONE_DOMAIN = 'YOUR_SUBDOMAIN.cybozu.com'; // 例: example.cybozu.com
+    const KINTONE_APP_ID = 'YOUR_APP_ID'; // kintoneアプリID
+    const KINTONE_API_TOKEN = 'YOUR_API_TOKEN'; // APIトークン（本番では外部関数で分離推奨）
+    const CARD_FIELD = 'visitor_card'; // ビジターカード番号のフィールドコード
+    const STATUS_FIELD = 'status'; // ステータスのフィールドコード
+    const EXIT_DATETIME_FIELD = 'exit_datetime'; // 退館日時のフィールドコード
+
+    // --- 状態管理 ---
+    let currentLang = 'ja';
+    let html5QrCodeScanner = null;
+
+    // --- 多言語切替 ---
+    document.getElementById('lang-switch').addEventListener('click', () => {
+      currentLang = currentLang === 'ja' ? 'en' : 'ja';
+      renderTop();
+    });
+
+    // --- 初期表示 ---
+    renderTop();
+
+    // --- トップ画面 ---
+    function renderTop() {
+      document.documentElement.lang = currentLang;
+      document.getElementById('lang-switch').textContent = i18n[currentLang].lang;
+      document.getElementById('main-container').innerHTML = `
+        <h1>${i18n[currentLang].title}</h1>
+        <div class="center">
+          <button class="btn" id="entry-btn">${i18n[currentLang].entry}</button>
+          <button class="btn" id="exit-btn">${i18n[currentLang].exit}</button>
         </div>
+      `;
+      document.getElementById('entry-btn').onclick = renderEntryForm;
+      document.getElementById('exit-btn').onclick = renderExitQr;
+    }
 
-        <!-- 入館フォーム -->
-        <div id="check-in-form" class="hidden">
-            <h1 id="check-in-title">入館フォーム</h1>
-            <div class="card">
-                <form id="visitor-form">
-                    <div class="form-group">
-                        <label for="visitor-name" id="name-label">氏名</label>
-                        <input type="text" id="visitor-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="company-name" id="company-label">会社名</label>
-                        <input type="text" id="company-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="check-in-time" id="checkin-time-label">来館日時</label>
-                        <input type="datetime-local" id="check-in-time" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="expected-checkout-time" id="expected-checkout-label">退館予定時刻</label>
-                        <input type="time" id="expected-checkout-time" required>
-                    </div>
-                    <div class="form-group">
-                        <label id="purpose-label">来訪目的（複数選択可）</label>
-                        <div class="checkbox-group" id="purpose-checkboxes">
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="purpose-meeting" name="purpose" value="meeting">
-                                <label for="purpose-meeting" id="purpose-meeting-label">打ち合わせ</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="purpose-delivery" name="purpose" value="delivery">
-                                <label for="purpose-delivery" id="purpose-delivery-label">荷物の受け渡し</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="purpose-interview" name="purpose" value="interview">
-                                <label for="purpose-interview" id="purpose-interview-label">面接</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="purpose-inspection" name="purpose" value="inspection">
-                                <label for="purpose-inspection" id="purpose-inspection-label">設備点検</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="purpose-other" name="purpose" value="other">
-                                <label for="purpose-other" id="purpose-other-label">その他</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label id="terms-label">注意事項</label>
-                        <div class="terms-container" id="terms-content">
-                            <p>1. 入館時は必ず受付で本人確認を行ってください。</p>
-                            <p>2. ビジターカードは常に見える位置に着用してください。</p>
-                            <p>3. 許可されたエリア以外への立ち入りは禁止されています。</p>
-                            <p>4. 館内での写真撮影・録音・録画は原則禁止です。</p>
-                            <p>5. 退館時は必ずビジターカードを返却してください。</p>
-                            <p>6. 緊急時は係員の指示に従ってください。</p>
-                            <p>7. 施設内は禁煙です。喫煙は指定の喫煙所をご利用ください。</p>
-                            <p>8. 貴重品の管理は各自でお願いいたします。紛失・盗難について当社は責任を負いかねます。</p>
-                            <p>9. 施設内での飲食は指定されたエリアでのみ可能です。</p>
-                            <p>10. 本規則に違反した場合、退館をお願いする場合があります。</p>
-                        </div>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="terms-agreement" required>
-                        <label for="terms-agreement" id="terms-agreement-label">注意事項に同意します</label>
-                    </div>
-                    <div class="form-group">
-                        <label id="visitor-card-label">ビジターカードのQRコードをスキャンしてください</label>
-                        <button type="button" class="btn" id="start-scan-btn">QRコードスキャンを開始</button>
-                        <div id="qr-reader" class="hidden"></div>
-                        <div class="qr-code-result hidden" id="qr-result-container">
-                            <label id="card-number-label">ビジターカード番号：</label>
-                            <span id="visitor-card-number"></span>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-success" id="submit-check-in">送信</button>
-                </form>
+    // --- 入館フォーム ---
+    function renderEntryForm() {
+      const now = new Date();
+      const dtStr = now.toISOString().slice(0,16); // yyyy-MM-ddTHH:mm
+      const purposes = i18n[currentLang].purposes;
+      document.getElementById('main-container').innerHTML = `
+        <h1>${i18n[currentLang].entry}</h1>
+        <form id="entry-form" autocomplete="off">
+          <div class="form-group">
+            <label for="name">${i18n[currentLang].name} <span style="color:#e53935">*</span></label>
+            <input type="text" id="name" name="name" required>
+          </div>
+          <div class="form-group">
+            <label for="company">${i18n[currentLang].company} <span style="color:#e53935">*</span></label>
+            <input type="text" id="company" name="company" required>
+          </div>
+          <div class="form-group">
+            <label for="visit-datetime">${i18n[currentLang].visitDatetime} <span style="color:#e53935">*</span></label>
+            <input type="datetime-local" id="visit-datetime" name="visit-datetime" value="${dtStr}" required>
+          </div>
+          <div class="form-group">
+            <label for="exit-plan">${i18n[currentLang].exitPlan} <span style="color:#e53935">*</span></label>
+            <input type="time" id="exit-plan" name="exit-plan" required>
+          </div>
+          <div class="form-group">
+            <label>${i18n[currentLang].visitPurpose} <span style="color:#e53935">*</span></label>
+            <div class="checkbox-group" id="purpose-group">
+              ${purposes.map((p,i)=>`
+                <label class="checkbox-label">
+                  <input type="checkbox" name="purpose" value="${p}"> ${p}
+                </label>
+              `).join('')}
             </div>
-            <a href="#" class="back-btn" id="back-from-check-in">戻る</a>
-        </div>
-
-        <!-- 退館フォーム -->
-        <div id="check-out-form" class="hidden">
-            <h1 id="check-out-title">退館処理</h1>
-            <div class="card">
-                <p id="scan-instruction">ビジターカードのQRコードをスキャンしてください</p>
-                <button type="button" class="btn" id="start-checkout-scan">QRコードスキャンを開始</button>
-                <div id="checkout-qr-reader" class="hidden"></div>
-                <div id="checkout-result" class="hidden result-container">
-                    <div id="checkout-loading" class="loading hidden"></div>
-                    <p id="checkout-message"></p>
-                </div>
+          </div>
+          <div class="form-group">
+            <div class="notice" id="notice-text">${i18n[currentLang].notice}</div>
+            <label>
+              <input type="checkbox" id="agree" required>
+              ${i18n[currentLang].noticeAgree}
+            </label>
+          </div>
+          <div class="form-group qr-section">
+            <div id="qr-area">
+              <button type="button" class="btn" id="qr-btn">${i18n[currentLang].qrRead}</button>
+              <div id="qr-reader" style="display:none; width:100%"></div>
+              <div id="qr-result" style="margin-top:8px;"></div>
             </div>
-            <a href="#" class="back-btn" id="back-from-check-out">戻る</a>
-        </div>
+            <label for="card-number">${i18n[currentLang].cardNumber} <span style="color:#e53935">*</span></label>
+            <input type="text" id="card-number" name="card-number" class="readonly" readonly required>
+          </div>
+          <div id="entry-error" class="error" style="display:none;"></div>
+          <button type="submit" class="btn">${i18n[currentLang].submit}</button>
+          <button type="button" class="btn" style="background:#eee;color:#222;" id="back-btn">${i18n[currentLang].back}</button>
+        </form>
+      `;
+      document.getElementById('qr-btn').onclick = startQrScanEntry;
+      document.getElementById('back-btn').onclick = renderTop;
+      document.getElementById('entry-form').onsubmit = submitEntryForm;
+    }
 
-        <!-- 処理結果表示画面 -->
-        <div id="result-screen" class="hidden">
-            <h1 id="result-title">処理結果</h1>
-            <div class="card result-container">
-                <div id="result-loading" class="loading hidden"></div>
-                <p id="result-message"></p>
-                <button class="btn" id="back-to-home">ホームに戻る</button>
-            </div>
-        </div>
-    </div>
+    // --- QRコード読み取り（入館） ---
+    function startQrScanEntry() {
+      const qrReaderDiv = document.getElementById('qr-reader');
+      qrReaderDiv.style.display = '';
+      document.getElementById('qr-btn').style.display = 'none';
+      document.getElementById('qr-result').textContent = i18n[currentLang].qrReading;
+      if (html5QrCodeScanner) html5QrCodeScanner.clear();
+      html5QrCodeScanner = new Html5Qrcode("qr-reader");
+      html5QrCodeScanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 200 },
+        (decodedText) => {
+          document.getElementById('card-number').value = decodedText;
+          document.getElementById('qr-result').textContent = i18n[currentLang].qrReadSuccess + decodedText;
+          html5QrCodeScanner.stop().then(() => {
+            qrReaderDiv.style.display = 'none';
+            document.getElementById('qr-btn').textContent = i18n[currentLang].qrReadAgain;
+            document.getElementById('qr-btn').style.display = '';
+          });
+        },
+        (error) => { /* ignore scan errors */ }
+      );
+    }
 
-    <script>
-        // 多言語対応のための翻訳データ
-        const translations = {
-            ja: {
-                homeTitle: "入館・退館管理システム",
-                checkInBtn: "これから入館する方",
-                checkOutBtn: "これから退館する方",
-                checkInTitle: "入館フォーム",
-                checkOutTitle: "退館処理",
-                resultTitle: "処理結果",
-                nameLabel: "氏名",
-                companyLabel: "会社名",
-                checkInTimeLabel: "来館日時",
-                expectedCheckoutLabel: "退館予定時刻",
-                purposeLabel: "来訪目的（複数選択可）",
-                purposeMeeting: "打ち合わせ",
-                purposeDelivery: "荷物の受け渡し",
-                purposeInterview: "面接",
-                purposeInspection: "設備点検",
-                purposeOther: "その他",
-                termsLabel: "注意事項",
-                termsContent: `
-                    <p>1. 入館時は必ず受付で本人確認を行ってください。</p>
-                    <p>2. ビジターカードは常に見える位置に着用してください。</p>
-                    <p>3. 許可されたエリア以外への立ち入りは禁止されています。</p>
-                    <p>4. 館内での写真撮影・録音・録画は原則禁止です。</p>
-                    <p>5. 退館時は必ずビジターカードを返却してください。</p>
-                    <p>6. 緊急時は係員の指示に従ってください。</p>
-                    <p>7. 施設内は禁煙です。喫煙は指定の喫煙所をご利用ください。</p>
-                    <p>8. 貴重品の管理は各自でお願いいたします。紛失・盗難について当社は責任を負いかねます。</p>
-                    <p>9. 施設内での飲食は指定されたエリアでのみ可能です。</p>
-                    <p>10. 本規則に違反した場合、退館をお願いする場合があります。</p>
-                `,
-                termsAgreement: "注意事項に同意します",
-                visitorCardLabel: "ビジターカードのQRコードをスキャンしてください",
-                startScanBtn: "QRコードスキャンを開始",
-                cardNumberLabel: "ビジターカード番号：",
-                submitCheckIn: "送信",
-                backBtn: "戻る",
-                scanInstruction: "ビジターカードのQRコードをスキャンしてください",
-                startCheckoutScan: "QRコードスキャンを開始",
-                backToHome: "ホームに戻る",
-                checkInSuccess: "入館処理が完了しました。ビジターカードをお受け取りください。",
-                checkInError: "入館処理に失敗しました。受付にお問い合わせください。",
-                checkOutSuccess: "退館処理が完了しました。ビジターカードをご返却ください。",
-                checkOutError: "退館処理に失敗しました。受付にお問い合わせください。",
-                cardNotFound: "該当するビジターカードが見つかりません。受付にお問い合わせください。",
-                alreadyCheckedOut: "このカードはすでに退館処理が完了しています。",
-                processingRequest: "処理中...",
-                languageSwitch: "English",
-                validationError: "すべての必須項目を入力してください。",
-                purposeRequired: "来訪目的を少なとも1つ選択してください。",
-                qrCodeRequired: "ビジターカードのQRコードをスキャンしてください。"
-            },
-            en: {
-                homeTitle: "Visitor Management System",
-                checkInBtn: "Check In",
-                checkOutBtn: "Check Out",
-                checkInTitle: "Check-In Form",
-                checkOutTitle: "Check-Out Process",
-                resultTitle: "Process Result",
-                nameLabel: "Full Name",
-                companyLabel: "Company Name",
-                checkInTimeLabel: "Check-In Date/Time",
-                expectedCheckoutLabel: "Expected Check-Out Time",
-                purposeLabel: "Purpose of Visit (Multiple selections allowed)",
-                purposeMeeting: "Meeting",
-                purposeDelivery: "Delivery",
-                purposeInterview: "Interview",
-                purposeInspection: "Facility Inspection",
-                purposeOther: "Other",
-                termsLabel: "Terms and Conditions",
-                termsContent: `
-                    <p>1. Please complete identity verification at the reception when checking in.</p>
-                    <p>2. Visitor card must be worn visibly at all times.</p>
-                    <p>3. Access to unauthorized areas is strictly prohibited.</p>
-                    <p>4. Photography, audio recording, and video recording are generally prohibited inside the building.</p>
-                    <p>5. Please return your visitor card when checking out.</p>
-                    <p>6. In case of emergency, follow the instructions of the staff.</p>
-                    <p>7. The facility is non-smoking. Please use designated smoking areas.</p>
-                    <p>8. Please manage your valuables. We are not responsible for any loss or theft.</p>
-                    <p>9. Food and drinks are only allowed in designated areas.</p>
-                    <p>10. Violation of these rules may result in being asked to leave the premises.</p>
-                `,
-                termsAgreement: "I agree to the terms and conditions",
-                visitorCardLabel: "Please scan the QR code on your visitor card",
-                startScanBtn: "Start QR Code Scan",
-                cardNumberLabel: "Visitor Card Number: ",
-                submitCheckIn: "Submit",
-                backBtn: "Back",
-                scanInstruction: "Please scan the QR code on your visitor card",
-                startCheckoutScan: "Start QR Code Scan",
-                backToHome: "Return to Home",
-                checkInSuccess: "Check-in completed successfully. Please receive your visitor card.",
-                checkInError: "Failed to complete check-in. Please contact the reception.",
-                checkOutSuccess: "Check-out completed successfully. Please return your visitor card.",
-                checkOutError: "Failed to complete check-out. Please contact the reception.",
-                cardNotFound: "Visitor card not found. Please contact the reception.",
-                alreadyCheckedOut: "This card has already been checked out.",
-                processingRequest: "Processing...",
-                languageSwitch: "日本語",
-                validationError: "Please fill in all required fields.",
-                purposeRequired: "Please select at least one purpose of visit.",
-                qrCodeRequired: "Please scan the QR code on your visitor card."
-            }
+    // --- 入館フォーム送信 ---
+    async function submitEntryForm(e) {
+      e.preventDefault();
+      // バリデーション
+      const lang = i18n[currentLang];
+      const name = document.getElementById('name').value.trim();
+      const company = document.getElementById('company').value.trim();
+      const visitDatetime = document.getElementById('visit-datetime').value;
+      const exitPlan = document.getElementById('exit-plan').value;
+      const purposes = Array.from(document.querySelectorAll('input[name="purpose"]:checked')).map(el=>el.value);
+      const agree = document.getElementById('agree').checked;
+      const cardNumber = document.getElementById('card-number').value.trim();
+      const errorDiv = document.getElementById('entry-error');
+      if (!name || !company || !visitDatetime || !exitPlan || !purposes.length || !agree || !cardNumber) {
+        errorDiv.textContent = lang.error;
+        errorDiv.style.display = '';
+        return;
+      }
+      errorDiv.style.display = 'none';
+      // 送信中UI
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = lang.submitting;
+
+      // kintone API送信
+      try {
+        const record = {
+          name: { value: name },
+          company: { value: company },
+          visit_datetime: { value: visitDatetime },
+          exit_plan: { value: exitPlan },
+          purpose: { value: purposes.join(', ') },
+          notice_agree: { value: agree ? '同意' : '未同意' },
+          [CARD_FIELD]: { value: cardNumber },
+          [STATUS_FIELD]: { value: '入館中' }
         };
+        await kintoneAddRecord(record);
+        e.target.innerHTML = `<div class="success">${lang.sent}</div>
+          <button type="button" class="btn" id="back-btn">${lang.back}</button>`;
+        document.getElementById('back-btn').onclick = renderTop;
+      } catch (err) {
+        errorDiv.textContent = lang.error;
+        errorDiv.style.display = '';
+        submitBtn.disabled = false;
+        submitBtn.textContent = lang.submit;
+      }
+    }
 
-        // アプリケーションの状態
-        let appState = {
-            language: 'ja',
-            visitorCardId: null,
-            html5QrCodeScanner: null,
-            html5QrCodeScannerCheckout: null
-        };
+    // --- 退館QRコード画面 ---
+    function renderExitQr() {
+      document.getElementById('main-container').innerHTML = `
+        <h1>${i18n[currentLang].exit}</h1>
+        <div class="qr-section">
+          <div id="qr-reader"></div>
+          <div id="qr-result" style="margin-top:8px;"></div>
+        </div>
+        <div id="exit-error" class="error" style="display:none;"></div>
+        <button type="button" class="btn" style="background:#eee;color:#222;" id="back-btn">${i18n[currentLang].back}</button>
+      `;
+      document.getElementById('back-btn').onclick = renderTop;
+      startQrScanExit();
+    }
 
-        // kintone APIの設定
-        // 注意: 本番環境ではAPIトークンをサーバレス関数等で分離することを推奨
-        const KINTONE_DOMAIN = "your-domain.cybozu.com";
-        const KINTONE_APP_ID = "your-app-id";
-        const KINTONE_API_TOKEN = "your-api-token";
-        const KINTONE_API_URL = `https://${KINTONE_DOMAIN}/k/v1/record.json`;
-        const KINTONE_SEARCH_URL = `https://${KINTONE_DOMAIN}/k/v1/records.json`;
+    // --- QRコード読み取り（退館） ---
+    function startQrScanExit() {
+      const qrReaderDiv = document.getElementById('qr-reader');
+      const resultDiv = document.getElementById('qr-result');
+      if (html5QrCodeScanner) html5QrCodeScanner.clear();
+      html5QrCodeScanner = new Html5Qrcode("qr-reader");
+      resultDiv.textContent = i18n[currentLang].qrReading;
+      html5QrCodeScanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 200 },
+        async (decodedText) => {
+          resultDiv.textContent = i18n[currentLang].qrReadSuccess + decodedText;
+          html5QrCodeScanner.stop();
+          await processExit(decodedText);
+        },
+        (error) => { /* ignore scan errors */ }
+      );
+    }
 
-        // 初期化
-        document.addEventListener('DOMContentLoaded', () => {
-            initApp();
+    // --- 退館処理 ---
+    async function processExit(cardNumber) {
+      const lang = i18n[currentLang];
+      const errorDiv = document.getElementById('exit-error');
+      errorDiv.style.display = 'none';
+      document.getElementById('qr-result').textContent = lang.exitProcessing;
+      try {
+        // 入館中のレコード検索
+        const record = await kintoneFindEntryRecord(cardNumber);
+        if (!record) {
+          errorDiv.textContent = lang.exitNotFound;
+          errorDiv.style.display = '';
+          return;
+        }
+        // ステータス・退館時刻更新
+        await kintoneUpdateRecord(record.$id.value, {
+          [STATUS_FIELD]: { value: '退館' },
+          [EXIT_DATETIME_FIELD]: { value: new Date().toISOString() }
         });
+        document.getElementById('main-container').innerHTML = `
+          <div class="success">${lang.exitSuccess}</div>
+          <button type="button" class="btn" id="back-btn">${lang.back}</button>
+        `;
+        document.getElementById('back-btn').onclick = renderTop;
+      } catch (err) {
+        errorDiv.textContent = lang.error;
+        errorDiv.style.display = '';
+      }
+    }
 
-        // アプリケーションの初期化
-        function initApp() {
-            updateLanguage();
-            setupEventListeners();
-            setDefaultCheckInTime();
-        }
+    // --- kintone API: レコード追加 ---
+    async function kintoneAddRecord(record) {
+      const url = `https://${KINTONE_DOMAIN}/k/v1/record.json`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Cybozu-API-Token': KINTONE_API_TOKEN
+        },
+        body: JSON.stringify({
+          app: KINTONE_APP_ID,
+          record
+        })
+      });
+      if (!res.ok) throw new Error('kintone add error');
+      return await res.json();
+    }
 
-        // イベントリスナーの設定
-        function setupEventListeners() {
-            // 言語切替
-            document.getElementById('language-toggle').addEventListener('click', toggleLanguage);
+    // --- kintone API: レコード検索 ---
+    async function kintoneFindEntryRecord(cardNumber) {
+      const url = `https://${KINTONE_DOMAIN}/k/v1/records.json?app=${KINTONE_APP_ID}&query=${encodeURIComponent(`${CARD_FIELD} = "${cardNumber}" and ${STATUS_FIELD} = "入館中"`)}`;
+      const res = await fetch(url, {
+        headers: { 'X-Cybozu-API-Token': KINTONE_API_TOKEN }
+      });
+      if (!res.ok) throw new Error('kintone find error');
+      const data = await res.json();
+      return data.records && data.records.length > 0 ? data.records[0] : null;
+    }
 
-            // ホーム画面
-            document.getElementById('check-in-btn').addEventListener('click', showCheckInForm);
-            document.getElementById('check-out-btn').addEventListener('click', showCheckOutForm);
+    // --- kintone API: レコード更新 ---
+    async function kintoneUpdateRecord(recordId, updateObj) {
+      const url = `https://${KINTONE_DOMAIN}/k/v1/record.json`;
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Cybozu-API-Token': KINTONE_API_TOKEN
+        },
+        body: JSON.stringify({
+          app: KINTONE_APP_ID,
+          id: recordId,
+          record: updateObj
+        })
+      });
+      if (!res.ok) throw new Error('kintone update error');
+      return await res.json();
+    }
 
-            // 入館フォーム
-            document.getElementById('visitor-form').addEventListener('submit', handleCheckInSubmit);
-            document.getElementById('start-scan-btn').addEventListener('click', startQRScan);
-            document.getElementById('back-from-check-in').addEventListener('click', showHomeScreen);
-
-            // 退館フォーム
-            document.getElementById('start-checkout-scan').addEventListener('click', startCheckoutQRScan);
-            document.getElementById('back-from-check-out').addEventListener('click', showHomeScreen);
-
-            // 結果画面
-            document.getElementById('back-to-home').addEventListener('click', showHomeScreen);
-        }
-
-        // 言語切替
-        function toggleLanguage(e) {
-            e.preventDefault();
-            appState.language = appState.language === 'ja' ? 'en' : 'ja';
-            updateLanguage();
-        }
-
-        // 言語に基づいて画面を更新
-        function updateLanguage() {
-            const lang = appState.language;
-            const t = translations[lang];
-
-            // ホーム画面
-            document.getElementById('home-title').textContent = t.homeTitle;
-            document.getElementById('check-in-btn').textContent = t.checkInBtn;
-            document.getElementById('check-out-btn').textContent = t.checkOutBtn;
-
-            // 入館フォーム
-            document.getElementById('check-in-title').textContent = t.checkInTitle;
-            document.getElementById('name-label').textContent = t.nameLabel;
-            document.getElementById('company-label').textContent = t.companyLabel;
-            document.getElementById('checkin-time-label').textContent = t.checkInTimeLabel;
-            document.getElementById('expected-checkout-label').textContent = t.expectedCheckoutLabel;
-            document.getElementById('purpose-label').textContent = t.purposeLabel;
-            document.getElementById('purpose-meeting-label').textContent = t.purposeMeeting;
-            document.getElementById('purpose-delivery-label').textContent = t.purposeDelivery;
-            document.getElementById('purpose-interview-label').textContent = t.purposeInterview;
-            document.getElementById('purpose-inspection-label').textContent = t.purposeInspection;
-            document.getElementById('purpose-other-label').textContent = t.purposeOther;
-            document.getElementById('terms-label').textContent = t.termsLabel;
-            document.getElementById('terms-content').innerHTML = t.termsContent;
-            document.getElementById('terms-agreement-label').textContent = t.termsAgreement;
-            document.getElementById('visitor-card-label').textContent = t.visitorCardLabel;
-            document.getElementById('start-scan-btn').textContent = t.startScanBtn;
-            document.getElementById('card-number-label').textContent = t.cardNumberLabel;
-            document.getElementById('submit-check-in').textContent = t.submitCheckIn;
-            document.getElementById('back-from-check-in').textContent = t.backBtn;
-
-            // 退館フォーム
-            document.getElementById('check-out-title').textContent = t.checkOutTitle;
-            document.getElementById('scan-instruction').textContent = t.scanInstruction;
-            document.getElementById('start-checkout-scan').textContent = t.startCheckoutScan;
-            document.getElementById('back-from-check-out').textContent = t.backBtn;
-
-            // 結果画面
-            document.getElementById('result-title').textContent = t.resultTitle;
-            document.getElementById('back-to-home').textContent = t.backToHome;
-
-            // 言語切替リンク
-            document.getElementById('language-toggle').textContent = t.languageSwitch;
-        }
-
-        // 現在日時をセット
-        function setDefaultCheckInTime() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            
-            const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
-            document.getElementById('check-in-time').value = formattedDateTime;
-        }
-
-        // 画面切替: ホーム画面表示
-        function showHomeScreen() {
-            if (appState.html5QrCodeScanner) {
-                appState.html5QrCodeScanner.clear();
-                appState.html5QrCodeScanner = null;
-            }
-            if (appState.html5QrCodeScannerCheckout) {
-                appState.html5QrCodeScannerCheckout.clear();
-                appState.html5QrCodeScannerCheckout = null;
-            }
-
-            // 表示・非表示を切り替え
-            document.getElementById('home-screen').classList.remove('hidden');
-            document.getElementById('check-in-form').classList.add('hidden');
-            document.getElementById('check-out-form').classList.add('hidden');
-            document.getElementById('result-screen').classList.add('hidden');
-            
-            // QRコードリーダーの表示をリセット
-            document.getElementById('qr-reader').classList.add('hidden');
-            document.getElementById('checkout-qr-reader').classList.add('hidden');
-            document.getElementById('qr-result-container').classList.add('hidden');
-            document.getElementById('checkout-result').classList.add('hidden');
-            
-            // フォームのリセット
-            document.getElementById('visitor-form').reset();
-            appState.visitorCardId = null;
-            setDefaultCheckInTime();
-        }
-
-        // 画面切替: 入館フォーム表示
-        function showCheckInForm() {
-            document.getElementById('home-screen').classList.add('hidden');
-            document.getElementById('check-in-form').classList.remove('hidden');
-        }
-
-        // 画面切替: 退館フォーム表示
-        function showCheckOutForm() {
-            document.getElementById('home-screen').classList.add('hidden');
-            document.getElementById('check-out-form').classList.remove('hidden');
-        }
-
-        // 画面切替: 結果画面表示
-        function showResultScreen(message, isSuccess) {
-            document.getElementById('check-in-form').classList.add('hidden');
-            document.getElementById('check-out-form').classList.add('hidden');
-            document.getElementById('result-screen').classList.remove('hidden');
-            
-            const resultMessage = document.getElementById('result-message');
-            resultMessage.textContent = message;
-            resultMessage.className = isSuccess ? 'success-message' : 'error-message';
-        }
-
-        // QRコードスキャン開始 (入館)
-        function startQRScan() {
-            const qrReader = document.getElementById('qr-reader');
-            qrReader.classList.remove('hidden');
-            
-            if (appState.html5QrCodeScanner) {
-                appState.html5QrCodeScanner.clear();
-            }
-            
-            appState.html5QrCodeScanner = new Html5QrcodeScanner(
-                "qr-reader", 
-                { fps: 10, qrbox: 250 }
-            );
-            
-            appState.html5QrCodeScanner.render(onScanSuccess, onScanError);
-        }
-        
-        // QRコードスキャン成功時 (入館)
-        function onScanSuccess(decodedText) {
-            if (appState.html5QrCodeScanner) {
-                appState.html5QrCodeScanner.clear();
-                appState.html5QrCodeScanner = null;
-            }
-            
-            document.getElementById('qr-reader').classList.add('hidden');
-            document.getElementById('qr-result-container').classList.remove('hidden');
-            document.getElementById('visitor-card-number').textContent = decodedText;
-            appState.visitorCardId = decodedText;
-        }
+    // --- 言語切替時の再描画 ---
+    window.addEventListener('popstate', () => renderTop());
+  </script>
+</body>
+</html>
