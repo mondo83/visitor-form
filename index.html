@@ -1,520 +1,464 @@
-<!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>入退館フォーム</title>
-  <!-- html5-qrcode CDN -->
-  <script src="https://unpkg.com/html5-qrcode"></script>
-  <style>
-    :root {
-      --main-bg: #f9f9f9;
-      --main-color: #222;
-      --accent: #1976d2;
-      --danger: #e53935;
-      --border: #ddd;
-      --radius: 8px;
-      --max-width: 480px;
-    }
-    body {
-      background: var(--main-bg);
-      color: var(--main-color);
-      font-family: 'Segoe UI', 'Hiragino Sans', Arial, sans-serif;
-      margin: 0;
-      min-height: 100vh;
-    }
-    .container {
-      max-width: var(--max-width);
-      margin: 0 auto;
-      padding: 24px 8px 40px 8px;
-      background: #fff;
-      border-radius: var(--radius);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      margin-top: 32px;
-    }
-    .center {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 48px;
-    }
-    .btn {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius);
-      padding: 18px 0;
-      font-size: 1.2rem;
-      width: 90%;
-      margin: 12px 0;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background 0.2s;
-    }
-    .btn:active, .btn:focus {
-      background: #12549b;
-    }
-    .lang-switch {
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      color: var(--accent);
-      cursor: pointer;
-      font-weight: bold;
-      text-decoration: underline;
+<meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>来訪者受付フォーム</title>
+<style>
+:root {
+@@ -14,26 +14,33 @@
+}
+* { box-sizing: border-box; }
+
+    /* ──────────────── 追加部分 ──────────────── */
+    input, textarea {
+    /* iOSの日本語入力対応 */
+    input, textarea, select {
+-webkit-user-select: text;
+user-select: text;
+      -webkit-appearance: none;
+      appearance: none;
+      font-size: 16px; /* 16pxより小さいとiOSがズームする */
+}
+    /* ───────────────────────────────────────── */
+
+body {
+margin: 0;
+padding: var(--spacing);
+background: var(--bg-color);
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-text-size-adjust: 100%;
+}
+main {
+      max-width: 600px;
+      max-width: 100%;
+      width: 600px;
+margin: auto;
+background: var(--card-bg);
+padding: calc(var(--spacing) * 1.5);
+border-radius: var(--border-radius);
+box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow-x: hidden; /* はみ出し防止 */
+}
+
+/* 見出し */
+@@ -45,6 +52,7 @@
+padding: 0.75em;
+border-radius: var(--border-radius);
+font-size: 1.5rem;
+      word-break: keep-all; /* 日本語の改行位置調整 */
+}
+#langSwitch {
+display: flex;
+@@ -58,13 +66,15 @@
+color: var(--primary-color);
+cursor: pointer;
+font-size: 0.9rem;
+      padding: 0.5em 1em; /* タップ領域拡大 */
+}
+
+.facility-display {
+text-align: center;
+margin-bottom: var(--spacing);
+color: var(--primary-color);
+font-weight: bold;
+      word-break: break-all; /* 長い施設名の改行 */
+}
+label {
+display: block;
+@@ -76,40 +86,169 @@
+margin-top: 0.25em;
+border: 1px solid #ccc;
+border-radius: 4px;
       font-size: 1rem;
-      z-index: 20;
+      font-size: 16px; /* iOSでのズーム防止 */
+      max-width: 100%; /* はみ出し防止 */
     }
-    h1 {
-      font-size: 1.5rem;
-      text-align: center;
-      margin-bottom: 12px;
+    
+    /* iOSでの日付・時間入力対応 */
+    input[type="date"], input[type="time"] {
+      min-height: 44px; /* タップしやすさ向上 */
     }
-    form {
-      margin-top: 12px;
+    
+    input, select { width: 100%; }
+    button { width: 100%; }
+
+    /* レスポンシブ対応強化 */
+    .datetime-row { 
+      display: flex; 
+      flex-wrap: wrap; /* 狭い画面で折り返し */
+      gap: 0.5em; 
+      margin-top: var(--spacing); 
     }
-    .form-group {
-      margin-bottom: 18px;
+    .datetime-field { 
+      flex: 1 1 45%; /* 狭い画面では縦に並ぶようにする */
+      min-width: 140px; 
+}
+    input, select, button { width: 100%; }
+
+    .datetime-row { display: flex; gap: 0.5em; margin-top: var(--spacing); }
+    .datetime-field { flex: 1; }
+
+    .name-pair { display: flex; gap: 0.5em; margin-top: 0.5em; }
+    .name-pair input { flex: 1 1 auto; min-width: 0; width: auto; }
+    .name-pair { 
+      display: flex; 
+      flex-wrap: wrap; /* 狭い画面で折り返し */
+      gap: 0.5em; 
+      margin-top: 0.5em; 
     }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 500;
+    .name-pair input { 
+      flex: 1 1 45%; 
+      min-width: 120px; /* 最小幅を確保 */
     }
-    input[type="text"], input[type="datetime-local"], input[type="time"], textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      font-size: 1rem;
-      box-sizing: border-box;
-      background: #fafbfc;
+
+    .purpose-table { width: 100%; border-collapse: collapse; margin-top: var(--spacing); }
+    .purpose-table th { text-align: left; padding-bottom: 0.5em; border-bottom: 1px solid #ddd; font-weight: bold; }
+    .purpose-table td { padding: 0.25em 0; vertical-align: middle; }
+    .purpose-table td:first-child { width: 2em; }
+    .purpose-table td:nth-child(2) { padding-left: 0.5em; }
+    .purpose-table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      margin-top: var(--spacing); 
+      table-layout: fixed; /* テーブルの幅固定 */
     }
-    textarea {
-      resize: vertical;
-      min-height: 60px;
+    .purpose-table th { 
+      text-align: left; 
+      padding-bottom: 0.5em; 
+      border-bottom: 1px solid #ddd; 
+      font-weight: bold; 
     }
-    .checkbox-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+    .purpose-table td { 
+      padding: 0.5em 0; /* タップ領域拡大 */
+      vertical-align: middle; 
     }
-    .checkbox-label {
-      margin-right: 12px;
-      font-size: 0.98rem;
+    .purpose-table td:first-child { 
+      width: 2em; 
+      text-align: center; 
     }
-    .notice {
-      background: #f1f8e9;
-      border-left: 4px solid var(--accent);
-      padding: 10px 12px;
-      margin-bottom: 10px;
-      border-radius: var(--radius);
-      font-size: 0.98rem;
-      white-space: pre-line;
+    .purpose-table td:first-child input[type="checkbox"] {
+      width: auto;
+      min-height: 24px; /* チェックボックスを大きくしてタップしやすく */
+      min-width: 24px;
     }
-    .qr-section {
-      margin: 20px 0;
-      text-align: center;
+    .purpose-table td:nth-child(2) { 
+      padding-left: 0.5em; 
+      word-break: keep-all; /* 日本語の改行位置調整 */
     }
-    .readonly {
-      background: #eee;
-      color: #888;
-      border: 1px solid #ccc;
+
+    .scroll-box { max-height: 240px; overflow-y: auto; background: #fafafa; padding: 0.75em; border: 1px solid #ddd; border-radius: 4px; white-space: normal; margin-top: 0.5em; font-size: 0.9rem; line-height: 1.4; }
+    .scroll-box ul { margin: 0; padding-left: 1.2em; }
+    .scroll-box li { margin-bottom: 0.5em; }
+    .scroll-box { 
+      max-height: 240px; 
+      overflow-y: auto; 
+      -webkit-overflow-scrolling: touch; /* iOSでのスムーズスクロール */
+      background: #fafafa; 
+      padding: 0.75em; 
+      border: 1px solid #ddd; 
+      border-radius: 4px; 
+      white-space: normal; 
+      margin-top: 0.5em; 
+      font-size: 0.9rem; 
+      line-height: 1.4; 
     }
-    .error {
-      color: var(--danger);
-      margin-bottom: 12px;
-      font-size: 1rem;
-      text-align: center;
+    .scroll-box ul { 
+      margin: 0; 
+      padding-left: 1.2em; 
     }
-    .success {
-      color: #388e3c;
-      margin-bottom: 12px;
-      font-size: 1rem;
-      text-align: center;
+    .scroll-box li { 
+      margin-bottom: 0.5em; 
+      overflow-wrap: break-word; /* 長い文章の折り返し */
+      word-break: break-word;
     }
-    @media (max-width: 600px) {
-      .container {
-        max-width: 100vw;
-        margin-top: 0;
-        border-radius: 0;
-        box-shadow: none;
-        padding: 12px 2vw 40px 2vw;
+
+    .agree-container { text-align: center; margin-top: var(--spacing); }
+    .agree-text { margin-bottom: 0.5em; font-weight: bold; }
+    .agree-container input[type="checkbox"] { width: auto; display: block; margin: 0 auto var(--spacing); transform: scale(1.2); }
+    .agree-container { 
+      text-align: center; 
+      margin-top: var(--spacing); 
+    }
+    .agree-text { 
+      margin-bottom: 0.5em; 
+      font-weight: bold; 
+    }
+    .agree-container input[type="checkbox"] { 
+      width: auto; 
+      display: block; 
+      margin: 0 auto var(--spacing); 
+      transform: scale(1.5); /* タップしやすくする */
+      min-height: 24px;
+      min-width: 24px;
+    }
+
+    .return-note { text-align: center; font-size: 0.9rem; margin-top: 0.5em; }
+    .return-note { 
+      text-align: center; 
+      font-size: 0.9rem; 
+      margin-top: 0.5em; 
+    }
+
+    .btn { background: var(--primary-color); color: #fff; border: none; cursor: pointer; font-size: 1rem; margin-top: var(--spacing); transition: background 0.2s; }
+    .btn:disabled { background: #aaa; cursor: not-allowed; }
+    .btn:hover:enabled { background: #00557a; }
+    .btn { 
+      background: var(--primary-color); 
+      color: #fff; 
+      border: none; 
+      cursor: pointer; 
+      font-size: 1rem; 
+      margin-top: var(--spacing); 
+      transition: background 0.2s; 
+      min-height: 44px; /* タップしやすく */
+    }
+    .btn:disabled { 
+      background: #aaa; 
+      cursor: not-allowed; 
+    }
+    .btn:hover:enabled, .btn:active:enabled { 
+      background: #00557a; 
+    }
+
+    .btn-small { background: var(--primary-color); color: #fff; width: auto; padding: 0.5em; font-size: 0.9rem; margin-top: 0.5em; }
+    .btn-small:hover { background: #00557a; }
+    .btn-small { 
+      background: var(--primary-color); 
+      color: #fff; 
+      width: auto; 
+      padding: 0.5em 1em; /* タップ領域拡大 */
+      font-size: 0.9rem; 
+      margin-top: 0.5em; 
+      min-height: 44px; /* タップしやすく */
+    }
+    .btn-small:hover, .btn-small:active { 
+      background: #00557a; 
+    }
+
+    #msg { margin-top: var(--spacing); text-align: center; color: #d33; font-weight: bold; }
+    #msg { 
+      margin-top: var(--spacing); 
+      text-align: center; 
+      color: #d33; 
+      font-weight: bold; 
+      word-break: break-word; /* エラーメッセージの折り返し */
+    }
+    
+    /* iOSでの表示問題解決のための追加スタイル */
+    @supports (-webkit-touch-callout: none) {
+      /* iOSデバイス向け特定対応 */
+      input, select, textarea, button {
+        font-size: 16px !important; /* ズーム防止のため */
       }
-      .btn {
-        width: 100%;
-      }
-      .lang-switch {
-        right: 10px;
-        top: 10px;
+      
+      /* フォーカス時の挙動改善 */
+      input:focus, textarea:focus, select:focus {
+        font-size: 16px !important;
+        transform: scale(1);
       }
     }
-  </style>
+</style>
 </head>
 <body>
-  <div class="lang-switch" id="lang-switch">English</div>
-  <div class="container" id="main-container">
-    <!-- Dynamic content will be rendered here -->
-  </div>
-  <script>
-    // --- 多言語辞書 ---
-    const i18n = {
-      ja: {
-        title: "入退館フォーム",
-        entry: "これから入館する方",
-        exit: "これで退館する方",
-        name: "氏名",
-        company: "会社名",
-        visitDatetime: "来館日時",
-        exitPlan: "退館予定時刻",
-        visitPurpose: "来訪目的",
-        purposes: [
-          "打ち合わせ", "納品", "点検", "面接", "その他"
-        ],
-        notice: `【注意事項】
-・館内では必ずビジターカードを携帯してください。
-・退館時は必ず本フォームから手続きを行ってください。
-・不明点があれば受付にお尋ねください。`,
-        noticeAgree: "注意事項を読み、同意します",
-        qrRead: "ビジターカードのQRコードを読み取ってください",
-        qrReading: "QRコード読み取り中...",
-        qrReadAgain: "再度QRコードを読み取る",
-        qrReadSuccess: "読み取り成功: ",
-        cardNumber: "ビジターカード番号",
-        submit: "送信",
-        submitting: "送信中...",
-        sent: "送信が完了しました。ご来館ありがとうございます。",
-        exitQr: "退館するビジターカードのQRコードを読み取ってください",
-        exitProcessing: "退館処理中...",
-        exitSuccess: "退館処理が完了しました。ご利用ありがとうございました。",
-        exitNotFound: "該当する入館中の記録が見つかりません。",
-        agreeRequired: "注意事項への同意が必要です。",
-        required: "必須項目です",
-        fieldRequired: "を入力してください",
-        error: "エラーが発生しました。再度お試しください。",
-        back: "戻る",
-        lang: "English"
-      },
-      en: {
-        title: "Entry/Exit Form",
-        entry: "Entry",
-        exit: "Exit",
-        name: "Name",
-        company: "Company",
-        visitDatetime: "Visit Date & Time",
-        exitPlan: "Planned Exit Time",
-        visitPurpose: "Purpose of Visit",
-        purposes: [
-          "Meeting", "Delivery", "Inspection", "Interview", "Other"
-        ],
-        notice: `【Notice】
-・Please always carry your visitor card inside the building.
-・Be sure to complete the exit procedure via this form when leaving.
-・If you have any questions, please ask at the reception.`,
-        noticeAgree: "I have read and agree to the notice",
-        qrRead: "Please scan the QR code on your visitor card",
-        qrReading: "Scanning QR code...",
-        qrReadAgain: "Scan QR code again",
-        qrReadSuccess: "Scan Success: ",
-        cardNumber: "Visitor Card Number",
-        submit: "Submit",
-        submitting: "Submitting...",
-        sent: "Submission completed. Thank you for your visit.",
-        exitQr: "Please scan the QR code of the visitor card to exit",
-        exitProcessing: "Processing exit...",
-        exitSuccess: "Exit completed. Thank you for your visit.",
-        exitNotFound: "No matching entry record found.",
-        agreeRequired: "You must agree to the notice.",
-        required: "Required",
-        fieldRequired: "is required.",
-        error: "An error occurred. Please try again.",
-        back: "Back",
-        lang: "日本語"
+@@ -139,11 +278,11 @@ <h1 data-ja="来訪者受付フォーム" data-en="Visitor Check-in Form">来訪
+<input type="time" id="leaveTime" name="leaveTime">
+
+<label for="company" data-ja="貴社名（必須）" data-en="Company Name (required)">貴社名（必須）</label>
+      <input type="text" id="company" name="company" required>
+      <input type="text" id="company" name="company" autocomplete="organization" required>
+
+<label data-ja="お名前・ビジターカード番号" data-en="Name & Visitor Card No.">お名前・ビジターカード番号</label>
+<div id="nameSection"></div>
+      <button type="button" class="btn btn-small" onclick="addNamePair()" data-ja="＋追加" data-en="+ Add">＋追加</button>
+      <button type="button" class="btn-small" onclick="addNamePair()" data-ja="＋追加" data-en="+ Add">＋追加</button>
+
+<table class="purpose-table">
+<thead><tr><th></th><th data-ja="ご来所目的（複数選択可）" data-en="Purpose of Visit (multiple)">ご来所目的（複数選択可）</th></tr></thead>
+@@ -164,11 +303,10 @@ <h1 data-ja="来訪者受付フォーム" data-en="Visitor Check-in Form">来訪
+<li data-ja="急な発熱や体調不良が発生した場合は弊社社員への連絡をお願いします。また火災や災害時などの緊急時は弊社社員の指示に従って避難をお願いします。" data-en="If you experience sudden fever or feel unwell, please contact our staff. In case of fire or other emergencies, follow our staff's instructions for evacuation.">急な発熱や体調不良が発生した場合は弊社社員への連絡をお願いします。また火災や災害時などの緊急時は弊社社員の指示に従って避難をお願いします。</li>
+<li data-ja="施設内ではビジターカード(VC)をご着用願います。また指定場所以外での飲食はご遠慮願います。" data-en="Please wear your visitor card (VC) within the facility. Eating and drinking outside designated areas is prohibited.">施設内ではビジターカード(VC)をご着用願います。また指定場所以外での飲食はご遠慮願います。</li>
+<li data-ja="施設内で知り得た情報の第三者開示、写真撮影、動画撮影は禁止しますのでご了承願います。" data-en="Disclosure of information obtained within the facility to third parties, photography, and video recording are prohibited.">施設内で知り得た情報の第三者開示、写真撮影、動画撮影は禁止しますのでご了承願います。</li>
+          <li data-ja="当方の一方的過失以外の事故などについては一切の 책임을負いかねます。事故防止には万全を期していただくようお願い申し上げます。" data-en="We accept no liability for any incidents other than our sole negligence. Please take all necessary precautions to prevent accidents.">当方の一方的過失以外の事故などについては一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。</li>
+          <li data-ja="当方の一方的過失以外の事故などについては一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。" data-en="We accept no liability for any incidents other than our sole negligence. Please take all necessary precautions to prevent accidents.">当方の一方的過失以外の事故などについては一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。</li>
+</ul>
+</div>
+
+
+<div class="agree-container">
+<div class="agree-text" data-ja="上記注意事項を確認しました" data-en="I have read and agree to the above">上記注意事項を確認しました</div>
+<input type="checkbox" id="agree" name="agree">
+@@ -186,62 +324,139 @@ <h1 data-ja="来訪者受付フォーム" data-en="Visitor Check-in Form">来訪
+
+function setLang(l) {
+lang = l;
+      document.querySelectorAll('[data-ja]').forEach(el => {
+        el.textContent = el.getAttribute(`data-${l}`);
+      document.querySelectorAll('[data-ja], [data-en]').forEach(el => {
+        // データ属性がある要素だけ処理
+        if(el.hasAttribute(`data-${l}`)) {
+          el.textContent = el.getAttribute(`data-${l}`);
+        }
+        
+        // プレースホルダー処理
+if (el.hasAttribute(`data-${l}-placeholder`)) {
+el.placeholder = el.getAttribute(`data-${l}-placeholder`);
+}
+});
+      
+      // 名前セクションのプレースホルダー更新
+      document.querySelectorAll('#nameSection input').forEach(input => {
+        if(input.name === 'visitorName[]') {
+          input.placeholder = lang === 'en' ? 'Name' : 'お名前';
+        } else if(input.name === 'visitorCard[]') {
+          input.placeholder = lang === 'en' ? 'Card No.' : 'VC No.';
+        }
+      });
+}
+
+    // iOSでのフォーカス問題を解決
+    document.addEventListener('focusin', function(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+        // 少し遅延させて確実にiOSのズームを防止
+        setTimeout(function() {
+          // まれにiOSでズームすることがあるので、メタビューポートを一時的に更新
+          const viewportMeta = document.querySelector('meta[name="viewport"]');
+          const originalContent = viewportMeta.getAttribute('content');
+          viewportMeta.setAttribute('content', originalContent + ', maximum-scale=1');
+          
+          // すぐに元に戻す（タイミング問題）
+          setTimeout(function() {
+            viewportMeta.setAttribute('content', originalContent);
+          }, 300);
+        }, 100);
       }
-    };
-
-    // --- 設定値（本番では外部関数で分離推奨） ---
-    const KINTONE_DOMAIN = 'YOUR_SUBDOMAIN.cybozu.com'; // 例: example.cybozu.com
-    const KINTONE_APP_ID = 'YOUR_APP_ID'; // kintoneアプリID
-    const KINTONE_API_TOKEN = 'YOUR_API_TOKEN'; // APIトークン（本番では外部関数で分離推奨）
-    const CARD_FIELD = 'visitor_card'; // ビジターカード番号のフィールドコード
-    const STATUS_FIELD = 'status'; // ステータスのフィールドコード
-    const EXIT_DATETIME_FIELD = 'exit_datetime'; // 退館日時のフィールドコード
-
-    // --- 状態管理 ---
-    let currentLang = 'ja';
-    let html5QrCodeScanner = null;
-
-    // --- 多言語切替 ---
-    document.getElementById('lang-switch').addEventListener('click', () => {
-      currentLang = currentLang === 'ja' ? 'en' : 'ja';
-      renderTop();
     });
 
-    // --- 初期表示 ---
-    renderTop();
+// 初期処理: 1行目もJavaScriptで追加
+window.addEventListener('DOMContentLoaded', () => {
+addNamePair();
 
-    // --- トップ画面 ---
-    function renderTop() {
-      document.documentElement.lang = currentLang;
-      document.getElementById('lang-switch').textContent = i18n[currentLang].lang;
-      document.getElementById('main-container').innerHTML = `
-        <h1>${i18n[currentLang].title}</h1>
-        <div class="center">
-          <button class="btn" id="entry-btn">${i18n[currentLang].entry}</button>
-          <button class="btn" id="exit-btn">${i18n[currentLang].exit}</button>
-        </div>
-      `;
-      document.getElementById('entry-btn').onclick = renderEntryForm;
-      document.getElementById('exit-btn').onclick = renderExitQr;
-    }
+const now = new Date();
+document.getElementById('visitDate').value = now.toISOString().slice(0,10);
+      document.getElementById('visitTime').value = now.toTimeString().slice(0,5);
 
-    // --- 入館フォーム ---
-    function renderEntryForm() {
-      const now = new Date();
-      const dtStr = now.toISOString().slice(0,16); // yyyy-MM-ddTHH:mm
-      const purposes = i18n[currentLang].purposes;
-      document.getElementById('main-container').innerHTML = `
-        <h1>${i18n[currentLang].entry}</h1>
-        <form id="entry-form" autocomplete="off">
-          <div class="form-group">
-            <label for="name">${i18n[currentLang].name} <span style="color:#e53935">*</span></label>
-            <input type="text" id="name" name="name" required>
-          </div>
-          <div class="form-group">
-            <label for="company">${i18n[currentLang].company} <span style="color:#e53935">*</span></label>
-            <input type="text" id="company" name="company" required>
-          </div>
-          <div class="form-group">
-            <label for="visit-datetime">${i18n[currentLang].visitDatetime} <span style="color:#e53935">*</span></label>
-            <input type="datetime-local" id="visit-datetime" name="visit-datetime" value="${dtStr}" required>
-          </div>
-          <div class="form-group">
-            <label for="exit-plan">${i18n[currentLang].exitPlan} <span style="color:#e53935">*</span></label>
-            <input type="time" id="exit-plan" name="exit-plan" required>
-          </div>
-          <div class="form-group">
-            <label>${i18n[currentLang].visitPurpose} <span style="color:#e53935">*</span></label>
-            <div class="checkbox-group" id="purpose-group">
-              ${purposes.map((p,i)=>`
-                <label class="checkbox-label">
-                  <input type="checkbox" name="purpose" value="${p}"> ${p}
-                </label>
-              `).join('')}
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="notice" id="notice-text">${i18n[currentLang].notice}</div>
-            <label>
-              <input type="checkbox" id="agree" required>
-              ${i18n[currentLang].noticeAgree}
-            </label>
-          </div>
-          <div class="form-group qr-section">
-            <div id="qr-area">
-              <button type="button" class="btn" id="qr-btn">${i18n[currentLang].qrRead}</button>
-              <div id="qr-reader" style="display:none; width:100%"></div>
-              <div id="qr-result" style="margin-top:8px;"></div>
-            </div>
-            <label for="card-number">${i18n[currentLang].cardNumber} <span style="color:#e53935">*</span></label>
-            <input type="text" id="card-number" name="card-number" class="readonly" readonly required>
-          </div>
-          <div id="entry-error" class="error" style="display:none;"></div>
-          <button type="submit" class="btn">${i18n[currentLang].submit}</button>
-          <button type="button" class="btn" style="background:#eee;color:#222;" id="back-btn">${i18n[currentLang].back}</button>
-        </form>
-      `;
-      document.getElementById('qr-btn').onclick = startQrScanEntry;
-      document.getElementById('back-btn').onclick = renderTop;
-      document.getElementById('entry-form').onsubmit = submitEntryForm;
-    }
+      const params = new URLSearchParams(location.search);
+      const fac = params.get('facility') || '未設定';
+      document.getElementById('facility').value = decodeURIComponent(fac);
+      document.getElementById('facilityDisplay').textContent = decodeURIComponent(fac);
+      
+      // 時刻フォーマットを修正（Safari対応）
+      let hours = now.getHours().toString().padStart(2, '0');
+      let minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('visitTime').value = `${hours}:${minutes}`;
 
-    // --- QRコード読み取り（入館） ---
-    function startQrScanEntry() {
-      const qrReaderDiv = document.getElementById('qr-reader');
-      qrReaderDiv.style.display = '';
-      document.getElementById('qr-btn').style.display = 'none';
-      document.getElementById('qr-result').textContent = i18n[currentLang].qrReading;
-      if (html5QrCodeScanner) html5QrCodeScanner.clear();
-      html5QrCodeScanner = new Html5Qrcode("qr-reader");
-      html5QrCodeScanner.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: 200 },
-        (decodedText) => {
-          document.getElementById('card-number').value = decodedText;
-          document.getElementById('qr-result').textContent = i18n[currentLang].qrReadSuccess + decodedText;
-          html5QrCodeScanner.stop().then(() => {
-            qrReaderDiv.style.display = 'none';
-            document.getElementById('qr-btn').textContent = i18n[currentLang].qrReadAgain;
-            document.getElementById('qr-btn').style.display = '';
-          });
-        },
-        (error) => { /* ignore scan errors */ }
-      );
-    }
+      try {
+        const params = new URLSearchParams(location.search);
+        const fac = params.get('facility') || '未設定';
+        document.getElementById('facility').value = decodeURIComponent(fac);
+        document.getElementById('facilityDisplay').textContent = decodeURIComponent(fac);
+      } catch (e) {
+        console.error('URLパラメータ処理エラー:', e);
+        document.getElementById('facility').value = '未設定';
+        document.getElementById('facilityDisplay').textContent = '未設定';
+      }
+      
+      // iOS日本語入力サポート
+      document.querySelectorAll('input[type="text"]').forEach(input => {
+        input.addEventListener('focus', function() {
+          // iOSでの日本語入力をサポート
+          this.setAttribute('autocomplete', 'off');
+        });
+      });
+});
 
-    // --- 入館フォーム送信 ---
-    async function submitEntryForm(e) {
-      e.preventDefault();
-      // バリデーション
-      const lang = i18n[currentLang];
-      const name = document.getElementById('name').value.trim();
-      const company = document.getElementById('company').value.trim();
-      const visitDatetime = document.getElementById('visit-datetime').value;
-      const exitPlan = document.getElementById('exit-plan').value;
-      const purposes = Array.from(document.querySelectorAll('input[name="purpose"]:checked')).map(el=>el.value);
-      const agree = document.getElementById('agree').checked;
-      const cardNumber = document.getElementById('card-number').value.trim();
-      const errorDiv = document.getElementById('entry-error');
-      if (!name || !company || !visitDatetime || !exitPlan || !purposes.length || !agree || !cardNumber) {
-        errorDiv.textContent = lang.error;
-        errorDiv.style.display = '';
+function addNamePair() {
+const section = document.getElementById('nameSection');
+const count = section.querySelectorAll('.name-pair').length;
+      if (count >= 5) return alert(lang==='en'? 'Up to 5 entries':'最大5名までです');
+      if (count >= 5) {
+        alert(lang==='en'? 'Up to 5 entries':'最大5名までです');
         return;
       }
-      errorDiv.style.display = 'none';
-      // 送信中UI
-      const submitBtn = e.target.querySelector('button[type="submit"]');
-      submitBtn.disabled = true;
-      submitBtn.textContent = lang.submitting;
 
-      // kintone API送信
-      try {
-        const record = {
-          name: { value: name },
-          company: { value: company },
-          visit_datetime: { value: visitDatetime },
-          exit_plan: { value: exitPlan },
-          purpose: { value: purposes.join(', ') },
-          notice_agree: { value: agree ? '同意' : '未同意' },
-          [CARD_FIELD]: { value: cardNumber },
-          [STATUS_FIELD]: { value: '入館中' }
-        };
-        await kintoneAddRecord(record);
-        e.target.innerHTML = `<div class="success">${lang.sent}</div>
-          <button type="button" class="btn" id="back-btn">${lang.back}</button>`;
-        document.getElementById('back-btn').onclick = renderTop;
-      } catch (err) {
-        errorDiv.textContent = lang.error;
-        errorDiv.style.display = '';
-        submitBtn.disabled = false;
-        submitBtn.textContent = lang.submit;
-      }
-    }
+const div = document.createElement('div');
+div.className = 'name-pair';
+      div.innerHTML = `
+<input type="text"
+       name="visitorName[]"
+       lang="ja"
+       placeholder="${lang==='en'?'Name':'お名前'}"
+       data-ja-placeholder="お名前"
+       data-en-placeholder="Name"
+       autocomplete="name"
+       autocapitalize="words"
+       inputmode="text"
+       required>
 
-    // --- 退館QRコード画面 ---
-    function renderExitQr() {
-      document.getElementById('main-container').innerHTML = `
-        <h1>${i18n[currentLang].exit}</h1>
-        <div class="qr-section">
-          <div id="qr-reader"></div>
-          <div id="qr-result" style="margin-top:8px;"></div>
-        </div>
-        <div id="exit-error" class="error" style="display:none;"></div>
-        <button type="button" class="btn" style="background:#eee;color:#222;" id="back-btn">${i18n[currentLang].back}</button>
+        <input type="text"
+               name="visitorCard[]"
+               placeholder="${lang==='en'?'Card No.':'VC No.'}"
+               data-ja-placeholder="VC No."
+               data-en-placeholder="Card No."
+               inputmode="numeric"
+               pattern="[0-9]*"
+               required>
       `;
-      document.getElementById('back-btn').onclick = renderTop;
-      startQrScanExit();
-    }
+      
+      // 日本語入力に対応した入力フィールド
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.name = 'visitorName[]';
+      nameInput.lang = 'ja';
+      nameInput.placeholder = lang==='en'?'Name':'お名前';
+      nameInput.setAttribute('data-ja-placeholder', 'お名前');
+      nameInput.setAttribute('data-en-placeholder', 'Name');
+      nameInput.autocomplete = 'name';
+      nameInput.autocapitalize = 'words';
+      nameInput.inputmode = 'text';
+      nameInput.required = true;
+      
+      const cardInput = document.createElement('input');
+      cardInput.type = 'text';
+      cardInput.name = 'visitorCard[]';
+      cardInput.placeholder = lang==='en'?'Card No.':'VC No.';
+      cardInput.setAttribute('data-ja-placeholder', 'VC No.');
+      cardInput.setAttribute('data-en-placeholder', 'Card No.');
+      cardInput.inputmode = 'numeric';
+      cardInput.pattern = '[0-9]*';
+      cardInput.required = true;
+      
+      div.appendChild(nameInput);
+      div.appendChild(cardInput);
+section.appendChild(div);
+}
 
-    // --- QRコード読み取り（退館） ---
-    function startQrScanExit() {
-      const qrReaderDiv = document.getElementById('qr-reader');
-      const resultDiv = document.getElementById('qr-result');
-      if (html5QrCodeScanner) html5QrCodeScanner.clear();
-      html5QrCodeScanner = new Html5Qrcode("qr-reader");
-      resultDiv.textContent = i18n[currentLang].qrReading;
-      html5QrCodeScanner.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: 200 },
-        async (decodedText) => {
-          resultDiv.textContent = i18n[currentLang].qrReadSuccess + decodedText;
-          html5QrCodeScanner.stop();
-          await processExit(decodedText);
-        },
-        (error) => { /* ignore scan errors */ }
-      );
-    }
-
-    // --- 退館処理 ---
-    async function processExit(cardNumber) {
-      const lang = i18n[currentLang];
-      const errorDiv = document.getElementById('exit-error');
-      errorDiv.style.display = 'none';
-      document.getElementById('qr-result').textContent = lang.exitProcessing;
-      try {
-        // 入館中のレコード検索
-        const record = await kintoneFindEntryRecord(cardNumber);
-        if (!record) {
-          errorDiv.textContent = lang.exitNotFound;
-          errorDiv.style.display = '';
-          return;
+    document.getElementById('visitorForm').addEventListener('change',()=>{
+    document.getElementById('visitorForm').addEventListener('change', function(e) {
+document.getElementById('submitBtn').disabled = !document.getElementById('agree').checked;
+});
+    
+    // チェックボックスのタップエリアを拡大
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('input[type="checkbox"]').forEach(function(checkbox) {
+        const parent = checkbox.parentElement;
+        if(parent) {
+          parent.style.cursor = 'pointer';
+          parent.addEventListener('click', function(e) {
+            // チェックボックス自体のクリックは通常処理
+            if(e.target !== checkbox) {
+              checkbox.checked = !checkbox.checked;
+              // イベント発火
+              const event = new Event('change', { bubbles: true });
+              checkbox.dispatchEvent(event);
+            }
+          });
         }
-        // ステータス・退館時刻更新
-        await kintoneUpdateRecord(record.$id.value, {
-          [STATUS_FIELD]: { value: '退館' },
-          [EXIT_DATETIME_FIELD]: { value: new Date().toISOString() }
-        });
-        document.getElementById('main-container').innerHTML = `
-          <div class="success">${lang.exitSuccess}</div>
-          <button type="button" class="btn" id="back-btn">${lang.back}</button>
-        `;
-        document.getElementById('back-btn').onclick = renderTop;
-      } catch (err) {
-        errorDiv.textContent = lang.error;
-        errorDiv.style.display = '';
-      }
-    }
-
-    // --- kintone API: レコード追加 ---
-    async function kintoneAddRecord(record) {
-      const url = `https://${KINTONE_DOMAIN}/k/v1/record.json`;
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Cybozu-API-Token': KINTONE_API_TOKEN
-        },
-        body: JSON.stringify({
-          app: KINTONE_APP_ID,
-          record
-        })
       });
-      if (!res.ok) throw new Error('kintone add error');
-      return await res.json();
-    }
-
-    // --- kintone API: レコード検索 ---
-    async function kintoneFindEntryRecord(cardNumber) {
-      const url = `https://${KINTONE_DOMAIN}/k/v1/records.json?app=${KINTONE_APP_ID}&query=${encodeURIComponent(`${CARD_FIELD} = "${cardNumber}" and ${STATUS_FIELD} = "入館中"`)}`;
-      const res = await fetch(url, {
-        headers: { 'X-Cybozu-API-Token': KINTONE_API_TOKEN }
-      });
-      if (!res.ok) throw new Error('kintone find error');
-      const data = await res.json();
-      return data.records && data.records.length > 0 ? data.records[0] : null;
-    }
-
-    // --- kintone API: レコード更新 ---
-    async function kintoneUpdateRecord(recordId, updateObj) {
-      const url = `https://${KINTONE_DOMAIN}/k/v1/record.json`;
-      const res = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Cybozu-API-Token': KINTONE_API_TOKEN
-        },
-        body: JSON.stringify({
-          app: KINTONE_APP_ID,
-          id: recordId,
-          record: updateObj
-        })
-      });
-      if (!res.ok) throw new Error('kintone update error');
-      return await res.json();
-    }
-
-    // --- 言語切替時の再描画 ---
-    window.addEventListener('popstate', () => renderTop());
-  </script>
+    });
+</script>
 </body>
 </html>
