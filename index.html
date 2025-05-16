@@ -382,4 +382,110 @@
       });
     }
     function renderPurposeOptions() {
-      const t = LANGUAGES[currentLang
+      const t = LANGUAGES[currentLang];
+      const group = document.getElementById("purpose-group");
+      group.innerHTML = "";
+      t.purposes.forEach((purpose, idx) => {
+        const id = "purpose_" + idx;
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = id;
+        checkbox.name = "purpose";
+        checkbox.value = purpose;
+        const label = document.createElement("label");
+        label.htmlFor = id;
+        label.className = "checkbox-label";
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(" " + purpose));
+        group.appendChild(label);
+      });
+    }
+    function addVisitorEntry(name = "", card = "") {
+      const t = LANGUAGES[currentLang];
+      const row = document.createElement("div");
+      row.className = "visitor-entry";
+      row.dataset.vid = visitorIdSeq++;
+      const nameInput = document.createElement("input");
+      nameInput.type = "text";
+      nameInput.className = "visitor-name";
+      nameInput.placeholder = t.visitorName;
+      nameInput.value = name;
+      const cardInput = document.createElement("input");
+      cardInput.type = "number";
+      cardInput.className = "visitor-card";
+      cardInput.placeholder = t.cardNumber;
+      cardInput.value = card;
+      cardInput.min = "0";
+      cardInput.inputmode = "numeric";
+      cardInput.pattern = "\\d*";
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "visitor-remove-btn";
+      removeBtn.textContent = t.remove;
+      removeBtn.onclick = function() { row.remove(); };
+      row.appendChild(nameInput);
+      row.appendChild(cardInput);
+      row.appendChild(removeBtn);
+      document.getElementById("visitor-list").appendChild(row);
+    }
+    function ensureOneVisitor() {
+      const list = document.getElementById("visitor-list");
+      if (list.children.length === 0) { addVisitorEntry(); }
+    }
+    function switchLang(lang) {
+      currentLang = lang;
+      document.querySelectorAll(".lang-btn").forEach(btn =>
+        btn.classList.toggle("active", btn.getAttribute("data-lang") === lang)
+      );
+      renderFormTexts();
+    }
+    function setDefaultDateTime() {
+      const now = new Date();
+      const dtStr = now.toISOString().slice(0,16);
+      document.getElementById("entry-datetime").value = dtStr;
+      now.setHours(now.getHours()+1);
+      const tStr = now.toTimeString().slice(0,5);
+      document.getElementById("exit-time").value = tStr;
+    }
+    function validateForm(e) {
+      const t = LANGUAGES[currentLang];
+      let ok = true;
+      if (!document.getElementById("company").value.trim()) { showError("error-company", t.errors.company); ok = false; }
+      else hideError("error-company");
+      if (!document.getElementById("entry-datetime").value) { showError("error-entry", t.errors.entry); ok = false; }
+      else hideError("error-entry");
+      if (!document.getElementById("exit-time").value) { showError("error-exit", t.errors.exit); ok = false; }
+      else hideError("error-exit");
+      const vlist = document.getElementById("visitor-list");
+      let filled = false;
+      Array.from(vlist.children).forEach(row => {
+        const name = row.querySelector(".visitor-name").value.trim();
+        const card = row.querySelector(".visitor-card").value.trim();
+        if (name && card) filled = true;
+      });
+      if (!filled) { showError("error-visitors", t.errors.visitors); ok = false; }
+      else hideError("error-visitors");
+      const purposes = Array.from(document.querySelectorAll('#purpose-group input[type="checkbox"]')).filter(cb=>cb.checked);
+      if (purposes.length === 0) { showError("error-purpose", t.errors.purpose); ok = false; }
+      else hideError("error-purpose");
+      if (!document.getElementById("notice-confirm").checked) { showError("error-notice", t.errors.notice); ok = false; }
+      else hideError("error-notice");
+      if (!ok) e.preventDefault();
+      return ok;
+    }
+    function showError(id, msg) { const el = document.getElementById(id); el.textContent = msg; el.style.display = ""; }
+    function hideError(id) { const el = document.getElementById(id); el.textContent = ""; el.style.display = "none"; }
+    document.addEventListener("DOMContentLoaded", function() {
+      document.querySelectorAll(".lang-btn").forEach(btn => {
+        btn.addEventListener("click", e => { switchLang(btn.getAttribute("data-lang")); });
+      });
+      renderPurposeOptions();
+      addVisitorEntry();
+      document.getElementById("add-visitor-btn").addEventListener("click", function() { addVisitorEntry(); });
+      setDefaultDateTime();
+      renderFormTexts();
+      document.getElementById("visit-form").addEventListener("submit", validateForm);
+    });
+  </script>
+</body>
+</html>
