@@ -43,14 +43,9 @@
   </form>
   <script>
     document.addEventListener("DOMContentLoaded", function(){
-      addVisitorEntry();
+      // 初期表示では visitor-entry を1つも追加しない！
       document.getElementById("add-visitor-btn").addEventListener("click",()=>addVisitorEntry());
-      // ★ フォーカス自動付与（iOS Safari IME復活対策）
-      setTimeout(function(){
-        var nameInput = document.querySelector('.visitor-name');
-        if(nameInput) { nameInput.focus(); nameInput.blur(); }
-      }, 200);
-
+      // 必要に応じて自動で1件目を追加する場合は、setTimeout等で「明示的な操作後」にする
       document.getElementById("visit-form").addEventListener("submit",function(e){
         let ok = false;
         let vlist = document.getElementById("visitor-list");
@@ -104,6 +99,8 @@
       row.appendChild(cardInput);
       row.appendChild(removeBtn);
       document.getElementById("visitor-list").appendChild(row);
+      // 追加直後にfocus（iOS IME出現期待）
+      nameInput.focus();
     }
   </script>
 </body>
