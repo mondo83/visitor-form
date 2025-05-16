@@ -2,6 +2,7 @@ function getOfficeFromURL() {
   const url = new URL(window.location.href);
   return url.searchParams.get("office") || "";
 }
+
 document.addEventListener("DOMContentLoaded", function(){
   // 事業所表示とhidden input
   const office = getOfficeFromURL();
@@ -12,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function(){
     hiddenOffice.name = "office";
     hiddenOffice.value = office;
     document.getElementById("visit-form").appendChild(hiddenOffice);
-    // 表示ラベル（そのまま表示）
+    // 表示ラベル
     document.getElementById("office-display").textContent = office;
   }
   // 日付・時刻の初期値
@@ -22,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function(){
   document.getElementById("entry-time").value = pad(now.getHours()) + ":" + pad(now.getMinutes());
   let plus1h = new Date(now.getTime() + 60*60*1000);
   document.getElementById("exit-time").value = pad(plus1h.getHours()) + ":" + pad(plus1h.getMinutes());
+
   // 来所目的
   const purposes = [
     "施設調査/監査","見学・データ調査（会議）","打合せ（会議）",
@@ -37,11 +39,16 @@ document.addEventListener("DOMContentLoaded", function(){
     label.appendChild(cb);label.append(" "+purpose);
     group.appendChild(label);
   });
-  // ビジター行
+
+  // ビジター行（最初の1行を追加）
   addVisitorEntry();
   document.getElementById("add-visitor-btn").addEventListener("click",()=>addVisitorEntry());
-  // バリデーション
-  document.getElementById("visit-form").addEventListener("submit",function(e){
+
+  // フォーム送信イベント（Netlify FunctionsにPOST）
+  document.getElementById("visit-form").addEventListener("submit", async function(e){
+    e.preventDefault();
+
+    // ===== バリデーション =====
     let ok = true;
     // 会社名
     if(!document.getElementById("company").value.trim()){
@@ -60,8 +67,8 @@ document.addEventListener("DOMContentLoaded", function(){
       showError("error-exit","退館予定時刻を入力してください。"); ok=false;
     }else{hideError("error-exit");}
     // 来所目的
-    const purposes = Array.from(document.querySelectorAll('#purpose-group input[type="checkbox"]')).filter(cb=>cb.checked);
-    if(purposes.length === 0){
+    const checkedPurposes = Array.from(document.querySelectorAll('#purpose-group input[type="checkbox"]')).filter(cb=>cb.checked);
+    if(checkedPurposes.length === 0){
       showError("error-purpose","来所目的を選択してください。"); ok=false;
     }else{hideError("error-purpose");}
     // ビジター番号＆氏名
@@ -85,11 +92,50 @@ document.addEventListener("DOMContentLoaded", function(){
     if(!noticeChk.checked){
       showError("error-notice","注意事項を確認してください。"); ok=false;
     }else{hideError("error-notice");}
-    if(!ok) e.preventDefault();
+    if(!ok) return;
+
+    // ===== ここから送信処理 =====
+
+    // 入力値の取得とrecord組み立て
+    const company = document.getElementById('company').value.trim();
+    const entryDate = document.getElementById('entry-date').value;
+    const entryTime = document.getElementById('entry-time').value;
+    const exitTime  = document.getElementById('exit-time').value;
+    const office    = getOfficeFromURL();
+    const purposes = checkedPurposes.map(cb=>cb.value);
+
+    const visitorRows = Array.from(document.querySelectorAll('.visitor-entry')).map(row => ({
+      value: {
+        visitor_name: { value: row.querySelector('.visitor-name').value.trim() },
+        visitor_card: { value: row.querySelector('.visitor-card').value.trim() }
+      }
+    }));
+
+    // Kintoneのフィールドコードにあわせて
+    const record = {
+      company:        { value: company },
+      entry_datetime: { value: `${entryDate}T${entryTime}:00Z` }, // 形式調整
+      exit_time:      { value: exitTime },
+      purpose:        { value: purposes },
+      office:         { value: office },
+      visitorTable:   { value: visitorRows }
+    };
+
+    try {
+      const recordId = await sendToNetlify(record);
+      alert("登録完了！ID: " + recordId);
+      location.reload();
+    } catch(err) {
+      alert("送信に失敗しました: " + err.message);
+    }
   });
+
+  // エラー表示用
   function showError(id,msg){const el=document.getElementById(id); el.textContent=msg; el.style.display="";}
   function hideError(id){const el=document.getElementById(id); el.textContent=""; el.style.display="none";}
 });
+
+// ビジター行追加
 function addVisitorEntry() {
   const row = document.createElement("div");
   row.className = "visitor-entry";
@@ -115,4 +161,17 @@ function addVisitorEntry() {
   row.appendChild(nameInput);
   row.appendChild(removeBtn);
   document.getElementById("visitor-list").appendChild(row);
+}
+
+// Netlify Functions送信用
+async function sendToNetlify(record) {
+  const response = await fetch('/.netlify/functions/sendToKintone', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ record })
+  });
+  const result = await response.json();
+
+  if (!response.ok) throw new Error("登録失敗: " + JSON.stringify(result.error));
+  return result.id;
 }
