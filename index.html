@@ -210,8 +210,6 @@
       h1 { font-size: 1.4em; }
       .form-group, .checkbox-group { font-size: 1em;}
     }
-    /* 追加予定フィールドのコメントアウト位置を明示 */
-    /* .future-feature { border: 2px dashed #aaa; margin: 2em 0; padding: 1em;} */
   </style>
 </head>
 <body>
@@ -243,18 +241,14 @@
 
     <div class="form-group">
       <label id="label-visitors">氏名・ビジターカード番号<span class="required">*</span></label>
-      <div class="visitor-list" id="visitor-list">
-        <!-- JSでエントリー追加 -->
-      </div>
+      <div class="visitor-list" id="visitor-list"></div>
       <button type="button" class="add-visitor-btn" id="add-visitor-btn">＋ 追加</button>
       <div class="error-msg" id="error-visitors"></div>
     </div>
 
     <div class="form-group">
       <label id="label-purpose">来所目的<span class="required">*</span></label>
-      <div class="checkbox-group" id="purpose-group">
-        <!-- JSで追加 -->
-      </div>
+      <div class="checkbox-group" id="purpose-group"></div>
       <div class="error-msg" id="error-purpose"></div>
     </div>
 
@@ -267,15 +261,11 @@
       </div>
       <div class="error-msg" id="error-notice"></div>
     </div>
-
-    <!-- 追加しやすい構造（例：QRコード/音声/手書き署名） -->
-    <!-- <div class="future-feature">QRコード読取欄（将来追加）</div> -->
-
     <button type="submit" class="submit-btn" id="submit-btn">送信</button>
   </form>
 
   <script>
-    // ======== 多言語テキスト定義 ========
+    // 多言語テキスト
     const LANGUAGES = {
       ja: {
         title: "来訪者受付フォーム",
@@ -298,7 +288,14 @@
           "その他"
         ],
         notice: "注意事項",
-        noticeText: `・試験エリアには化学物質や有機溶媒が置かれています。それらに接触することにより眼や皮膚が障害されたり、吸収されて健康被害を惹き起こす可能性があります。そのため、試験エリアに立ち入る際には、肌の露出を避ける服装でご入室してください。また、化学物質等に接触の可能性が高い場合は保護具（マスク、ゴーグル、グローブ、白衣）を貸与致しますので、弊社社員にお申し付けください。\n・試験エリアには機器や設備が机上や足元に設置されています。それらに接触すると衣服が破れたり、けがをする恐れがありますのでご注意願います。\n・試験エリアで作業される際には、弊社の生産活動に支障をきたすことのないように安全には十分ご注意いただくとともに、弊社社員の指示には必ず従っていただきますようお願いします。\n・サンプル（生体試料、原薬、製剤等）の保存エリアに立ち入る際は、設置機器・設備の停止、誤操作、破損/汚損にご留意願います。異常発生時には速やかに弊社社員に連絡願います。また、本エリアの温度変動を最小限にするため、ドアの開閉は速やかにお願いします。\n・急な発熱や体調不良が発生した場合は弊社社員への連絡をお願いします。また、火災や災害時などの緊急時は弊社社員の指示に従って避難をお願いします。\n・施設内ではビジターカード(VC)をご着用願います。また、指定場所以外での飲食はご遠慮願います。\n・施設内で知り得た情報の第三者開示、写真撮影、動画撮影は禁止しますのでご了承願います。\n・当方の一方的過失以外の事故などについては、一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。`,
+        noticeText: `・試験エリアには化学物質や有機溶媒が置かれています。それらに接触することにより眼や皮膚が障害されたり、吸収されて健康被害を惹き起こす可能性があります。そのため、試験エリアに立ち入る際には、肌の露出を避ける服装でご入室してください。また、化学物質等に接触の可能性が高い場合は保護具（マスク、ゴーグル、グローブ、白衣）を貸与致しますので、弊社社員にお申し付けください。
+・試験エリアには機器や設備が机上や足元に設置されています。それらに接触すると衣服が破れたり、けがをする恐れがありますのでご注意願います。
+・試験エリアで作業される際には、弊社の生産活動に支障をきたすことのないように安全には十分ご注意いただくとともに、弊社社員の指示には必ず従っていただきますようお願いします。
+・サンプル（生体試料、原薬、製剤等）の保存エリアに立ち入る際は、設置機器・設備の停止、誤操作、破損/汚損にご留意願います。異常発生時には速やかに弊社社員に連絡願います。また、本エリアの温度変動を最小限にするため、ドアの開閉は速やかにお願いします。
+・急な発熱や体調不良が発生した場合は弊社社員への連絡をお願いします。また、火災や災害時などの緊急時は弊社社員の指示に従って避難をお願いします。
+・施設内ではビジターカード(VC)をご着用願います。また、指定場所以外での飲食はご遠慮願います。
+・施設内で知り得た情報の第三者開示、写真撮影、動画撮影は禁止しますのでご了承願います。
+・当方の一方的過失以外の事故などについては、一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。`,
         noticeConfirm: "注意事項を確認しました",
         submit: "送信",
         required: "必須",
@@ -334,7 +331,14 @@
           "Other"
         ],
         notice: "Notice",
-        noticeText: `- Chemicals and organic solvents are present in the test area. Contact with them may harm your eyes or skin, or cause health issues by absorption. Wear clothing that covers your skin when entering the test area. If you may come into contact with chemicals, we will provide protective equipment (masks, goggles, gloves, lab coats); please consult our staff.\n- Equipment and devices are placed on desks or near your feet in the test area. Contact may tear your clothing or cause injury; please be careful.\n- When working in the test area, be sure to follow staff instructions and take care not to interfere with our production activities or safety procedures.\n- When entering storage areas for samples (biological, APIs, formulations, etc.), please avoid stopping or mishandling equipment, and prevent any damage or contamination. Contact staff immediately if you notice anything abnormal. To minimize temperature fluctuations, please open and close doors promptly.\n- If you develop a sudden fever or feel unwell, notify our staff. In case of fire or disaster, follow the evacuation instructions.\n- Please wear your visitor card (VC) while on premises. Do not eat or drink except in designated areas.\n- Do not disclose information, take photos, or record videos inside the facility.\n- We accept no liability for accidents except those caused solely by our fault. Please take all possible precautions to prevent accidents.`,
+        noticeText: `- Chemicals and organic solvents are present in the test area. Contact with them may harm your eyes or skin, or cause health issues by absorption. Wear clothing that covers your skin when entering the test area. If you may come into contact with chemicals, we will provide protective equipment (masks, goggles, gloves, lab coats); please consult our staff.
+- Equipment and devices are placed on desks or near your feet in the test area. Contact may tear your clothing or cause injury; please be careful.
+- When working in the test area, be sure to follow staff instructions and take care not to interfere with our production activities or safety procedures.
+- When entering storage areas for samples (biological, APIs, formulations, etc.), please avoid stopping or mishandling equipment, and prevent any damage or contamination. Contact staff immediately if you notice anything abnormal. To minimize temperature fluctuations, please open and close doors promptly.
+- If you develop a sudden fever or feel unwell, notify our staff. In case of fire or disaster, follow the evacuation instructions.
+- Please wear your visitor card (VC) while on premises. Do not eat or drink except in designated areas.
+- Do not disclose information, take photos, or record videos inside the facility.
+- We accept no liability for accidents except those caused solely by our fault. Please take all possible precautions to prevent accidents.`,
         noticeConfirm: "I have read and agree to the notice",
         submit: "Submit",
         required: "required",
@@ -351,30 +355,216 @@
       }
     };
 
-    // ======== 状態変数 ========
+    // 状態
     let currentLang = "ja";
-    let visitorCount = 0;
+    let visitorIdSeq = 1;
 
-    // ======== ユーティリティ ========
-    function setTextContent(id, text) {
-      const el = document.getElementById(id);
-      if (el) el.textContent = text;
+    // ユーティリティ
+    function spanRequired() { return `<span class="required">*</span>`; }
+
+    // ---- フォーム描画 ----
+    function renderFormTexts() {
+      const t = LANGUAGES[currentLang];
+      document.getElementById("form-title").textContent = t.title;
+      document.getElementById("label-company").innerHTML = t.company + spanRequired();
+      document.getElementById("label-entry").innerHTML = t.entry + spanRequired();
+      document.getElementById("label-exit").innerHTML = t.exit + spanRequired();
+      document.getElementById("label-visitors").innerHTML = t.visitors + spanRequired();
+      document.getElementById("add-visitor-btn").textContent = t.addVisitor;
+      document.getElementById("label-purpose").innerHTML = t.purpose + spanRequired();
+      document.getElementById("label-notice").textContent = t.notice;
+      document.getElementById("notice-text").textContent = t.noticeText;
+      document.getElementById("label-notice-confirm").innerHTML = t.noticeConfirm + spanRequired();
+      document.getElementById("submit-btn").textContent = t.submit;
+      renderPurposeOptions();
+      // visitor entry のラベルとプレースホルダー切替
+      document.querySelectorAll(".visitor-entry").forEach(function(row) {
+        row.querySelector(".visitor-name").placeholder = t.visitorName;
+        row.querySelector(".visitor-name-label").textContent = t.visitorName;
+        row.querySelector(".visitor-card").placeholder = t.cardNumber;
+        row.querySelector(".visitor-card-label").textContent = t.cardNumber;
+        row.querySelector(".visitor-remove-btn").textContent = t.remove;
+      });
     }
 
-    // ======== 言語切替 ========
+    // 来所目的のチェックボックス
+    function renderPurposeOptions() {
+      const t = LANGUAGES[currentLang];
+      const group = document.getElementById("purpose-group");
+      group.innerHTML = "";
+      t.purposes.forEach((purpose, idx) => {
+        const id = "purpose_" + idx;
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = id;
+        checkbox.name = "purpose";
+        checkbox.value = purpose;
+
+        const label = document.createElement("label");
+        label.htmlFor = id;
+        label.className = "checkbox-label";
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(" " + purpose));
+        group.appendChild(label);
+      });
+    }
+
+    // ビジター欄の行追加
+    function addVisitorEntry(name = "", card = "") {
+      const t = LANGUAGES[currentLang];
+      const row = document.createElement("div");
+      row.className = "visitor-entry";
+      row.dataset.vid = visitorIdSeq++;
+
+      // 氏名
+      const nameLabel = document.createElement("label");
+      nameLabel.className = "visitor-name-label";
+      nameLabel.textContent = t.visitorName;
+      const nameInput = document.createElement("input");
+      nameInput.type = "text";
+      nameInput.className = "visitor-name";
+      nameInput.placeholder = t.visitorName;
+      nameInput.value = name;
+
+      // カード番号
+      const cardLabel = document.createElement("label");
+      cardLabel.className = "visitor-card-label";
+      cardLabel.textContent = t.cardNumber;
+      const cardInput = document.createElement("input");
+      cardInput.type = "number";
+      cardInput.className = "visitor-card";
+      cardInput.placeholder = t.cardNumber;
+      cardInput.value = card;
+      cardInput.min = "0";
+      cardInput.inputmode = "numeric";
+      cardInput.pattern = "\\d*";
+
+      // 削除ボタン
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "visitor-remove-btn";
+      removeBtn.textContent = t.remove;
+      removeBtn.onclick = function() {
+        row.remove();
+      };
+
+      row.appendChild(nameLabel);
+      row.appendChild(nameInput);
+      row.appendChild(cardLabel);
+      row.appendChild(cardInput);
+      row.appendChild(removeBtn);
+
+      document.getElementById("visitor-list").appendChild(row);
+    }
+
+    // visitor-listを1つ以上に保つ
+    function ensureOneVisitor() {
+      const list = document.getElementById("visitor-list");
+      if (list.children.length === 0) {
+        addVisitorEntry();
+      }
+    }
+
+    // 言語切替
     function switchLang(lang) {
       currentLang = lang;
-      const t = LANGUAGES[lang];
-      document.documentElement.lang = lang;
-      setTextContent("form-title", t.title);
-      setTextContent("label-company", t.company + spanRequired());
-      setTextContent("label-entry", t.entry + spanRequired());
-      setTextContent("label-exit", t.exit + spanRequired());
-      setTextContent("label-visitors", t.visitors + spanRequired());
-      setTextContent("label-purpose", t.purpose + spanRequired());
-      setTextContent("label-notice", t.notice);
-      document.getElementById("notice-text").textContent = t.noticeText;
-      setTextContent("label-notice-confirm", t.noticeConfirm + spanRequired());
-      setTextContent("submit-btn", t.submit);
-      document.getElementById("add-visitor-btn").textContent = t.addVisitor;
+      document.querySelectorAll(".lang-btn").forEach(btn =>
+        btn.classList.toggle("active", btn.getAttribute("data-lang") === lang)
+      );
+      renderFormTexts();
+    }
+
+    // デフォルト日付時刻セット
+    function setDefaultDateTime() {
+      const now = new Date();
+      const dtStr = now.toISOString().slice(0,16);
+      document.getElementById("entry-datetime").value = dtStr;
+      now.setHours(now.getHours()+1);
+      const tStr = now.toTimeString().slice(0,5);
+      document.getElementById("exit-time").value = tStr;
+    }
+
+    // バリデーション&エラーメッセージ
+    function validateForm(e) {
+      const t = LANGUAGES[currentLang];
+      let ok = true;
+
+      // 会社名
+      if (!document.getElementById("company").value.trim()) {
+        showError("error-company", t.errors.company); ok = false;
+      } else hideError("error-company");
+
+      // 入館日時
+      if (!document.getElementById("entry-datetime").value) {
+        showError("error-entry", t.errors.entry); ok = false;
+      } else hideError("error-entry");
+
+      // 退館予定時刻
+      if (!document.getElementById("exit-time").value) {
+        showError("error-exit", t.errors.exit); ok = false;
+      } else hideError("error-exit");
+
+      // ビジター欄
+      const vlist = document.getElementById("visitor-list");
+      let filled = false;
+      Array.from(vlist.children).forEach(row => {
+        const name = row.querySelector(".visitor-name").value.trim();
+        const card = row.querySelector(".visitor-card").value.trim();
+        if (name && card) filled = true;
+      });
+      if (!filled) {
+        showError("error-visitors", t.errors.visitors); ok = false;
+      } else hideError("error-visitors");
+
+      // 来所目的
+      const purposes = Array.from(document.querySelectorAll('#purpose-group input[type="checkbox"]')).filter(cb=>cb.checked);
+      if (purposes.length === 0) {
+        showError("error-purpose", t.errors.purpose); ok = false;
+      } else hideError("error-purpose");
+
+      // 注意事項確認
+      if (!document.getElementById("notice-confirm").checked) {
+        showError("error-notice", t.errors.notice); ok = false;
+      } else hideError("error-notice");
+
+      if (!ok) e.preventDefault();
+      return ok;
+    }
+    function showError(id, msg) {
+      const el = document.getElementById(id); el.textContent = msg; el.style.display = "";
+    }
+    function hideError(id) {
+      const el = document.getElementById(id); el.textContent = ""; el.style.display = "none";
+    }
+
+    // --------------- 初期化
+    document.addEventListener("DOMContentLoaded", function() {
+      // 言語ボタン
+      document.querySelectorAll(".lang-btn").forEach(btn => {
+        btn.addEventListener("click", e => {
+          switchLang(btn.getAttribute("data-lang"));
+        });
+      });
+      // 来所目的生成
       renderPurposeOptions();
+
+      // ビジター初期欄
+      addVisitorEntry();
+
+      // ビジター追加
+      document.getElementById("add-visitor-btn").addEventListener("click", function() {
+        addVisitorEntry();
+      });
+
+      // 入館日時/退館時刻デフォルト
+      setDefaultDateTime();
+
+      // 言語切替でラベル全再描画
+      renderFormTexts();
+
+      // フォーム送信バリデーション
+      document.getElementById("visit-form").addEventListener("submit", validateForm);
+    });
+  </script>
+</body>
+</html>
