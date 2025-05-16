@@ -10,12 +10,12 @@
     h1 { text-align: center; font-size: 1.6em; margin-bottom: 1.2em; }
     .form-group { margin-bottom: 1.4em; }
     label { font-weight: 500; font-size: 1.08em; display: block; margin-bottom: 0.5em; }
-    input[type="text"], input[type="datetime-local"], input[type="time"] {
+    input[type="text"], input[type="date"], input[type="time"] {
       font-size: 1.1em; padding: 1em 0.8em; border: 1.5px solid #dbeafe;
       border-radius: 1.2em; outline: none; width: 100%; margin-bottom:0.3em; box-sizing: border-box;
       transition: border 0.2s;
     }
-    input[type="text"]:focus, input[type="datetime-local"]:focus, input[type="time"]:focus {
+    input[type="text"]:focus, input[type="date"]:focus, input[type="time"]:focus {
       border: 1.5px solid #2563eb;
       background: #e0e7ef;
     }
@@ -54,9 +54,14 @@
         <div class="error-msg" id="error-company"></div>
       </div>
       <div class="form-group">
-        <label for="entry-datetime">入館日時 <span class="required">*</span></label>
-        <input type="datetime-local" id="entry-datetime" name="entry-datetime" required>
-        <div class="error-msg" id="error-entry"></div>
+        <label for="entry-date">入館日 <span class="required">*</span></label>
+        <input type="date" id="entry-date" name="entry-date" required>
+        <div class="error-msg" id="error-entry-date"></div>
+      </div>
+      <div class="form-group">
+        <label for="entry-time">入館時刻 <span class="required">*</span></label>
+        <input type="time" id="entry-time" name="entry-time" required>
+        <div class="error-msg" id="error-entry-time"></div>
       </div>
       <div class="form-group">
         <label for="exit-time">退館予定時刻 <span class="required">*</span></label>
@@ -96,16 +101,19 @@
     </form>
   </div>
   <script>
-    // 初期値の設定
     document.addEventListener("DOMContentLoaded", function(){
-      // 入館日時：現在時刻
+      // 日付・時刻の初期値
       const now = new Date();
-      document.getElementById("entry-datetime").value = now.toISOString().slice(0,16);
-      // 退館予定時刻：+1時間
-      now.setHours(now.getHours()+1);
-      document.getElementById("exit-time").value = now.toTimeString().slice(0,5);
+      const pad = n => n.toString().padStart(2,'0');
+      // 入館日
+      document.getElementById("entry-date").value = now.getFullYear() + "-" + pad(now.getMonth()+1) + "-" + pad(now.getDate());
+      // 入館時刻
+      document.getElementById("entry-time").value = pad(now.getHours()) + ":" + pad(now.getMinutes());
+      // 退館予定時刻
+      let plus1h = new Date(now.getTime() + 60*60*1000);
+      document.getElementById("exit-time").value = pad(plus1h.getHours()) + ":" + pad(plus1h.getMinutes());
 
-      // 来所目的チェックボックス
+      // 来所目的
       const purposes = [
         "施設調査/監査","見学・データ調査（会議）","打合せ（会議）",
         "点検/修理","納品/納入","清掃","その他"
@@ -121,7 +129,7 @@
         group.appendChild(label);
       });
 
-      // 最初のビジター行
+      // ビジター行
       addVisitorEntry();
       document.getElementById("add-visitor-btn").addEventListener("click",()=>addVisitorEntry());
 
@@ -132,10 +140,14 @@
         if(!document.getElementById("company").value.trim()){
           showError("error-company","会社名を入力してください。"); ok=false;
         }else{hideError("error-company");}
-        // 入館日時
-        if(!document.getElementById("entry-datetime").value){
-          showError("error-entry","入館日時を入力してください。"); ok=false;
-        }else{hideError("error-entry");}
+        // 入館日
+        if(!document.getElementById("entry-date").value){
+          showError("error-entry-date","入館日を入力してください。"); ok=false;
+        }else{hideError("error-entry-date");}
+        // 入館時刻
+        if(!document.getElementById("entry-time").value){
+          showError("error-entry-time","入館時刻を入力してください。"); ok=false;
+        }else{hideError("error-entry-time");}
         // 退館予定時刻
         if(!document.getElementById("exit-time").value){
           showError("error-exit","退館予定時刻を入力してください。"); ok=false;
