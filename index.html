@@ -5,504 +5,142 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>来訪者受付フォーム / Visitor Check-In</title>
   <style>
-    :root {
-      --main-color: #2563eb;
-      --accent-color: #22d3ee;
-      --bg-color: #f4f8fb;
-      --text-color: #222;
-      --danger: #e11d48;
-      --button-size: 1.3em;
-      --input-height: 3.2rem;
-      --radius: 1.2em;
-    }
-    body {
-      background: var(--bg-color);
-      color: var(--text-color);
-      font-family: "Segoe UI", "Yu Gothic", sans-serif;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-    }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 2vw 4vw 0 4vw;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-    .lang-switch {
-      display: flex;
-      gap: 1em;
-    }
-    .lang-btn {
-      background: var(--main-color);
-      color: #fff;
-      border: none;
-      border-radius: 0.8em;
-      font-size: 1.1em;
-      font-weight: bold;
-      padding: 0.5em 1.2em;
-      cursor: pointer;
-      opacity: 0.7;
-      transition: opacity .2s;
-    }
-    .lang-btn.active, .lang-btn:focus {
-      opacity: 1;
-      outline: 2px solid var(--accent-color);
-    }
-    h1 {
-      font-size: 2em;
-      margin: 0.6em 0 0.2em 0;
-    }
-    .desc {
-      color: #555;
-      font-size: 1em;
-      margin: 0 0 1em 0;
-    }
-    form {
-      background: #fff;
-      border-radius: var(--radius);
-      box-shadow: 0 4px 24px #0001;
-      max-width: 700px;
-      margin: 1.5em auto;
-      padding: 2em 4vw 2em 4vw;
-      font-size: 1.2em;
-      display: flex;
-      flex-direction: column;
-      gap: 2em;
-    }
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5em;
-      margin-bottom: 0.3em;
-    }
-    label {
-      font-weight: 500;
-      font-size: 1.1em;
-    }
-    input[type="text"], input[type="datetime-local"], input[type="time"] {
-      font-size: 1.15em;
-      padding: 0.7em;
-      border: 1.5px solid #dbeafe;
-      border-radius: var(--radius);
-      outline: none;
-      height: var(--input-height);
-      transition: border-color 0.2s;
-    }
-    input:focus {
-      border-color: var(--main-color);
-      background: #f0f7ff;
-    }
-    .visitor-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1em;
-    }
-    .visitor-entry {
-      display: flex;
-      gap: 0.7em;
-      align-items: flex-end;
-      flex-wrap: wrap;
-    }
-    .visitor-entry input.visitor-name {
-      flex: 1 1 60%;
-      min-width: 110px;
-      max-width: 300px;
-    }
-    .visitor-entry input.visitor-card {
-      width: 90px;
-      min-width: 60px;
-      max-width: 120px;
-      flex: none;
-      ime-mode: disabled;
-    }
-    .visitor-remove-btn {
-      background: var(--danger);
-      color: #fff;
-      border: none;
-      border-radius: 0.7em;
-      padding: 0.3em 0.8em;
-      font-size: 1.1em;
-      cursor: pointer;
-      opacity: 0.9;
-      transition: opacity .2s;
-      margin-left: 0.3em;
-    }
-    .visitor-remove-btn:focus {
-      outline: 2px solid var(--danger);
-      opacity: 1;
-    }
-    .add-visitor-btn {
-      background: var(--main-color);
-      color: #fff;
-      border: none;
-      border-radius: 0.7em;
-      padding: 0.6em 1.5em;
-      font-size: var(--button-size);
-      font-weight: bold;
-      margin-top: 0.6em;
-      cursor: pointer;
-      align-self: flex-end;
-      opacity: 0.95;
-      transition: opacity .2s;
-    }
-    .add-visitor-btn:focus {
-      outline: 2px solid var(--accent-color);
-      opacity: 1;
-    }
-    .checkbox-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.9em 2em;
-    }
-    .checkbox-label {
-      font-size: 1.05em;
-      display: flex;
-      align-items: center;
-      gap: 0.5em;
-      cursor: pointer;
-      user-select: none;
-    }
-    .notice-scroll {
-      max-height: 180px;
-      overflow-y: auto;
-      background: #e0e7ef;
-      padding: 1em;
-      border-radius: 0.8em;
-      font-size: 1em;
-      border: 1px solid #cbd5e1;
-      margin-bottom: 0.5em;
-      white-space: pre-line;
-    }
-    .confirm-group {
-      display: flex;
-      align-items: center;
-      gap: 1em;
-      margin-top: 0.2em;
-    }
-    .confirm-group label {
-      font-size: 1em;
-      font-weight: 400;
-    }
-    .submit-btn {
-      font-size: 1.35em;
-      background: var(--main-color);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius);
-      padding: 1em;
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 1em;
-      transition: background 0.2s;
-      box-shadow: 0 2px 10px #0002;
-    }
-    .submit-btn:active {
-      background: #1e40af;
-    }
-    .required {
-      color: var(--danger);
-      margin-left: 0.3em;
-      font-size: 0.95em;
-    }
-    .error-msg {
-      color: var(--danger);
-      margin: 0.3em 0 0 0;
-      font-size: 1em;
-      font-weight: 500;
-      display: none;
-    }
-    @media (max-width: 700px) {
-      header, form {
-        max-width: 98vw;
-        padding: 3vw;
-      }
-      h1 { font-size: 1.4em; }
-      .form-group, .checkbox-group { font-size: 1em;}
-      .visitor-entry input.visitor-name { min-width: 60px; }
-      .visitor-entry input.visitor-card { min-width: 50px; width: 60px;}
-    }
+    body { background: #f4f8fb; color: #222; font-family: "Segoe UI","Yu Gothic",sans-serif; margin:0;padding:0;}
+    header { max-width: 700px; margin: 0 auto; padding: 2vw 4vw 0 4vw; }
+    .desc { margin: 1em 0 .5em 0; color: #444; font-size: 1.1em;}
+    form { background: #fff; border-radius: 1.2em; box-shadow: 0 4px 24px #0001; max-width: 700px; margin: 1em auto; padding: 2em 4vw;}
+    .form-group { margin-bottom: 1.3em; }
+    label { font-weight: 500; font-size: 1.1em; }
+    input, select { font-size: 1.15em; padding: 0.7em; border: 1.5px solid #dbeafe; border-radius: 1.2em; outline: none; width: 100%; margin-bottom:0.5em;}
+    .visitor-list { margin-bottom: 0.7em; }
+    .visitor-entry { display: flex; gap: 0.5em; margin-bottom:0.3em;}
+    .visitor-entry input.visitor-name { flex: 2 1 0; min-width:90px;}
+    .visitor-entry input.visitor-card { flex: 1 1 0; min-width:60px; max-width:90px;}
+    .visitor-remove-btn { background: #e11d48; color: #fff; border:none; border-radius:0.7em; font-size:1em; padding:0.2em 1em; cursor:pointer;}
+    .add-visitor-btn { background: #2563eb; color:#fff; border:none; border-radius:0.7em; font-size:1.1em; font-weight:bold; padding:0.5em 1.3em; cursor:pointer;}
+    .checkbox-group { display:flex; flex-wrap:wrap; gap:0.7em 2em; }
+    .checkbox-label { font-size: 1em; }
+    .notice-scroll { max-height: 180px; overflow-y: auto; background: #e0e7ef; padding: 1em; border-radius: 0.8em; font-size: 1em; border: 1px solid #cbd5e1; margin-bottom: 0.5em; white-space: pre-line;}
+    .submit-btn { font-size: 1.2em; background: #2563eb; color: #fff; border: none; border-radius: 1.2em; padding: 1em; cursor: pointer; font-weight: bold; margin-top: 1em; }
+    .required { color:#e11d48;}
+    .error-msg { color: #e11d48; font-size:1em; margin:0.1em 0 0 0; display:none;}
   </style>
 </head>
 <body>
   <header>
     <h1 id="form-title">来訪者受付フォーム</h1>
-    <div class="lang-switch">
-      <button type="button" class="lang-btn active" data-lang="ja">JP</button>
-      <button type="button" class="lang-btn" data-lang="en">EN</button>
-    </div>
+    <div class="desc" id="desc">ビジター全員分の氏名とビジターカード番号を入力してください。</div>
+    <!-- ダミー画像でリーダーモード抑制 -->
+    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAgKAAEAOw==" alt="" width="1" height="1" style="display:block;">
   </header>
-  <div class="desc" id="desc">ビジター全員分の「氏名」と「ビジターカード番号」を入力してください。</div>
   <form id="visit-form" autocomplete="off">
     <div class="form-group">
-      <label for="company" id="label-company">会社名<span class="required">*</span></label>
+      <label for="company">会社名<span class="required">*</span></label>
       <input type="text" id="company" name="company" required autocomplete="organization">
       <div class="error-msg" id="error-company"></div>
     </div>
     <div class="form-group">
-      <label for="entry-datetime" id="label-entry">入館日時<span class="required">*</span></label>
+      <label for="entry-datetime">入館日時<span class="required">*</span></label>
       <input type="datetime-local" id="entry-datetime" name="entry-datetime" required>
       <div class="error-msg" id="error-entry"></div>
     </div>
     <div class="form-group">
-      <label for="exit-time" id="label-exit">退館予定時刻<span class="required">*</span></label>
+      <label for="exit-time">退館予定時刻<span class="required">*</span></label>
       <input type="time" id="exit-time" name="exit-time" required>
       <div class="error-msg" id="error-exit"></div>
     </div>
     <div class="form-group">
-      <label id="label-visitors">氏名・ビジターカード番号<span class="required">*</span></label>
+      <label>氏名・ビジターカード番号<span class="required">*</span></label>
       <div class="visitor-list" id="visitor-list"></div>
       <button type="button" class="add-visitor-btn" id="add-visitor-btn">＋ 追加</button>
       <div class="error-msg" id="error-visitors"></div>
     </div>
     <div class="form-group">
-      <label id="label-purpose">来所目的<span class="required">*</span></label>
+      <label>来所目的<span class="required">*</span></label>
       <div class="checkbox-group" id="purpose-group"></div>
       <div class="error-msg" id="error-purpose"></div>
     </div>
     <div class="form-group">
-      <label id="label-notice">注意事項</label>
+      <label>注意事項</label>
       <div class="notice-scroll" id="notice-text"></div>
-      <div class="confirm-group">
-        <input type="checkbox" id="notice-confirm" name="notice-confirm" required>
-        <label for="notice-confirm" id="label-notice-confirm">注意事項を確認しました<span class="required">*</span></label>
+      <div>
+        <input type="checkbox" id="notice-confirm" required>
+        <label for="notice-confirm">注意事項を確認しました<span class="required">*</span></label>
       </div>
       <div class="error-msg" id="error-notice"></div>
     </div>
-    <button type="submit" class="submit-btn" id="submit-btn">送信</button>
+    <button type="submit" class="submit-btn">送信</button>
   </form>
   <script>
-    const LANGUAGES = {
-      ja: {
-        title: "来訪者受付フォーム",
-        desc: "ビジター全員分の「氏名」と「ビジターカード番号」を入力してください。",
-        company: "会社名",
-        entry: "入館日時",
-        exit: "退館予定時刻",
-        visitors: "氏名・ビジターカード番号",
-        visitorName: "氏名",
-        cardNumber: "ビジターカード番号",
-        addVisitor: "＋ 追加",
-        remove: "削除",
-        purpose: "来所目的",
-        purposes: [
-          "施設調査/監査",
-          "見学・データ調査（会議）",
-          "打合せ（会議）",
-          "点検/修理",
-          "納品/納入",
-          "清掃",
-          "その他"
-        ],
-        notice: "注意事項",
-        noticeText: `・試験エリアには化学物質や有機溶媒が置かれています。それらに接触することにより眼や皮膚が障害されたり、吸収されて健康被害を惹き起こす可能性があります。そのため、試験エリアに立ち入る際には、肌の露出を避ける服装でご入室してください。また、化学物質等に接触の可能性が高い場合は保護具（マスク、ゴーグル、グローブ、白衣）を貸与致しますので、弊社社員にお申し付けください。
+    // 入館・退館デフォルト値
+    document.addEventListener("DOMContentLoaded", function(){
+      const now = new Date();
+      document.getElementById("entry-datetime").value = now.toISOString().slice(0,16);
+      now.setHours(now.getHours()+1);
+      document.getElementById("exit-time").value = now.toTimeString().slice(0,5);
+    });
+    // 目的
+    const purposes = [
+      "施設調査/監査","見学・データ調査（会議）","打合せ（会議）",
+      "点検/修理","納品/納入","清掃","その他"
+    ];
+    document.addEventListener("DOMContentLoaded", function(){
+      const group = document.getElementById("purpose-group");
+      purposes.forEach((purpose,i)=>{
+        const id = "purpose"+i;
+        const cb = document.createElement("input");
+        cb.type="checkbox";cb.id=id;cb.name="purpose";cb.value=purpose;
+        const label = document.createElement("label");
+        label.htmlFor = id;label.className="checkbox-label";
+        label.appendChild(cb);label.append(" "+purpose);
+        group.appendChild(label);
+      });
+      // 注意事項
+      document.getElementById("notice-text").textContent =
+`・試験エリアには化学物質や有機溶媒が置かれています。それらに接触することにより眼や皮膚が障害されたり、吸収されて健康被害を惹き起こす可能性があります。そのため、試験エリアに立ち入る際には、肌の露出を避ける服装でご入室してください。また、化学物質等に接触の可能性が高い場合は保護具（マスク、ゴーグル、グローブ、白衣）を貸与致しますので、弊社社員にお申し付けください。
 ・試験エリアには機器や設備が机上や足元に設置されています。それらに接触すると衣服が破れたり、けがをする恐れがありますのでご注意願います。
 ・試験エリアで作業される際には、弊社の生産活動に支障をきたすことのないように安全には十分ご注意いただくとともに、弊社社員の指示には必ず従っていただきますようお願いします。
 ・サンプル（生体試料、原薬、製剤等）の保存エリアに立ち入る際は、設置機器・設備の停止、誤操作、破損/汚損にご留意願います。異常発生時には速やかに弊社社員に連絡願います。また、本エリアの温度変動を最小限にするため、ドアの開閉は速やかにお願いします。
 ・急な発熱や体調不良が発生した場合は弊社社員への連絡をお願いします。また、火災や災害時などの緊急時は弊社社員の指示に従って避難をお願いします。
 ・施設内ではビジターカード(VC)をご着用願います。また、指定場所以外での飲食はご遠慮願います。
 ・施設内で知り得た情報の第三者開示、写真撮影、動画撮影は禁止しますのでご了承願います。
-・当方の一方的過失以外の事故などについては、一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。`,
-        noticeConfirm: "注意事項を確認しました",
-        submit: "送信",
-        required: "必須",
-        errors: {
-          company: "会社名を入力してください。",
-          entry: "入館日時を入力してください。",
-          exit: "退館予定時刻を入力してください。",
-          visitors: "少なくとも1名の氏名とカード番号を入力してください。",
-          visitorName: "氏名を入力してください。",
-          cardNumber: "カード番号を入力してください（半角数字）。",
-          purpose: "来所目的を1つ以上選択してください。",
-          notice: "注意事項を確認してください。"
-        }
-      },
-      en: {
-        title: "Visitor Check-In Form",
-        desc: "Please enter the name and visitor card number for all visitors.",
-        company: "Company Name",
-        entry: "Entry Date & Time",
-        exit: "Expected Exit Time",
-        visitors: "Visitor Name & Card Number",
-        visitorName: "Name",
-        cardNumber: "Visitor Card Number",
-        addVisitor: "+ Add",
-        remove: "Remove",
-        purpose: "Purpose of Visit",
-        purposes: [
-          "Facility Audit/Inspection",
-          "Tour / Data Research (Meeting)",
-          "Meeting / Discussion",
-          "Inspection / Repair",
-          "Delivery / Supply",
-          "Cleaning",
-          "Other"
-        ],
-        notice: "Notice",
-        noticeText: `- Chemicals and organic solvents are present in the test area. Contact with them may harm your eyes or skin, or cause health issues by absorption. Wear clothing that covers your skin when entering the test area. If you may come into contact with chemicals, we will provide protective equipment (masks, goggles, gloves, lab coats); please consult our staff.
-- Equipment and devices are placed on desks or near your feet in the test area. Contact may tear your clothing or cause injury; please be careful.
-- When working in the test area, be sure to follow staff instructions and take care not to interfere with our production activities or safety procedures.
-- When entering storage areas for samples (biological, APIs, formulations, etc.), please avoid stopping or mishandling equipment, and prevent any damage or contamination. Contact staff immediately if you notice anything abnormal. To minimize temperature fluctuations, please open and close doors promptly.
-- If you develop a sudden fever or feel unwell, notify our staff. In case of fire or disaster, follow the evacuation instructions.
-- Please wear your visitor card (VC) while on premises. Do not eat or drink except in designated areas.
-- Do not disclose information, take photos, or record videos inside the facility.
-- We accept no liability for accidents except those caused solely by our fault. Please take all possible precautions to prevent accidents.`,
-        noticeConfirm: "I have read and agree to the notice",
-        submit: "Submit",
-        required: "required",
-        errors: {
-          company: "Please enter your company name.",
-          entry: "Please enter entry date and time.",
-          exit: "Please enter expected exit time.",
-          visitors: "Please enter at least one visitor's name and card number.",
-          visitorName: "Please enter a name.",
-          cardNumber: "Please enter the card number (numbers only).",
-          purpose: "Please select at least one purpose.",
-          notice: "Please confirm you have read the notice."
-        }
-      }
-    };
-    let currentLang = "ja";
-    let visitorIdSeq = 1;
-
-    function spanRequired() { return `<span class="required">*</span>`; }
-    function renderFormTexts() {
-      const t = LANGUAGES[currentLang];
-      document.getElementById("form-title").textContent = t.title;
-      document.getElementById("desc").textContent = t.desc;
-      document.getElementById("label-company").innerHTML = t.company + spanRequired();
-      document.getElementById("label-entry").innerHTML = t.entry + spanRequired();
-      document.getElementById("label-exit").innerHTML = t.exit + spanRequired();
-      document.getElementById("label-visitors").innerHTML = t.visitors + spanRequired();
-      document.getElementById("add-visitor-btn").textContent = t.addVisitor;
-      document.getElementById("label-purpose").innerHTML = t.purpose + spanRequired();
-      document.getElementById("label-notice").textContent = t.notice;
-      document.getElementById("notice-text").textContent = t.noticeText;
-      document.getElementById("label-notice-confirm").innerHTML = t.noticeConfirm + spanRequired();
-      document.getElementById("submit-btn").textContent = t.submit;
-      renderPurposeOptions();
-      document.querySelectorAll(".visitor-entry").forEach(function(row) {
-        row.querySelector(".visitor-name").placeholder = t.visitorName;
-        row.querySelector(".visitor-card").placeholder = t.cardNumber;
-        row.querySelector(".visitor-remove-btn").textContent = t.remove;
-      });
-    }
-    function renderPurposeOptions() {
-      const t = LANGUAGES[currentLang];
-      const group = document.getElementById("purpose-group");
-      group.innerHTML = "";
-      t.purposes.forEach((purpose, idx) => {
-        const id = "purpose_" + idx;
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.id = id;
-        checkbox.name = "purpose";
-        checkbox.value = purpose;
-        const label = document.createElement("label");
-        label.htmlFor = id;
-        label.className = "checkbox-label";
-        label.appendChild(checkbox);
-        label.appendChild(document.createTextNode(" " + purpose));
-        group.appendChild(label);
-      });
-    }
-    function addVisitorEntry(name = "", card = "") {
-      const t = LANGUAGES[currentLang];
+・当方の一方的過失以外の事故などについては、一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。`;
+      // visitor最初の1件
+      addVisitorEntry();
+      document.getElementById("add-visitor-btn").addEventListener("click",()=>addVisitorEntry());
+    });
+    function addVisitorEntry(name="",card="") {
       const row = document.createElement("div");
       row.className = "visitor-entry";
-      row.dataset.vid = visitorIdSeq++;
-      // 1. 氏名（text, 日本語IME対応）
+      // 氏名（必ずtext。日本語IME有効）
       const nameInput = document.createElement("input");
       nameInput.type = "text";
       nameInput.className = "visitor-name";
-      nameInput.placeholder = t.visitorName;
-      nameInput.value = name;
+      nameInput.placeholder = "氏名";
       nameInput.setAttribute("inputmode", "text");
       nameInput.setAttribute("autocomplete", "name");
-      // 2. ビジターカード番号（textで数字制限）
+      // ビジターカード番号（text+数字制限。Safari対策）
       const cardInput = document.createElement("input");
       cardInput.type = "text";
       cardInput.className = "visitor-card";
-      cardInput.placeholder = t.cardNumber;
-      cardInput.value = card;
+      cardInput.placeholder = "カード番号";
       cardInput.setAttribute("inputmode", "numeric");
       cardInput.setAttribute("pattern", "[0-9]*");
       cardInput.setAttribute("autocomplete", "off");
-      cardInput.addEventListener("input", function() {
-        // 数字以外は除去
-        this.value = this.value.replace(/[^\d]/g, "");
+      cardInput.addEventListener("input",function(){
+        this.value = this.value.replace(/[^\d]/g,"");
       });
+      // 削除
       const removeBtn = document.createElement("button");
       removeBtn.type = "button";
       removeBtn.className = "visitor-remove-btn";
-      removeBtn.textContent = t.remove;
+      removeBtn.textContent = "削除";
       removeBtn.onclick = function() { row.remove(); };
-      // 順序: 氏名→カード番号
       row.appendChild(nameInput);
       row.appendChild(cardInput);
       row.appendChild(removeBtn);
       document.getElementById("visitor-list").appendChild(row);
     }
-    function ensureOneVisitor() {
-      const list = document.getElementById("visitor-list");
-      if (list.children.length === 0) { addVisitorEntry(); }
-    }
-    function switchLang(lang) {
-      currentLang = lang;
-      document.querySelectorAll(".lang-btn").forEach(btn =>
-        btn.classList.toggle("active", btn.getAttribute("data-lang") === lang)
-      );
-      renderFormTexts();
-    }
-    function setDefaultDateTime() {
-      const now = new Date();
-      const dtStr = now.toISOString().slice(0,16);
-      document.getElementById("entry-datetime").value = dtStr;
-      now.setHours(now.getHours()+1);
-      const tStr = now.toTimeString().slice(0,5);
-      document.getElementById("exit-time").value = tStr;
-    }
-    function validateForm(e) {
-      const t = LANGUAGES[currentLang];
-      let ok = true;
-      if (!document.getElementById("company").value.trim()) { showError("error-company", t.errors.company); ok = false; }
-      else hideError("error-company");
-      if (!document.getElementById("entry-datetime").value) { showError("error-entry", t.errors.entry); ok = false; }
-      else hideError("error-entry");
-      if (!document.getElementById("exit-time").value) { showError("error-exit", t.errors.exit); ok = false; }
-      else hideError("error-exit");
-      const vlist = document.getElementById("visitor-list");
-      let filled = false;
-      Array.from(vlist.children).forEach(row => {
-        const name = row.querySelector(".visitor-name").value.trim();
-        const card = row.querySelector(".visitor-card").value.trim();
-        if (name && card) filled = true;
-      });
-      if (!filled) { showError("error-visitors", t.errors.visitors); ok = false; }
-      else hideError("error-visitors");
-      const purposes = Array.from(document.querySelectorAll('#purpose-group input[type="checkbox"]')).filter(cb=>cb.checked);
-      if (purposes.length === 0) { showError("error-purpose", t.errors.purpose); ok = false; }
-      else hideError("error-purpose");
-      if (!document.getElementById("notice-confirm").checked) { showError("error-notice", t.errors.notice); ok = false; }
-      else hideError("error-notice");
-      if (!ok) e.preventDefault();
-      return ok;
-    }
-    function showError(id, msg) { const el = document.getElementById(id); el.textContent = msg; el.style.display = ""; }
-    function hideError(id) { const el = document.getElementById(id); el.textContent = ""; el.style.display = "none"; }
-    document.addEventListener("DOMContentLoaded", function() {
-      document.querySelectorAll(".lang-btn").forEach(btn => {
-        btn.addEventListener("click", e => { switchLang(btn.getAttribute("data-lang")); });
-      });
-      renderPurposeOptions();
-      addVisitorEntry();
-      document.getElementById("add-visitor-btn").addEventListener("click", function() { addVisitorEntry(); });
-      setDefaultDateTime();
-      renderFormTexts();
-      document.getElementById("visit-form").addEventListener("submit", validateForm);
-    });
   </script>
 </body>
 </html>
