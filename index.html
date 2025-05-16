@@ -101,10 +101,16 @@
       align-items: flex-end;
       flex-wrap: wrap;
     }
-    .visitor-entry input[type="text"],
-    .visitor-entry input[type="number"] {
+    .visitor-entry input[type="text"] {
       flex: 1 1 45%;
       min-width: 120px;
+      max-width: 300px;
+    }
+    .visitor-entry input[type="number"] {
+      width: 90px;
+      min-width: 60px;
+      max-width: 120px;
+      flex: none;
     }
     .visitor-remove-btn {
       background: var(--danger);
@@ -209,6 +215,8 @@
       }
       h1 { font-size: 1.4em; }
       .form-group, .checkbox-group { font-size: 1em;}
+      .visitor-entry input[type="text"] { min-width: 60px; }
+      .visitor-entry input[type="number"] { min-width: 50px; width: 60px;}
     }
   </style>
 </head>
@@ -226,32 +234,27 @@
       <input type="text" id="company" name="company" required autocomplete="organization">
       <div class="error-msg" id="error-company"></div>
     </div>
-
     <div class="form-group">
       <label for="entry-datetime" id="label-entry">入館日時<span class="required">*</span></label>
       <input type="datetime-local" id="entry-datetime" name="entry-datetime" required>
       <div class="error-msg" id="error-entry"></div>
     </div>
-
     <div class="form-group">
       <label for="exit-time" id="label-exit">退館予定時刻<span class="required">*</span></label>
       <input type="time" id="exit-time" name="exit-time" required>
       <div class="error-msg" id="error-exit"></div>
     </div>
-
     <div class="form-group">
       <label id="label-visitors">氏名・ビジターカード番号<span class="required">*</span></label>
       <div class="visitor-list" id="visitor-list"></div>
       <button type="button" class="add-visitor-btn" id="add-visitor-btn">＋ 追加</button>
       <div class="error-msg" id="error-visitors"></div>
     </div>
-
     <div class="form-group">
       <label id="label-purpose">来所目的<span class="required">*</span></label>
       <div class="checkbox-group" id="purpose-group"></div>
       <div class="error-msg" id="error-purpose"></div>
     </div>
-
     <div class="form-group">
       <label id="label-notice">注意事項</label>
       <div class="notice-scroll" id="notice-text"></div>
@@ -263,7 +266,6 @@
     </div>
     <button type="submit" class="submit-btn" id="submit-btn">送信</button>
   </form>
-
   <script>
     // 多言語テキスト
     const LANGUAGES = {
@@ -354,15 +356,11 @@
         }
       }
     };
-
     // 状態
     let currentLang = "ja";
     let visitorIdSeq = 1;
 
-    // ユーティリティ
     function spanRequired() { return `<span class="required">*</span>`; }
-
-    // ---- フォーム描画 ----
     function renderFormTexts() {
       const t = LANGUAGES[currentLang];
       document.getElementById("form-title").textContent = t.title;
@@ -377,194 +375,11 @@
       document.getElementById("label-notice-confirm").innerHTML = t.noticeConfirm + spanRequired();
       document.getElementById("submit-btn").textContent = t.submit;
       renderPurposeOptions();
-      // visitor entry のラベルとプレースホルダー切替
       document.querySelectorAll(".visitor-entry").forEach(function(row) {
         row.querySelector(".visitor-name").placeholder = t.visitorName;
-        row.querySelector(".visitor-name-label").textContent = t.visitorName;
         row.querySelector(".visitor-card").placeholder = t.cardNumber;
-        row.querySelector(".visitor-card-label").textContent = t.cardNumber;
         row.querySelector(".visitor-remove-btn").textContent = t.remove;
       });
     }
-
-    // 来所目的のチェックボックス
     function renderPurposeOptions() {
-      const t = LANGUAGES[currentLang];
-      const group = document.getElementById("purpose-group");
-      group.innerHTML = "";
-      t.purposes.forEach((purpose, idx) => {
-        const id = "purpose_" + idx;
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.id = id;
-        checkbox.name = "purpose";
-        checkbox.value = purpose;
-
-        const label = document.createElement("label");
-        label.htmlFor = id;
-        label.className = "checkbox-label";
-        label.appendChild(checkbox);
-        label.appendChild(document.createTextNode(" " + purpose));
-        group.appendChild(label);
-      });
-    }
-
-    // ビジター欄の行追加
-    function addVisitorEntry(name = "", card = "") {
-      const t = LANGUAGES[currentLang];
-      const row = document.createElement("div");
-      row.className = "visitor-entry";
-      row.dataset.vid = visitorIdSeq++;
-
-      // 氏名
-      const nameLabel = document.createElement("label");
-      nameLabel.className = "visitor-name-label";
-      nameLabel.textContent = t.visitorName;
-      const nameInput = document.createElement("input");
-      nameInput.type = "text";
-      nameInput.className = "visitor-name";
-      nameInput.placeholder = t.visitorName;
-      nameInput.value = name;
-
-      // カード番号
-      const cardLabel = document.createElement("label");
-      cardLabel.className = "visitor-card-label";
-      cardLabel.textContent = t.cardNumber;
-      const cardInput = document.createElement("input");
-      cardInput.type = "number";
-      cardInput.className = "visitor-card";
-      cardInput.placeholder = t.cardNumber;
-      cardInput.value = card;
-      cardInput.min = "0";
-      cardInput.inputmode = "numeric";
-      cardInput.pattern = "\\d*";
-
-      // 削除ボタン
-      const removeBtn = document.createElement("button");
-      removeBtn.type = "button";
-      removeBtn.className = "visitor-remove-btn";
-      removeBtn.textContent = t.remove;
-      removeBtn.onclick = function() {
-        row.remove();
-      };
-
-      row.appendChild(nameLabel);
-      row.appendChild(nameInput);
-      row.appendChild(cardLabel);
-      row.appendChild(cardInput);
-      row.appendChild(removeBtn);
-
-      document.getElementById("visitor-list").appendChild(row);
-    }
-
-    // visitor-listを1つ以上に保つ
-    function ensureOneVisitor() {
-      const list = document.getElementById("visitor-list");
-      if (list.children.length === 0) {
-        addVisitorEntry();
-      }
-    }
-
-    // 言語切替
-    function switchLang(lang) {
-      currentLang = lang;
-      document.querySelectorAll(".lang-btn").forEach(btn =>
-        btn.classList.toggle("active", btn.getAttribute("data-lang") === lang)
-      );
-      renderFormTexts();
-    }
-
-    // デフォルト日付時刻セット
-    function setDefaultDateTime() {
-      const now = new Date();
-      const dtStr = now.toISOString().slice(0,16);
-      document.getElementById("entry-datetime").value = dtStr;
-      now.setHours(now.getHours()+1);
-      const tStr = now.toTimeString().slice(0,5);
-      document.getElementById("exit-time").value = tStr;
-    }
-
-    // バリデーション&エラーメッセージ
-    function validateForm(e) {
-      const t = LANGUAGES[currentLang];
-      let ok = true;
-
-      // 会社名
-      if (!document.getElementById("company").value.trim()) {
-        showError("error-company", t.errors.company); ok = false;
-      } else hideError("error-company");
-
-      // 入館日時
-      if (!document.getElementById("entry-datetime").value) {
-        showError("error-entry", t.errors.entry); ok = false;
-      } else hideError("error-entry");
-
-      // 退館予定時刻
-      if (!document.getElementById("exit-time").value) {
-        showError("error-exit", t.errors.exit); ok = false;
-      } else hideError("error-exit");
-
-      // ビジター欄
-      const vlist = document.getElementById("visitor-list");
-      let filled = false;
-      Array.from(vlist.children).forEach(row => {
-        const name = row.querySelector(".visitor-name").value.trim();
-        const card = row.querySelector(".visitor-card").value.trim();
-        if (name && card) filled = true;
-      });
-      if (!filled) {
-        showError("error-visitors", t.errors.visitors); ok = false;
-      } else hideError("error-visitors");
-
-      // 来所目的
-      const purposes = Array.from(document.querySelectorAll('#purpose-group input[type="checkbox"]')).filter(cb=>cb.checked);
-      if (purposes.length === 0) {
-        showError("error-purpose", t.errors.purpose); ok = false;
-      } else hideError("error-purpose");
-
-      // 注意事項確認
-      if (!document.getElementById("notice-confirm").checked) {
-        showError("error-notice", t.errors.notice); ok = false;
-      } else hideError("error-notice");
-
-      if (!ok) e.preventDefault();
-      return ok;
-    }
-    function showError(id, msg) {
-      const el = document.getElementById(id); el.textContent = msg; el.style.display = "";
-    }
-    function hideError(id) {
-      const el = document.getElementById(id); el.textContent = ""; el.style.display = "none";
-    }
-
-    // --------------- 初期化
-    document.addEventListener("DOMContentLoaded", function() {
-      // 言語ボタン
-      document.querySelectorAll(".lang-btn").forEach(btn => {
-        btn.addEventListener("click", e => {
-          switchLang(btn.getAttribute("data-lang"));
-        });
-      });
-      // 来所目的生成
-      renderPurposeOptions();
-
-      // ビジター初期欄
-      addVisitorEntry();
-
-      // ビジター追加
-      document.getElementById("add-visitor-btn").addEventListener("click", function() {
-        addVisitorEntry();
-      });
-
-      // 入館日時/退館時刻デフォルト
-      setDefaultDateTime();
-
-      // 言語切替でラベル全再描画
-      renderFormTexts();
-
-      // フォーム送信バリデーション
-      document.getElementById("visit-form").addEventListener("submit", validateForm);
-    });
-  </script>
-</body>
-</html>
+      const t = LANGUAGES[currentLang
