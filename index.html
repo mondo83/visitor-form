@@ -108,14 +108,6 @@
     </form>
   </div>
   <script>
-    // 事業所コード→正式名 変換テーブル
-    const OFFICE_LABELS = {
-      tokyo: "東京事業所",
-      sapporo: "札幌ラボラトリー",
-      osaka: "大阪事業所",
-      fukuoka: "福岡センター"
-      // 必要に応じて追加
-    };
     function getOfficeFromURL() {
       const url = new URL(window.location.href);
       return url.searchParams.get("office") || "";
@@ -130,9 +122,8 @@
         hiddenOffice.name = "office";
         hiddenOffice.value = office;
         document.getElementById("visit-form").appendChild(hiddenOffice);
-        // 表示ラベル
-        const label = OFFICE_LABELS[office] || office;
-        document.getElementById("office-display").textContent = label;
+        // 表示ラベル（そのまま表示）
+        document.getElementById("office-display").textContent = office;
       }
       // 日付・時刻の初期値
       const now = new Date();
