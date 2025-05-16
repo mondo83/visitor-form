@@ -165,7 +165,7 @@ function addVisitorEntry() {
 
 // Netlify Functions送信用
 async function sendToNetlify(record) {
-  const response = await fetch('/.netlify/functions/sendToKintone', {
+  const response = await fetch('/.netlify/functions/sendtokintone', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ record })
