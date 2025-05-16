@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>来訪者受付フォーム</title>
   <style>
-    body { background: #f4f8fb; color: #222; font-family: 'Segoe UI', 'Yu Gothic', sans-serif; margin:0; padding:0;}
-    .container { max-width: 520px; margin: 2em auto; background: #fff; border-radius: 1.4em; box-shadow: 0 6px 30px #0002; padding: 2em 5vw;}
-    h1 { text-align: center; font-size: 1.6em; margin-bottom: 1.2em; }
+    body { background: #f4f8fb; color: #222; font-family: 'Segoe UI', 'Yu Gothic', sans-serif; margin:0; padding:0; }
+    .container { max-width: 520px; margin: 2em auto; background: #fff; border-radius: 1.4em; box-shadow: 0 6px 30px #0002; padding: 2em 5vw; }
+    h1 { text-align: center; font-size: 1.6em; margin-bottom: 0.2em; }
+    .office-label { text-align: center; font-size: 0.95em; color: #555; margin-bottom: 1.2em; }
     .form-group { margin-bottom: 1.4em; }
     label { font-weight: 500; font-size: 1.08em; display: block; margin-bottom: 0.5em; }
     input[type="text"], input[type="date"], input[type="time"] {
@@ -19,54 +20,60 @@
       border: 1.5px solid #2563eb;
       background: #e0e7ef;
     }
+    .row-flex { display: flex; gap: 1.3em; }
+    .row-flex > .form-group { flex: 1 1 0; margin-bottom: 0; }
     .checkbox-group { display:flex; flex-wrap:wrap; gap:0.7em 2em; }
     .checkbox-label { font-size: 1em; cursor:pointer; }
     .visitor-list { margin-bottom: 0.7em; }
-    .visitor-entry { display: flex; gap: 0.5em; margin-bottom:0.4em;}
+    .visitor-entry { display: flex; gap: 0.5em; margin-bottom:0.4em; }
     .visitor-entry input.visitor-card {
       flex: 1 1 0; min-width:70px; max-width:110px; text-align:center;
       letter-spacing:0.03em;
     }
-    .visitor-entry input.visitor-name { flex: 2 1 0; min-width:100px;}
-    .visitor-remove-btn { background: #e11d48; color: #fff; border:none; border-radius:0.9em; font-size:1.1em; padding:0.3em 1.1em; cursor:pointer; margin-left: 0.2em; transition: background 0.2s;}
-    .visitor-remove-btn:hover { background: #be123c;}
-    .add-visitor-btn { background: #2563eb; color:#fff; border:none; border-radius:0.9em; font-size:1.1em; font-weight:bold; padding:0.55em 1.2em; cursor:pointer; margin-top:0.2em; transition: background 0.2s;}
-    .add-visitor-btn:hover { background: #1d4ed8;}
-    .notice-scroll { max-height: 180px; overflow-y: auto; background: #e0e7ef; padding: 1em; border-radius: 0.8em; font-size: 1em; border: 1px solid #cbd5e1; margin-bottom: 0.5em; white-space: pre-line;}
-    .submit-btn { margin-top:1.7em; background:#2563eb; color:#fff; border:none; border-radius:1.4em; font-size:1.23em; padding:1.1em; font-weight:bold; cursor:pointer; width: 100%; transition: background 0.2s;}
+    .visitor-entry input.visitor-name { flex: 2 1 0; min-width:100px; }
+    .visitor-remove-btn { background: #e11d48; color: #fff; border:none; border-radius:0.9em; font-size:1.1em; padding:0.3em 1.1em; cursor:pointer; margin-left: 0.2em; transition: background 0.2s; }
+    .visitor-remove-btn:hover { background: #be123c; }
+    .add-visitor-btn { background: #2563eb; color:#fff; border:none; border-radius:0.9em; font-size:1.1em; font-weight:bold; padding:0.55em 1.2em; cursor:pointer; margin-top:0.2em; transition: background 0.2s; }
+    .add-visitor-btn:hover { background: #1d4ed8; }
+    .notice-scroll { max-height: 180px; overflow-y: auto; background: #e0e7ef; padding: 1em; border-radius: 0.8em; font-size: 1em; border: 1px solid #cbd5e1; margin-bottom: 0.5em; white-space: pre-line; }
+    .submit-btn { margin-top:1.7em; background:#2563eb; color:#fff; border:none; border-radius:1.4em; font-size:1.23em; padding:1.1em; font-weight:bold; cursor:pointer; width: 100%; transition: background 0.2s; }
     .submit-btn:hover { background:#1e40af; }
-    .required { color:#e11d48;}
-    .error-msg { color: #e11d48; font-size:1em; margin:0.2em 0 0 0; display:none;}
+    .required { color:#e11d48; }
+    .error-msg { color: #e11d48; font-size:1em; margin:0.2em 0 0 0; display:none; }
     @media (max-width: 600px) {
       .container { padding: 2em 2vw; }
+      .row-flex { flex-direction: column; gap: 0; }
       .visitor-entry { flex-direction:column; gap:0; }
-      .visitor-remove-btn { margin: 0.3em 0 0 0;}
+      .visitor-remove-btn { margin: 0.3em 0 0 0; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>来訪者受付フォーム</h1>
+    <div class="office-label" id="office-display"></div>
     <form id="visit-form" autocomplete="off">
       <div class="form-group">
         <label for="company">会社名 <span class="required">*</span></label>
         <input type="text" id="company" name="company" autocomplete="organization" required>
         <div class="error-msg" id="error-company"></div>
       </div>
-      <div class="form-group">
-        <label for="entry-date">入館日 <span class="required">*</span></label>
-        <input type="date" id="entry-date" name="entry-date" required>
-        <div class="error-msg" id="error-entry-date"></div>
-      </div>
-      <div class="form-group">
-        <label for="entry-time">入館時刻 <span class="required">*</span></label>
-        <input type="time" id="entry-time" name="entry-time" required>
-        <div class="error-msg" id="error-entry-time"></div>
-      </div>
-      <div class="form-group">
-        <label for="exit-time">退館予定時刻 <span class="required">*</span></label>
-        <input type="time" id="exit-time" name="exit-time" required>
-        <div class="error-msg" id="error-exit"></div>
+      <div class="row-flex">
+        <div class="form-group">
+          <label for="entry-date">入館日 <span class="required">*</span></label>
+          <input type="date" id="entry-date" name="entry-date" required>
+          <div class="error-msg" id="error-entry-date"></div>
+        </div>
+        <div class="form-group">
+          <label for="entry-time">入館時刻 <span class="required">*</span></label>
+          <input type="time" id="entry-time" name="entry-time" required>
+          <div class="error-msg" id="error-entry-time"></div>
+        </div>
+        <div class="form-group">
+          <label for="exit-time">退館予定時刻 <span class="required">*</span></label>
+          <input type="time" id="exit-time" name="exit-time" required>
+          <div class="error-msg" id="error-exit"></div>
+        </div>
       </div>
       <div class="form-group">
         <label>来所目的 <span class="required">*</span></label>
@@ -101,18 +108,39 @@
     </form>
   </div>
   <script>
+    // 事業所コード→正式名 変換テーブル
+    const OFFICE_LABELS = {
+      tokyo: "東京事業所",
+      sapporo: "札幌ラボラトリー",
+      osaka: "大阪事業所",
+      fukuoka: "福岡センター"
+      // 必要に応じて追加
+    };
+    function getOfficeFromURL() {
+      const url = new URL(window.location.href);
+      return url.searchParams.get("office") || "";
+    }
     document.addEventListener("DOMContentLoaded", function(){
+      // 事業所表示とhidden input
+      const office = getOfficeFromURL();
+      if(office){
+        // hidden input
+        const hiddenOffice = document.createElement("input");
+        hiddenOffice.type = "hidden";
+        hiddenOffice.name = "office";
+        hiddenOffice.value = office;
+        document.getElementById("visit-form").appendChild(hiddenOffice);
+        // 表示ラベル
+        const label = OFFICE_LABELS[office] || office;
+        document.getElementById("office-display").textContent = label;
+      }
       // 日付・時刻の初期値
       const now = new Date();
       const pad = n => n.toString().padStart(2,'0');
-      // 入館日
       document.getElementById("entry-date").value = now.getFullYear() + "-" + pad(now.getMonth()+1) + "-" + pad(now.getDate());
-      // 入館時刻
       document.getElementById("entry-time").value = pad(now.getHours()) + ":" + pad(now.getMinutes());
-      // 退館予定時刻
       let plus1h = new Date(now.getTime() + 60*60*1000);
       document.getElementById("exit-time").value = pad(plus1h.getHours()) + ":" + pad(plus1h.getMinutes());
-
       // 来所目的
       const purposes = [
         "施設調査/監査","見学・データ調査（会議）","打合せ（会議）",
@@ -128,11 +156,9 @@
         label.appendChild(cb);label.append(" "+purpose);
         group.appendChild(label);
       });
-
       // ビジター行
       addVisitorEntry();
       document.getElementById("add-visitor-btn").addEventListener("click",()=>addVisitorEntry());
-
       // バリデーション
       document.getElementById("visit-form").addEventListener("submit",function(e){
         let ok = true;
@@ -164,7 +190,6 @@
           const card = row.querySelector(".visitor-card").value.trim();
           const name = row.querySelector(".visitor-name").value.trim();
           if(card && name){ visitorOk=true; }
-          // ビジター番号は数字のみ
           if(card && !/^\d+$/.test(card)){
             showError("error-visitors","カード番号は半角数字で入力してください。"); ok=false;
           }
@@ -179,18 +204,14 @@
         if(!noticeChk.checked){
           showError("error-notice","注意事項を確認してください。"); ok=false;
         }else{hideError("error-notice");}
-
         if(!ok) e.preventDefault();
       });
       function showError(id,msg){const el=document.getElementById(id); el.textContent=msg; el.style.display="";}
       function hideError(id){const el=document.getElementById(id); el.textContent=""; el.style.display="none";}
     });
-
-    // ビジター番号→氏名の順
     function addVisitorEntry() {
       const row = document.createElement("div");
       row.className = "visitor-entry";
-      // カード番号（数字のみ受け付け）
       const cardInput = document.createElement("input");
       cardInput.type = "text";
       cardInput.className = "visitor-card";
@@ -200,12 +221,10 @@
       cardInput.addEventListener("input",function(){
         this.value = this.value.replace(/[^0-9]/g,"");
       });
-      // 氏名
       const nameInput = document.createElement("input");
       nameInput.type = "text";
       nameInput.className = "visitor-name";
       nameInput.placeholder = "氏名";
-      // 削除
       const removeBtn = document.createElement("button");
       removeBtn.type = "button";
       removeBtn.className = "visitor-remove-btn";
@@ -215,24 +234,6 @@
       row.appendChild(nameInput);
       row.appendChild(removeBtn);
       document.getElementById("visitor-list").appendChild(row);
-      // URLからofficeパラメータを取得してhidden inputを追加
-function getOfficeFromURL() {
-  const url = new URL(window.location.href);
-  return url.searchParams.get("office") || "";
-}
-
-document.addEventListener("DOMContentLoaded", function(){
-  // …既存の初期化処理の後ろ（または前）に追加
-  const office = getOfficeFromURL();
-  if(office){
-    const hiddenOffice = document.createElement("input");
-    hiddenOffice.type = "hidden";
-    hiddenOffice.name = "office";
-    hiddenOffice.value = office;
-    document.getElementById("visit-form").appendChild(hiddenOffice);
-  }
-});
-
     }
   </script>
 </body>
