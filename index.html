@@ -6,11 +6,6 @@
   <title>来訪者受付フォーム</title>
   <style>
     body { background: #f4f8fb; color: #222; font-family: "Segoe UI","Yu Gothic",sans-serif; margin:0;padding:0;}
-    h1 { margin: 2em 0 1em 0; font-size: 1.5em; text-align:center; }
-    .form-container { background: #fff; border-radius: 1.2em; box-shadow: 0 4px 24px #0001; max-width: 700px; margin: 2em auto; padding: 2em 4vw;}
-    .form-group { margin-bottom: 1.3em; }
-    label { font-weight: 500; font-size: 1.1em; }
-    input, select { font-size: 1.1em; padding: 0.7em; border: 1.5px solid #dbeafe; border-radius: 1.2em; outline: none; width: 100%; margin-bottom:0.5em;}
     .visitor-list { margin-bottom: 0.7em; }
     .visitor-entry { display: flex; gap: 0.5em; margin-bottom:0.3em;}
     .visitor-entry input.visitor-name { flex: 2 1 0; min-width:90px;}
@@ -19,23 +14,17 @@
     .add-visitor-btn { background: #2563eb; color:#fff; border:none; border-radius:0.7em; font-size:1.1em; font-weight:bold; padding:0.5em 1.3em; cursor:pointer; margin-top:0.2em;}
     .error-msg { color: #e11d48; font-size:1em; margin:0.3em 0 0 0; display:none;}
     .submit-btn { margin-top:1em; background:#2563eb; color:#fff; border:none; border-radius:1.2em; font-size:1.2em; padding:1em; font-weight:bold; cursor:pointer;}
-    .dummy-row { display: none !important; }
     .notice-scroll { max-height: 180px; overflow-y: auto; background: #e0e7ef; padding: 1em; border-radius: 0.8em; font-size: 1em; border: 1px solid #cbd5e1; margin-bottom: 0.5em; white-space: pre-line;}
   </style>
 </head>
 <body>
   <h1>来訪者受付フォーム</h1>
-  <div class="form-container">
-    <form id="visit-form" autocomplete="off">
-      <div class="form-group">
-        <label>氏名・ビジターカード番号<span style="color:#e11d48;">*</span></label>
-        <div class="visitor-list" id="visitor-list"></div>
-        <button type="button" class="add-visitor-btn" id="add-visitor-btn">＋ 追加</button>
-        <div class="error-msg" id="error-visitors"></div>
-      </div>
-      <div class="form-group">
-        <label>注意事項</label>
-        <div class="notice-scroll" id="notice-text">
+  <form id="visit-form" autocomplete="off">
+    <div>氏名・ビジターカード番号<span style="color:#e11d48;">*</span></div>
+    <div class="visitor-list" id="visitor-list"></div>
+    <button type="button" class="add-visitor-btn" id="add-visitor-btn">＋ 追加</button>
+    <div class="error-msg" id="error-visitors"></div>
+    <div class="notice-scroll">
 ・試験エリアには化学物質や有機溶媒が置かれています。それらに接触することにより眼や皮膚が障害されたり、吸収されて健康被害を惹き起こす可能性があります。そのため、試験エリアに立ち入る際には、肌の露出を避ける服装でご入室してください。また、化学物質等に接触の可能性が高い場合は保護具（マスク、ゴーグル、グローブ、白衣）を貸与致しますので、弊社社員にお申し付けください。
 ・試験エリアには機器や設備が机上や足元に設置されています。それらに接触すると衣服が破れたり、けがをする恐れがありますのでご注意願います。
 ・試験エリアで作業される際には、弊社の生産活動に支障をきたすことのないように安全には十分ご注意いただくとともに、弊社社員の指示には必ず従っていただきますようお願いします。
@@ -44,27 +33,29 @@
 ・施設内ではビジターカード(VC)をご着用願います。また、指定場所以外での飲食はご遠慮願います。
 ・施設内で知り得た情報の第三者開示、写真撮影、動画撮影は禁止しますのでご了承願います。
 ・当方の一方的過失以外の事故などについては、一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。
-        </div>
-        <div>
-          <input type="checkbox" id="notice-confirm" required>
-          <label for="notice-confirm">注意事項を確認しました<span style="color:#e11d48;">*</span></label>
-        </div>
-        <div class="error-msg" id="error-notice"></div>
-      </div>
-      <button type="submit" class="submit-btn">送信</button>
-    </form>
-  </div>
+    </div>
+    <div>
+      <input type="checkbox" id="notice-confirm" required>
+      <label for="notice-confirm">注意事項を確認しました<span style="color:#e11d48;">*</span></label>
+    </div>
+    <div class="error-msg" id="error-notice"></div>
+    <button type="submit" class="submit-btn">送信</button>
+  </form>
   <script>
     document.addEventListener("DOMContentLoaded", function(){
-      addVisitorEntry(true); // 1行目はダミー
-      addVisitorEntry();     // 2行目からユーザー用
+      addVisitorEntry();
       document.getElementById("add-visitor-btn").addEventListener("click",()=>addVisitorEntry());
+      // ★ フォーカス自動付与（iOS Safari IME復活対策）
+      setTimeout(function(){
+        var nameInput = document.querySelector('.visitor-name');
+        if(nameInput) { nameInput.focus(); nameInput.blur(); }
+      }, 200);
+
       document.getElementById("visit-form").addEventListener("submit",function(e){
         let ok = false;
         let vlist = document.getElementById("visitor-list");
         let error = document.getElementById("error-visitors");
-        let visitorRows = Array.from(vlist.children).filter((row,i)=>!row.classList.contains("dummy-row"));
-        for(const row of visitorRows){
+        for(const row of vlist.children){
           const name = row.querySelector(".visitor-name").value.trim();
           const card = row.querySelector(".visitor-card").value.trim();
           if(name && card){ ok=true; break; }
@@ -90,11 +81,9 @@
         }
       });
     });
-    // isDummy = trueの時は非表示ダミーinput（iOSバグ回避用）
-    function addVisitorEntry(isDummy=false) {
+    function addVisitorEntry() {
       const row = document.createElement("div");
       row.className = "visitor-entry";
-      if(isDummy) row.classList.add("dummy-row");
       // 氏名
       const nameInput = document.createElement("input");
       nameInput.type = "text";
@@ -105,21 +94,15 @@
       cardInput.type = "text";
       cardInput.className = "visitor-card";
       cardInput.placeholder = "カード番号";
-      // 削除（ダミー行には付けない）
-      if(!isDummy){
-        const removeBtn = document.createElement("button");
-        removeBtn.type = "button";
-        removeBtn.className = "visitor-remove-btn";
-        removeBtn.textContent = "削除";
-        removeBtn.onclick = function() { row.remove(); };
-        row.appendChild(nameInput);
-        row.appendChild(cardInput);
-        row.appendChild(removeBtn);
-      }else{
-        // ダミー行（非表示）
-        row.appendChild(nameInput);
-        row.appendChild(cardInput);
-      }
+      // 削除
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "visitor-remove-btn";
+      removeBtn.textContent = "削除";
+      removeBtn.onclick = function() { row.remove(); };
+      row.appendChild(nameInput);
+      row.appendChild(cardInput);
+      row.appendChild(removeBtn);
       document.getElementById("visitor-list").appendChild(row);
     }
   </script>
