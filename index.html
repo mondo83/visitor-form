@@ -5,26 +5,78 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>来訪者受付フォーム</title>
   <style>
-    body { background: #f4f8fb; color: #222; font-family: "Segoe UI","Yu Gothic",sans-serif; margin:0;padding:0;}
+    body { background: #f4f8fb; color: #222; font-family: 'Segoe UI', 'Yu Gothic', sans-serif; margin:0; padding:0;}
+    .container { max-width: 520px; margin: 2em auto; background: #fff; border-radius: 1.4em; box-shadow: 0 6px 30px #0002; padding: 2em 5vw;}
+    h1 { text-align: center; font-size: 1.6em; margin-bottom: 1.2em; }
+    .form-group { margin-bottom: 1.4em; }
+    label { font-weight: 500; font-size: 1.08em; display: block; margin-bottom: 0.5em; }
+    input[type="text"], input[type="datetime-local"], input[type="time"] {
+      font-size: 1.1em; padding: 1em 0.8em; border: 1.5px solid #dbeafe;
+      border-radius: 1.2em; outline: none; width: 100%; margin-bottom:0.3em; box-sizing: border-box;
+      transition: border 0.2s;
+    }
+    input[type="text"]:focus, input[type="datetime-local"]:focus, input[type="time"]:focus {
+      border: 1.5px solid #2563eb;
+      background: #e0e7ef;
+    }
+    .checkbox-group { display:flex; flex-wrap:wrap; gap:0.7em 2em; }
+    .checkbox-label { font-size: 1em; cursor:pointer; }
     .visitor-list { margin-bottom: 0.7em; }
-    .visitor-entry { display: flex; gap: 0.5em; margin-bottom:0.3em;}
-    .visitor-entry input.visitor-card { flex: 1 1 0; min-width:60px; max-width:120px;}
-    .visitor-entry input.visitor-name { flex: 2 1 0; min-width:90px;}
-    .visitor-remove-btn { background: #e11d48; color: #fff; border:none; border-radius:0.7em; font-size:1em; padding:0.2em 1em; cursor:pointer;}
-    .add-visitor-btn { background: #2563eb; color:#fff; border:none; border-radius:0.7em; font-size:1.1em; font-weight:bold; padding:0.5em 1.3em; cursor:pointer; margin-top:0.2em;}
-    .error-msg { color: #e11d48; font-size:1em; margin:0.3em 0 0 0; display:none;}
-    .submit-btn { margin-top:1em; background:#2563eb; color:#fff; border:none; border-radius:1.2em; font-size:1.2em; padding:1em; font-weight:bold; cursor:pointer;}
+    .visitor-entry { display: flex; gap: 0.5em; margin-bottom:0.4em;}
+    .visitor-entry input.visitor-card {
+      flex: 1 1 0; min-width:70px; max-width:110px; text-align:center;
+      letter-spacing:0.03em;
+    }
+    .visitor-entry input.visitor-name { flex: 2 1 0; min-width:100px;}
+    .visitor-remove-btn { background: #e11d48; color: #fff; border:none; border-radius:0.9em; font-size:1.1em; padding:0.3em 1.1em; cursor:pointer; margin-left: 0.2em; transition: background 0.2s;}
+    .visitor-remove-btn:hover { background: #be123c;}
+    .add-visitor-btn { background: #2563eb; color:#fff; border:none; border-radius:0.9em; font-size:1.1em; font-weight:bold; padding:0.55em 1.2em; cursor:pointer; margin-top:0.2em; transition: background 0.2s;}
+    .add-visitor-btn:hover { background: #1d4ed8;}
     .notice-scroll { max-height: 180px; overflow-y: auto; background: #e0e7ef; padding: 1em; border-radius: 0.8em; font-size: 1em; border: 1px solid #cbd5e1; margin-bottom: 0.5em; white-space: pre-line;}
+    .submit-btn { margin-top:1.7em; background:#2563eb; color:#fff; border:none; border-radius:1.4em; font-size:1.23em; padding:1.1em; font-weight:bold; cursor:pointer; width: 100%; transition: background 0.2s;}
+    .submit-btn:hover { background:#1e40af; }
+    .required { color:#e11d48;}
+    .error-msg { color: #e11d48; font-size:1em; margin:0.2em 0 0 0; display:none;}
+    @media (max-width: 600px) {
+      .container { padding: 2em 2vw; }
+      .visitor-entry { flex-direction:column; gap:0; }
+      .visitor-remove-btn { margin: 0.3em 0 0 0;}
+    }
   </style>
 </head>
 <body>
-  <h1>来訪者受付フォーム</h1>
-  <form id="visit-form" autocomplete="off">
-    <div>ビジターカード番号・氏名<span style="color:#e11d48;">*</span></div>
-    <div class="visitor-list" id="visitor-list"></div>
-    <button type="button" class="add-visitor-btn" id="add-visitor-btn">＋ 追加</button>
-    <div class="error-msg" id="error-visitors"></div>
-    <div class="notice-scroll">
+  <div class="container">
+    <h1>来訪者受付フォーム</h1>
+    <form id="visit-form" autocomplete="off">
+      <div class="form-group">
+        <label for="company">会社名 <span class="required">*</span></label>
+        <input type="text" id="company" name="company" autocomplete="organization" required>
+        <div class="error-msg" id="error-company"></div>
+      </div>
+      <div class="form-group">
+        <label for="entry-datetime">入館日時 <span class="required">*</span></label>
+        <input type="datetime-local" id="entry-datetime" name="entry-datetime" required>
+        <div class="error-msg" id="error-entry"></div>
+      </div>
+      <div class="form-group">
+        <label for="exit-time">退館予定時刻 <span class="required">*</span></label>
+        <input type="time" id="exit-time" name="exit-time" required>
+        <div class="error-msg" id="error-exit"></div>
+      </div>
+      <div class="form-group">
+        <label>来所目的 <span class="required">*</span></label>
+        <div class="checkbox-group" id="purpose-group"></div>
+        <div class="error-msg" id="error-purpose"></div>
+      </div>
+      <div class="form-group">
+        <label>ビジターカード番号・氏名 <span class="required">*</span></label>
+        <div class="visitor-list" id="visitor-list"></div>
+        <button type="button" class="add-visitor-btn" id="add-visitor-btn">＋ 追加</button>
+        <div class="error-msg" id="error-visitors"></div>
+      </div>
+      <div class="form-group">
+        <label>注意事項</label>
+        <div class="notice-scroll">
 ・試験エリアには化学物質や有機溶媒が置かれています。それらに接触することにより眼や皮膚が障害されたり、吸収されて健康被害を惹き起こす可能性があります。そのため、試験エリアに立ち入る際には、肌の露出を避ける服装でご入室してください。また、化学物質等に接触の可能性が高い場合は保護具（マスク、ゴーグル、グローブ、白衣）を貸与致しますので、弊社社員にお申し付けください。
 ・試験エリアには機器や設備が机上や足元に設置されています。それらに接触すると衣服が破れたり、けがをする恐れがありますのでご注意願います。
 ・試験エリアで作業される際には、弊社の生産活動に支障をきたすことのないように安全には十分ご注意いただくとともに、弊社社員の指示には必ず従っていただきますようお願いします。
@@ -33,57 +85,110 @@
 ・施設内ではビジターカード(VC)をご着用願います。また、指定場所以外での飲食はご遠慮願います。
 ・施設内で知り得た情報の第三者開示、写真撮影、動画撮影は禁止しますのでご了承願います。
 ・当方の一方的過失以外の事故などについては、一切の責任を負いかねます。事故防止には万全を期していただくようお願い申し上げます。
-    </div>
-    <div>
-      <input type="checkbox" id="notice-confirm" required>
-      <label for="notice-confirm">注意事項を確認しました<span style="color:#e11d48;">*</span></label>
-    </div>
-    <div class="error-msg" id="error-notice"></div>
-    <button type="submit" class="submit-btn">送信</button>
-  </form>
+        </div>
+        <div>
+          <input type="checkbox" id="notice-confirm" required>
+          <label for="notice-confirm">注意事項を確認しました<span class="required">*</span></label>
+        </div>
+        <div class="error-msg" id="error-notice"></div>
+      </div>
+      <button type="submit" class="submit-btn">送信</button>
+    </form>
+  </div>
   <script>
+    // 初期値の設定
     document.addEventListener("DOMContentLoaded", function(){
+      // 入館日時：現在時刻
+      const now = new Date();
+      document.getElementById("entry-datetime").value = now.toISOString().slice(0,16);
+      // 退館予定時刻：+1時間
+      now.setHours(now.getHours()+1);
+      document.getElementById("exit-time").value = now.toTimeString().slice(0,5);
+
+      // 来所目的チェックボックス
+      const purposes = [
+        "施設調査/監査","見学・データ調査（会議）","打合せ（会議）",
+        "点検/修理","納品/納入","清掃","その他"
+      ];
+      const group = document.getElementById("purpose-group");
+      purposes.forEach((purpose,i)=>{
+        const id = "purpose"+i;
+        const cb = document.createElement("input");
+        cb.type="checkbox";cb.id=id;cb.name="purpose";cb.value=purpose;
+        const label = document.createElement("label");
+        label.htmlFor = id;label.className="checkbox-label";
+        label.appendChild(cb);label.append(" "+purpose);
+        group.appendChild(label);
+      });
+
+      // 最初のビジター行
       addVisitorEntry();
       document.getElementById("add-visitor-btn").addEventListener("click",()=>addVisitorEntry());
+
+      // バリデーション
       document.getElementById("visit-form").addEventListener("submit",function(e){
-        let ok = false;
+        let ok = true;
+        // 会社名
+        if(!document.getElementById("company").value.trim()){
+          showError("error-company","会社名を入力してください。"); ok=false;
+        }else{hideError("error-company");}
+        // 入館日時
+        if(!document.getElementById("entry-datetime").value){
+          showError("error-entry","入館日時を入力してください。"); ok=false;
+        }else{hideError("error-entry");}
+        // 退館予定時刻
+        if(!document.getElementById("exit-time").value){
+          showError("error-exit","退館予定時刻を入力してください。"); ok=false;
+        }else{hideError("error-exit");}
+        // 来所目的
+        const purposes = Array.from(document.querySelectorAll('#purpose-group input[type="checkbox"]')).filter(cb=>cb.checked);
+        if(purposes.length === 0){
+          showError("error-purpose","来所目的を選択してください。"); ok=false;
+        }else{hideError("error-purpose");}
+        // ビジター番号＆氏名
         let vlist = document.getElementById("visitor-list");
-        let error = document.getElementById("error-visitors");
+        let visitorOk = false;
         for(const row of vlist.children){
           const card = row.querySelector(".visitor-card").value.trim();
           const name = row.querySelector(".visitor-name").value.trim();
-          if(card && name){ ok=true; break; }
+          if(card && name){ visitorOk=true; }
+          // ビジター番号は数字のみ
+          if(card && !/^\d+$/.test(card)){
+            showError("error-visitors","カード番号は半角数字で入力してください。"); ok=false;
+          }
         }
-        if(!ok){
-          error.textContent = "少なくとも1名のカード番号と氏名を入力してください。";
-          error.style.display = "";
-          e.preventDefault();
-        }else{
-          error.textContent = "";
-          error.style.display = "none";
+        if(!visitorOk){
+          showError("error-visitors","少なくとも1名のカード番号と氏名を入力してください。"); ok=false;
+        }else if(ok){
+          hideError("error-visitors");
         }
-        // 注意事項必須
+        // 注意事項
         let noticeChk = document.getElementById("notice-confirm");
-        let errNotice = document.getElementById("error-notice");
         if(!noticeChk.checked){
-          errNotice.textContent = "注意事項を確認してください。";
-          errNotice.style.display = "";
-          e.preventDefault();
-        }else{
-          errNotice.textContent = "";
-          errNotice.style.display = "none";
-        }
+          showError("error-notice","注意事項を確認してください。"); ok=false;
+        }else{hideError("error-notice");}
+
+        if(!ok) e.preventDefault();
       });
+      function showError(id,msg){const el=document.getElementById(id); el.textContent=msg; el.style.display="";}
+      function hideError(id){const el=document.getElementById(id); el.textContent=""; el.style.display="none";}
     });
+
+    // ビジター番号→氏名の順
     function addVisitorEntry() {
       const row = document.createElement("div");
       row.className = "visitor-entry";
-      // 1. カード番号
+      // カード番号（数字のみ受け付け）
       const cardInput = document.createElement("input");
       cardInput.type = "text";
       cardInput.className = "visitor-card";
       cardInput.placeholder = "カード番号";
-      // 2. 氏名（type=text/IME優先）
+      cardInput.inputMode = "numeric";
+      cardInput.autocomplete = "off";
+      cardInput.addEventListener("input",function(){
+        this.value = this.value.replace(/[^0-9]/g,"");
+      });
+      // 氏名
       const nameInput = document.createElement("input");
       nameInput.type = "text";
       nameInput.className = "visitor-name";
