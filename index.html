@@ -215,6 +215,24 @@
       row.appendChild(nameInput);
       row.appendChild(removeBtn);
       document.getElementById("visitor-list").appendChild(row);
+      // URLからofficeパラメータを取得してhidden inputを追加
+function getOfficeFromURL() {
+  const url = new URL(window.location.href);
+  return url.searchParams.get("office") || "";
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+  // …既存の初期化処理の後ろ（または前）に追加
+  const office = getOfficeFromURL();
+  if(office){
+    const hiddenOffice = document.createElement("input");
+    hiddenOffice.type = "hidden";
+    hiddenOffice.name = "office";
+    hiddenOffice.value = office;
+    document.getElementById("visit-form").appendChild(hiddenOffice);
+  }
+});
+
     }
   </script>
 </body>
