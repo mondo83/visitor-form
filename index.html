@@ -8,8 +8,8 @@
     body { background: #f4f8fb; color: #222; font-family: "Segoe UI","Yu Gothic",sans-serif; margin:0;padding:0;}
     .visitor-list { margin-bottom: 0.7em; }
     .visitor-entry { display: flex; gap: 0.5em; margin-bottom:0.3em;}
-    .visitor-entry input.visitor-name { flex: 2 1 0; min-width:90px;}
     .visitor-entry input.visitor-card { flex: 1 1 0; min-width:60px; max-width:120px;}
+    .visitor-entry input.visitor-name { flex: 2 1 0; min-width:90px;}
     .visitor-remove-btn { background: #e11d48; color: #fff; border:none; border-radius:0.7em; font-size:1em; padding:0.2em 1em; cursor:pointer;}
     .add-visitor-btn { background: #2563eb; color:#fff; border:none; border-radius:0.7em; font-size:1.1em; font-weight:bold; padding:0.5em 1.3em; cursor:pointer; margin-top:0.2em;}
     .error-msg { color: #e11d48; font-size:1em; margin:0.3em 0 0 0; display:none;}
@@ -20,7 +20,7 @@
 <body>
   <h1>来訪者受付フォーム</h1>
   <form id="visit-form" autocomplete="off">
-    <div>氏名・ビジターカード番号<span style="color:#e11d48;">*</span></div>
+    <div>ビジターカード番号・氏名<span style="color:#e11d48;">*</span></div>
     <div class="visitor-list" id="visitor-list"></div>
     <button type="button" class="add-visitor-btn" id="add-visitor-btn">＋ 追加</button>
     <div class="error-msg" id="error-visitors"></div>
@@ -43,20 +43,19 @@
   </form>
   <script>
     document.addEventListener("DOMContentLoaded", function(){
-      // 初期表示では visitor-entry を1つも追加しない！
+      addVisitorEntry();
       document.getElementById("add-visitor-btn").addEventListener("click",()=>addVisitorEntry());
-      // 必要に応じて自動で1件目を追加する場合は、setTimeout等で「明示的な操作後」にする
       document.getElementById("visit-form").addEventListener("submit",function(e){
         let ok = false;
         let vlist = document.getElementById("visitor-list");
         let error = document.getElementById("error-visitors");
         for(const row of vlist.children){
-          const name = row.querySelector(".visitor-name").value.trim();
           const card = row.querySelector(".visitor-card").value.trim();
-          if(name && card){ ok=true; break; }
+          const name = row.querySelector(".visitor-name").value.trim();
+          if(card && name){ ok=true; break; }
         }
         if(!ok){
-          error.textContent = "少なくとも1名の氏名とカード番号を入力してください。";
+          error.textContent = "少なくとも1名のカード番号と氏名を入力してください。";
           error.style.display = "";
           e.preventDefault();
         }else{
@@ -79,28 +78,26 @@
     function addVisitorEntry() {
       const row = document.createElement("div");
       row.className = "visitor-entry";
-      // 氏名
-      const nameInput = document.createElement("input");
-      nameInput.type = "text";
-      nameInput.className = "visitor-name";
-      nameInput.placeholder = "氏名";
-      // カード番号
+      // 1. カード番号
       const cardInput = document.createElement("input");
       cardInput.type = "text";
       cardInput.className = "visitor-card";
       cardInput.placeholder = "カード番号";
+      // 2. 氏名（type=text/IME優先）
+      const nameInput = document.createElement("input");
+      nameInput.type = "text";
+      nameInput.className = "visitor-name";
+      nameInput.placeholder = "氏名";
       // 削除
       const removeBtn = document.createElement("button");
       removeBtn.type = "button";
       removeBtn.className = "visitor-remove-btn";
       removeBtn.textContent = "削除";
       removeBtn.onclick = function() { row.remove(); };
-      row.appendChild(nameInput);
       row.appendChild(cardInput);
+      row.appendChild(nameInput);
       row.appendChild(removeBtn);
       document.getElementById("visitor-list").appendChild(row);
-      // 追加直後にfocus（iOS IME出現期待）
-      nameInput.focus();
     }
   </script>
 </body>
